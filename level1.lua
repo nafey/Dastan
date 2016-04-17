@@ -2,11 +2,13 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 
-background = null
 player = null
 
-function scene:create( event )
+mapWidth = 15
+mapHeight = 10
 
+function scene:create( event )
+	
 	local sceneGroup = self.view
 
 	-- Called when the scene's view does not exist.
@@ -15,13 +17,12 @@ function scene:create( event )
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
 	-- display a background image
-	background = display.newImageRect( "background.jpg", display.contentWidth, display.contentHeight )
+	background = display.newImageRect( "map.png", display.contentWidth, display.contentHeight )
 	background.anchorX = 0
 	background.anchorY = 0
 	background.x, background.y = 0, 0
 	
-	background:addEventListener("tap", myTapEvent)
-	
+	-- Player Setup
 	local options =
 	{
 		width = 32,
@@ -45,8 +46,8 @@ function scene:create( event )
 	
 	player.id = "player"
 
-	
 	sceneGroup:insert( background )
+	sceneGroup:addEventListener("tap", myTapEvent)
 end
 
 function myTapEvent(event)
