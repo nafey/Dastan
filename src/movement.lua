@@ -34,42 +34,42 @@ function movement.flood(grid, p, range)
 
 		a = 1
 		--if the location is not obstructed and not far
-		if (grid[p.y][p.x] == 0) and (manhattan(p.x, p.y, current.x, current.y) <= range) then
-			tested[current.y][current.x] = 1
+		if (grid[p.x][p.y] == 0) and (manhattan(p.x, p.y, current.x, current.y) <= range) then
+			tested[current.x][current.y] = 1
 			
 			-- check top
 			if (current.y ~= 1) then
-				if (grid[current.y - 1][current.x] == 0) and(tested[current.y - 1][current.x] == 0) then
-					tested[current.y - 1][current.x] = 0.5
+				if (grid[current.x][current.y - 1] == 0) and(tested[current.x][current.y - 1] == 0) then
+					tested[current.x][current.y - 1] = 0.5
 					table.insert(testnext, points.createPoint(current.x, current.y - 1))
 				end
 			end
 			-- check left
 			if (current.x ~= 1) then
-				if (grid[current.y][current.x - 1] == 0) and(tested[current.y][current.x - 1] == 0) then
-					tested[current.y][current.x - 1] = 0.5
+				if (grid[current.x - 1][current.y] == 0) and(tested[current.x - 1][current.y] == 0) then
+					tested[current.x - 1][current.y] = 0.5
 					table.insert(testnext, points.createPoint(current.x - 1, current.y))
 				end
 			end
 			
 			-- check bottom
 			if (current.y ~= grid.height) then
-				if (grid[current.y + 1][current.x] == 0) and(tested[current.y + 1][current.x] == 0) then
-					tested[current.y + 1][current.x] = 0.5
+				if (grid[current.x][current.y + 1] == 0) and(tested[current.x][current.y + 1] == 0) then
+					tested[current.x][current.y + 1] = 0.5
 					table.insert(testnext, points.createPoint(current.x, current.y + 1))
 				end
 			end
 			
 			-- check right
 			if (current.x ~= grid.width) then
-				if (grid[current.y][current.x + 1] == 0) and(tested[current.y][current.x + 1] == 0) then
-					tested[current.y][current.x + 1] = 0.5
+				if (grid[current.x + 1][current.y] == 0) and(tested[current.x + 1][current.y] == 0) then
+					tested[current.x + 1][current.y] = 0.5
 					table.insert(testnext, points.createPoint(current.x + 1, current.y))
 				end
 			end
 		
 		else 
-			tested[current.y][current.x] = -1
+			tested[current.x][current.y] = -1
 		end
 		
 		

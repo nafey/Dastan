@@ -24,8 +24,17 @@ function scene:create( event )
 	player = sprites.draw("res/char_med.png", 1, 2)
 	
 	grid = grids.createGrid(15, 10)
+	grid[5][2] = 1
+	grid[5][3] = 1
+	grid[5][4] = 1
+	grid[6][4] = 1
+	grid[6][2] = 1
 	
-	movement.flood(grid, points.createPoint(4, 3), 1)
+	
+	
+	
+	
+	movement.flood(grid, points.createPoint(5, 5), 5)
 
 	sceneGroup:insert( background )
 	sceneGroup:addEventListener("tap", myTapEvent)	

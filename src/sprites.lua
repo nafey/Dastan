@@ -20,7 +20,7 @@ function sprites.draw(path, x, y, anchor_x, anchor_y)
 		count=1
 	}
 	
-	sprite = display.newSprite(sheet, sequenceData);
+	local sprite = display.newSprite(sheet, sequenceData);
 	sprite.x = x * TILE_X
 	sprite.y = y * TILE_Y
 	sprite.anchorX = anchor_x;

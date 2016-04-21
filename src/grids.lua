@@ -1,20 +1,20 @@
-grids = {}
+local grids = {}
 
 function grids.createGrid(size_x, size_y) 
-	g = {}
+	local g = {}
 	g.width = size_x
 	g.height = size_y
-	for j = 1, size_y do
-		g[j] = {}
-		for i = 1, size_x do
-			g[j][i] = 0
+	for i = 1, size_x do
+		g[i] = {}
+		for j = 1, size_y do
+			g[i][j] = 0
 		end
 	end
 	
 	function g.print()
-		for j = 1, size_y do 
-			for i = 1, size_x do
-				io.write(g[j][i] .. " ")
+		for j = 1, size_y do
+			for i = 1, size_x do 
+				io.write(g[i][j] .. " ")
 			end
 			
 			io.write("\n")
