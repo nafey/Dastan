@@ -1,9 +1,9 @@
 
 local composer = require( "composer" )
-local sprites = require("src.sprites")
-local movement = require("src.movement")
-local point = require("src.points")
-local grids = require("src.grids")
+local sprites = require("src.helper.sprites")
+local geometry = require("src.helper.geometry")
+local points = require("src.model.points")
+local grids = require("src.model.grids")
 
 
 local scene = composer.newScene()
@@ -34,7 +34,7 @@ function scene:create( event )
 	
 	
 	
-	movement.flood(grid, points.createPoint(5, 5), 5)
+	geometry.flood(grid, points.createPoint(5, 5), 5)
 
 	sceneGroup:insert( background )
 	sceneGroup:addEventListener("tap", myTapEvent)	

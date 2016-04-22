@@ -1,4 +1,4 @@
-points = {}
+local points = {}
 
 function points.createPoint(x, y) 
 	local p = {}

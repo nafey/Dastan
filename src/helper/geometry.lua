@@ -1,5 +1,5 @@
-local points = require("src.points")
-local grids = require("src.grids")
+local points = require("src.model.points")
+local grids = require("src.model.grids")
 
 local movement = {}
 
