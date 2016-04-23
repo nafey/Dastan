@@ -133,7 +133,6 @@ function geometry.drawGrid(grid)
 		end
 	end
 	
-	adj.print()
 	
 	
 	local function drawEndAura(x, y) 
