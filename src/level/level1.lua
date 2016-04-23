@@ -8,7 +8,7 @@ local grids = require("src.model.grids")
 
 local scene = composer.newScene()
 
-player = null
+local player = null
 
 
 function scene:create( event )
@@ -23,19 +23,20 @@ function scene:create( event )
 		
 	player = sprites.draw("res/char_med.png", 1, 2)
 	
-	grid = grids.createGrid(15, 10)
+	local grid = grids.createGrid(15, 10)
 	grid[5][2] = 1
 	grid[5][3] = 1
 	grid[5][4] = 1
 	grid[6][4] = 1
 	grid[6][2] = 1
+	grid[9][4] = 1
+	grid[9][6] = 1
+	grid[6][9] = 1
+	grid[4][9] = 1
 	
+	local result = geometry.flood(grid, points.createPoint(5, 5), 5)
+	geometry.drawGrid(result)
 	
-	
-	
-	
-	geometry.flood(grid, points.createPoint(5, 5), 5)
-
 	sceneGroup:insert( background )
 	sceneGroup:addEventListener("tap", myTapEvent)	
 end

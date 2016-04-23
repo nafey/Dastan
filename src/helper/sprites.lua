@@ -1,8 +1,7 @@
 --Helper functions for displaying sprites
 local sprites = {}
-function sprites.draw(path, x, y, anchor_x, anchor_y) 
-	anchor_x = anchor_x or 0;
-	anchor_y = anchor_y or 0;
+function sprites.draw(path, x, y, rotate) 
+	rotate = rotate or 0;
 	
 	local options =
 	{
@@ -10,7 +9,7 @@ function sprites.draw(path, x, y, anchor_x, anchor_y)
 		height = TILE_Y,
 		numFrames = 1
 	}
-	print(path)
+	
 	local sheet = graphics.newImageSheet( path, options )
 	
 	local sequenceData =
@@ -21,10 +20,21 @@ function sprites.draw(path, x, y, anchor_x, anchor_y)
 	}
 	
 	local sprite = display.newSprite(sheet, sequenceData);
+	
 	sprite.x = x * TILE_X
 	sprite.y = y * TILE_Y
-	sprite.anchorX = anchor_x;
-	sprite.anchorY = anchor_y;
+	
+	--Ensure rot is around center only
+	if (rotate ~= 0) then
+		sprite.anchorX = 0.5
+		sprite.anchorY = 0.5
+		sprite.x = sprite.x + TILE_X / 2
+		sprite.y = sprite.y + TILE_Y / 2
+		sprite:rotate(rotate)
+	else
+		sprite.anchorX = 0
+		sprite.anchorY = 0
+	end	
 	
 	return sprite
 end

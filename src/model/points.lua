@@ -15,7 +15,8 @@ function points.createPoint(x, y)
 	end
 	return p
 end
---doesnt work
+
+--Prints all the points in an array of points
 function points.printPoints(pointsTable) 
 	io.write("{")
 	for i = 1, #pointsTable do

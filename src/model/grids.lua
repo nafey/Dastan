@@ -20,6 +20,17 @@ function grids.createGrid(size_x, size_y)
 			io.write("\n")
 		end
 	end
+	
+	--safe get on a grid value if OOB then return 0
+	function g.safe(i, j)
+		local ret = 0
+		if ((i >= 1 and i <= g.width) and (j >= 1 and j <= g.height)) then
+			ret = g[i][j]
+		end
+		
+		return ret
+	end
+	
 	return g
 end
 
