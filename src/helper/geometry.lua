@@ -78,18 +78,7 @@ function geometry.flood(grid, p, range)
 	
 	return tested
 end
---[[
-0 0 -1 1 1 1 -1 0 0 0 0 0 0 0 0 
-0 -1 1 1 0 0 1 -1 0 0 0 0 0 0 0 
--1 1 1 1 0 1 1 1 -1 0 0 0 0 0 0 
-1 1 1 1 0 0 1 1 1 -1 0 0 0 0 0 
-1 1 1 1 1 1 1 1 1 1 -1 0 0 0 0 
-1 1 1 1 1 1 1 1 1 -1 0 0 0 0 0 
--1 1 1 1 1 1 1 1 -1 0 0 0 0 0 0 
-0 -1 1 1 1 1 1 -1 0 0 0 0 0 0 0 
-0 0 -1 1 1 1 -1 0 0 0 0 0 0 0 0 
-0 0 0 -1 1 -1 0 0 0 0 0 0 0 0 0 
-]]
+
 -- Checks number of 1 value grid adjacent the particular position
 -- called by the draw grid function
 local function adjacency(grid, x, y)
@@ -123,7 +112,7 @@ end
 
 
 --Being a passed a grid of accepted tiles draw the selected area
-function geometry.drawGrid(grid) 
+function geometry.drawGrid(grid, displayGroup) 
 	local adj = grids.createGrid(grid.width, grid.height)
 	for i = 1, grid.width do
 		for j = 1, grid.height do
@@ -132,9 +121,7 @@ function geometry.drawGrid(grid)
 			end
 		end
 	end
-	
-	
-	
+		
 	local function drawEndAura(x, y) 
 		local rot = 0
 		
@@ -154,7 +141,7 @@ function geometry.drawGrid(grid)
 		end
 		
 		-- decreasing by 1 because the screen is zero based and adj is 1 based
-		sprites.draw("res/aura_end.png", x - 1, y - 1, rot)
+		sprites.draw("res/aura_end.png", x - 1, y - 1, rot, displayGroup)
 	end
 	
 		
@@ -192,7 +179,7 @@ function geometry.drawGrid(grid)
 		
 		
 		-- decreasing by 1 because the screen is zero based and adj is 1 based
-		sprites.draw(png, x - 1, y - 1, rot)
+		sprites.draw(png, x - 1, y - 1, rot, displayGroup)
 	end
 	
 	local function drawEdgeAura(x, y)
@@ -214,7 +201,7 @@ function geometry.drawGrid(grid)
 		end
 		
 		-- decreasing by 1 because the screen is zero based and adj is 1 based
-		sprites.draw("res/aura_side.png", x - 1, y - 1, rot)
+		sprites.draw("res/aura_side.png", x - 1, y - 1, rot, displayGroup)
 	end
 	
 	local function drawDotAura(x, y)

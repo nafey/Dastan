@@ -1,7 +1,9 @@
 --Helper functions for displaying sprites
 local sprites = {}
-function sprites.draw(path, x, y, rotate) 
+function sprites.draw(path, x, y, rotate, displayGroup) 
 	rotate = rotate or 0;
+	
+
 	
 	local options =
 	{
@@ -19,7 +21,15 @@ function sprites.draw(path, x, y, rotate)
 		count=1
 	}
 	
-	local sprite = display.newSprite(sheet, sequenceData);
+	local sprite = nil
+	
+	if (displayGroup == nil) then
+		sprite = display.newSprite(sheet, sequenceData);
+	else
+		sprite = display.newSprite(displayGroup, sheet, sequenceData);
+	end
+	
+	
 	
 	sprite.x = x * TILE_X
 	sprite.y = y * TILE_Y
