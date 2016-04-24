@@ -146,8 +146,8 @@ function geometry.drawGrid(grid, displayGroup)
 	
 		
 	local function drawCornerOrPipeAura(x, y)
-		rot = 0
-		png = "res/aura_corner.png"
+		local rot = 0
+		local png = "res/aura_corner.png"
 		
 		-- determine if pipe or corner
 		if (adj.safe(x - 1, y) ~= 0) then
@@ -205,7 +205,43 @@ function geometry.drawGrid(grid, displayGroup)
 	end
 	
 	local function drawDotAura(x, y)
-	
+		local rot = 0	
+		local png = "res/aura_dot.png"
+		
+		-- top left 
+		if ((adj.safe(x, y - 1) ~= 0) and (adj.safe(x - 1, y) ~= 0)) then
+			if (adj.safe(x - 1, y - 1) == 0) then
+				-- decreasing by 1 because the screen is zero based and adj is 1 based
+				sprites.draw(png, x - 1, y - 1, rot, displayGroup)
+			end
+		end
+		
+		-- top right 
+		if ((adj.safe(x, y - 1) ~= 0) and (adj.safe(x + 1, y) ~= 0)) then
+			if (adj.safe(x + 1, y - 1) == 0) then
+				rot = 90
+				-- decreasing by 1 because the screen is zero based and adj is 1 based
+				sprites.draw(png, x - 1, y - 1, rot, displayGroup)
+			end
+		end
+		
+		-- bot right 
+		if ((adj.safe(x - 1, y) ~= 0) and (adj.safe(x, y - 1) ~= 0)) then
+			if (adj.safe(x + 1, y + 1) == 0) then
+				rot = 180
+				-- decreasing by 1 because the screen is zero based and adj is 1 based
+				sprites.draw(png, x - 1, y - 1, rot, displayGroup)
+			end
+		end
+		
+		-- bot left 
+		if ((adj.safe(x, y + 1) ~= 0) and (adj.safe(x - 1, y) ~= 0)) then
+			if (adj.safe(x - 1, y + 1) == 0) then
+				rot = 270
+				-- decreasing by 1 because the screen is zero based and adj is 1 based
+				sprites.draw(png, x - 1, y - 1, rot, displayGroup)
+			end
+		end
 	end
 	
 	--where adjacency is 1
@@ -218,6 +254,11 @@ function geometry.drawGrid(grid, displayGroup)
 			elseif (adj[i][j] == 3) then
 				drawEdgeAura(i, j)
 			end
+			
+			if (adj[i][j] ~= 0) then
+				drawDotAura(i, j)
+			end
+			
 		end
 	end
 end
