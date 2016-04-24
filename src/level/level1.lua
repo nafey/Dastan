@@ -16,6 +16,7 @@ grid_level1 = grids.createGrid(15, 10)
 
 function scene:create( event )
 	
+	-- The order here is important dont move it up or down as it affects the draw order
 	self.view.background = display.newGroup()
 	self.view.selection = display.newGroup()
 	self.view.player = display.newGroup()
@@ -53,8 +54,10 @@ function myTapEvent(event)
 		player.x = x * TILE_X
 		player.y = y * TILE_Y
 		
-		scene.view.selection:removeSelf()
-		scene.view.selection = display.newGroup()
+		-- Remove all the children sprites without removing the parent itself
+		for i = 1, scene.view.selection.numChildren do
+			scene.view.selection:remove(1)
+		end
 		
 		move_result = geometry.flood(grid_level1, points.createPoint(math.floor(event.x / TILE_X) + 1, math.floor(event.y / TILE_Y) + 1) , 4)
 		geometry.drawGrid(move_result, scene.view.selection)

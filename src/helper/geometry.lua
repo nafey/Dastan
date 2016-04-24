@@ -229,11 +229,7 @@ function geometry.drawGrid(grid, displayGroup)
 		
 		-- bot right 
 		if ((adj.safe(x + 1, y) ~= 0) and (adj.safe(x, y + 1) ~= 0)) then
-			if (x == 9 and y == 7) then
-				print(adj.safe(10, 7))
-				print(adj.safe(9, 8))
-			end	
-		
+					
 			if (adj.safe(x + 1, y + 1) == 0) then
 				rot = 180
 				-- decreasing by 1 because the screen is zero based and adj is 1 based
