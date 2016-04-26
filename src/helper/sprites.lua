@@ -3,8 +3,6 @@ local sprites = {}
 function sprites.draw(path, x, y, rotate, displayGroup) 
 	rotate = rotate or 0;
 	
-
-	
 	local options =
 	{
 		width = TILE_X,
@@ -28,8 +26,6 @@ function sprites.draw(path, x, y, rotate, displayGroup)
 	else
 		sprite = display.newSprite(displayGroup, sheet, sequenceData);
 	end
-	
-	
 	
 	sprite.x = x * TILE_X
 	sprite.y = y * TILE_Y

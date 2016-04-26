@@ -1,7 +1,10 @@
 
 local composer = require( "composer" )
+
 local sprites = require("src.helper.sprites")
 local geometry = require("src.helper.geometry")
+local levelloader = require("src.helper.levelloader")
+
 local points = require("src.model.points")
 local grids = require("src.model.grids")
 
@@ -11,10 +14,13 @@ local player = null
 local move_result = null
 
 
-grid_level1 = grids.createGrid(15, 10)
+local grid_level1 = grids.createGrid(15, 10)
 
 
 function scene:create( event )
+
+	local player_start_x = 7
+	local player_start_y = 4
 	
 	-- The order here is important dont move it up or down as it affects the draw order
 	self.view.background = display.newGroup()
@@ -27,21 +33,12 @@ function scene:create( event )
 	bg.anchorY = 0
 	self.view.background:insert(bg)
 	
-	grid_level1[5][2] = 1
-	grid_level1[5][3] = 1
-	grid_level1[5][4] = 1
-	grid_level1[6][4] = 1
-	grid_level1[6][2] = 1
-	grid_level1[9][4] = 1
-	grid_level1[9][6] = 1
-	grid_level1[6][9] = 1
-	grid_level1[4][9] = 1
-		
-	move_result = geometry.flood(grid_level1, points.createPoint(5, 5), 4)
+	grid_level1 = levelloader.loadlevel("level1")
+	
+	move_result = geometry.flood(grid_level1, points.createPoint(player_start_x, player_start_y), 4)
 	geometry.drawGrid(move_result, self.view.selection)
 	
-	player = sprites.draw("res/char_med.png", 4, 4, player)
-	grid_level1.print()
+	player = sprites.draw("res/char_med.png", player_start_x - 1, player_start_y - 1, player)
 	
 	self.view.background:addEventListener("tap", myTapEvent)	
 end
