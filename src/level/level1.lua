@@ -18,7 +18,8 @@ local grid_level1 = grids.createGrid(15, 10)
 
 
 function scene:create( event )
-
+	local levelname =  "arena"
+	
 	local player_start_x = 7
 	local player_start_y = 4
 	
@@ -28,12 +29,12 @@ function scene:create( event )
 	self.view.player = display.newGroup()
 
 	-- display a background image
-	local bg = display.newImageRect("res/map.png", display.contentWidth, display.contentHeight )
+	local bg = display.newImageRect("res/maps/" .. levelname .. ".png", display.contentWidth, display.contentHeight )
 	bg.anchorX = 0
 	bg.anchorY = 0
 	self.view.background:insert(bg)
 	
-	grid_level1 = levelloader.loadlevel("level1")
+	grid_level1 = levelloader.loadlevel(levelname)
 	
 	move_result = geometry.flood(grid_level1, points.createPoint(player_start_x, player_start_y), 4)
 	geometry.drawGrid(move_result, self.view.selection)

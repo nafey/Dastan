@@ -5,7 +5,7 @@ local levelloader = {}
 
 function levelloader.loadlevel(levelname)
 	-- Path for the file to read
-	local path = system.pathForFile( "src/level/" .. levelname .. ".csv", system.ResourceDirectory )
+	local path = system.pathForFile( "res/maps/" .. levelname .. ".csv", system.ResourceDirectory )
 
 	-- Open the file handle
 	local file, errorString = io.open( path, "r" )
