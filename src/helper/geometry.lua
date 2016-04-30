@@ -113,6 +113,12 @@ end
 
 --Being a passed a grid of accepted tiles draw the selected area
 function geometry.drawGrid(grid, displayGroup) 
+	local path_dot = "res/ui/aura_dot.png"
+	local path_corner = "res/ui/aura_corner.png"
+	local path_end = "res/ui/aura_end.png" 
+	local path_pipe = "res/ui/aura_pipe.png"
+	local path_side = "res/ui/aura_side.png"
+	
 	local adj = grids.createGrid(grid.width, grid.height)
 	for i = 1, grid.width do
 		for j = 1, grid.height do
@@ -141,20 +147,20 @@ function geometry.drawGrid(grid, displayGroup)
 		end
 		
 		-- decreasing by 1 because the screen is zero based and adj is 1 based
-		sprites.draw("res/aura_end.png", x - 1, y - 1, rot, displayGroup)
+		sprites.draw(path_end, x - 1, y - 1, rot, displayGroup)
 	end
 	
 		
 	local function drawCornerOrPipeAura(x, y)
 		local rot = 0
-		local png = "res/aura_corner.png"
+		local png = path_corner
 		
 		-- determine if pipe or corner
 		if (adj.safe(x - 1, y) ~= 0) then
 			if (adj.safe(x + 1, y) ~= 0) then
 				-- identified hort pipe
 				rot = 90
-				png = "res/aura_pipe.png"
+				png = path_pipe
 			else
 				-- identified corner find rot now
 				if (adj.safe(x, y - 1) ~= 0) then
@@ -173,7 +179,7 @@ function geometry.drawGrid(grid, displayGroup)
 			end -- no need for else as top left is the default case
 		else
 			-- identified vert pipe
-			png = "res/aura_pipe.png"
+			png = path_pipe
 		end
 		
 		
@@ -182,7 +188,7 @@ function geometry.drawGrid(grid, displayGroup)
 		sprites.draw(png, x - 1, y - 1, rot, displayGroup)
 	end
 	
-	local function drawEdgeAura(x, y)
+	local function drawSideAura(x, y)
 		local rot = 0
 		
 		--rotate top
@@ -201,12 +207,12 @@ function geometry.drawGrid(grid, displayGroup)
 		end
 		
 		-- decreasing by 1 because the screen is zero based and adj is 1 based
-		sprites.draw("res/aura_side.png", x - 1, y - 1, rot, displayGroup)
+		sprites.draw(path_side, x - 1, y - 1, rot, displayGroup)
 	end
 	
 	local function drawDotAura(x, y)
 		local rot = 0	
-		local png = "res/aura_dot.png"
+		local png = path_dot
 		
 		-- top left 
 		if ((adj.safe(x, y - 1) ~= 0) and (adj.safe(x - 1, y) ~= 0)) then
@@ -255,7 +261,7 @@ function geometry.drawGrid(grid, displayGroup)
 			elseif (adj[i][j] == 2) then
 				drawCornerOrPipeAura(i, j)
 			elseif (adj[i][j] == 3) then
-				drawEdgeAura(i, j)
+				drawSideAura(i, j)
 			end
 			
 			if (adj[i][j] ~= 0) then
