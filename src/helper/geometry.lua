@@ -32,6 +32,7 @@ function geometry.flood(grid, p, range)
 		
 		table.remove(testnext, 1)
 
+--		Variable Never used
 		a = 1
 		--if the location is not obstructed and not far
 		if (grid[p.x][p.y] == 0) and (manhattan(p.x, p.y, current.x, current.y) <= range) then
@@ -72,7 +73,7 @@ function geometry.flood(grid, p, range)
 			tested[current.x][current.y] = -1
 		end
 		
-		
+--		Variable i not being used
 		i = i + 1
 	end
 	
