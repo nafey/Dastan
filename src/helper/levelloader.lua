@@ -1,54 +1,46 @@
 local strings = require("src.helper.strings")
 local grids = require("src.model.grids")
 local points = require("src.model.points")
+local file_helper = require("src.helper.file_helper")
 
 local levelloader = {}
 
 function levelloader.loadlevel(levelname)
 	-- Path for the file to read
-	local path = system.pathForFile( "res/maps/" .. levelname .. ".csv", system.ResourceDirectory )
-
-	-- Open the file handle
-	local file, errorString = io.open( path, "r" )
 	
+	local level_file = file_helper.getFile("res/maps/" .. levelname .. ".csv", "r")
+
 	local ret = nil
+	
+	-- Found the file
+	local j = 0
+	
+	local width = 0
+	local height = 0
+	
+	
+	for line in level_file:lines() do
+		local line_split = strings.split(line, ",")
 
-	if not file then
-		-- Error occurred; output the cause
-		print( "File error: " .. errorString )
-	else
-		 -- Found the file
-		local j = 0
-		
-		local width = 0
-		local height = 0
-		
-		
-		for line in file:lines() do
-			local line_split = strings.split(line, ",")
-
-			if (j == 0) then
-				width = tonumber(line_split[1])
-				height = tonumber(line_split[2])
-				
-				ret = grids.createGrid(width, height)
-			else
-				for i = 1, width do
-					if tonumber(line_split[i]) ~= nil then
-						ret[i][j] = tonumber(line_split[i])
-					else 
-						ret[i][j] = line_split[i]
-					end
+		if (j == 0) then
+			width = tonumber(line_split[1])
+			height = tonumber(line_split[2])
+			
+			ret = grids.createGrid(width, height)
+		else
+			for i = 1, width do
+				if tonumber(line_split[i]) ~= nil then
+					ret[i][j] = tonumber(line_split[i])
+				else 
+					ret[i][j] = line_split[i]
 				end
 			end
-			j = j + 1
 		end
-				
-		-- Close the file handle
-		io.close( file )
+		j = j + 1
 	end
-
-	file = nil
+	
+	-- Close the file handle
+	io.close( level_file )
 	
 	return ret
 end

@@ -6,11 +6,16 @@ local geometry = require("src.helper.geometry")
 local levelloader = require("src.helper.levelloader")
 local player_helper = require("src.helper.player_helper")
 
+local file_helper = require("src.helper.file_helper")
+--print(file_helper.getFileText("res/data/char_dat.json"))
+
 local points = require("src.model.points")
 local grids = require("src.model.grids")
 
 local selected_player = null
 
+--local json_reader = require("src.helper.json_reader")
+--local result = json_reader:decode()
 
 local scene = composer.newScene()
 
@@ -66,7 +71,6 @@ function scene:create( event )
 
 	
 	-- load the level
-	
 	local raw_level1 = levelloader.loadlevel(levelname)
 	local player_pos = levelloader.getPlayerPositions(raw_level1)
 	
