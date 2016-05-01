@@ -95,8 +95,8 @@ function flood_helper.getMovementGrid(grid, point, movementPoints)
 
     for i=movementPoints,1,-1 do
         local test = false
-        if movementPoints~=1 then
-            test = false
+        if movementPoints>1 then
+            test = true
         end
 
         local testPoints = floodAgain(pointsToConsider, test);
