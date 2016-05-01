@@ -1,3 +1,7 @@
+local file_helper = require("src.helper.file_helper")
+local json_helper = require("src.helper.json_helper")
+local players = require("src.model.players")
+
 local player_helper = {}
 
 local move_threshold = 100
@@ -34,5 +38,29 @@ function player_helper.selectNextMover(player_list)
 	
 	return ret
 end
+
+function player_helper.loadPlayers(path, teams)
+	local json_list = json_helper:decode(file_helper.getFileText(path))
+	local player_list = {}
+	for i = 1, #json_list do
+		local json = json_list[i]
+		
+		for j = 1, #teams do
+			if (teams[j]["name"] == json["name"]) then
+				local p = players.createPlayer(json["name"], json["label"], 
+											   json["hp"], json["attack"], 
+											   json["speed"], json["range"])
+				p.team = teams[j]["team"]
+				p.start_pos  = teams[j]["start_pos"]
+				
+				table.insert(player_list, p)
+				
+			end
+		end
+		
+	end
+	
+	return player_list
+end	
 
 return player_helper

@@ -6,48 +6,31 @@ local geometry = require("src.helper.geometry")
 local levelloader = require("src.helper.levelloader")
 local player_helper = require("src.helper.player_helper")
 
-local file_helper = require("src.helper.file_helper")
---print(file_helper.getFileText("res/data/char_dat.json"))
+
+local teams = {}
+local a1 = {}
+a1["name"] = "sam"
+a1["team"] = 1
+a1["start_pos"] = "P1"
+
+local a2 = {}
+a2["name"] = "ben"
+a2["team"] = 2
+a2["start_pos"] = "P4"
+
+table.insert(teams, a1)
+table.insert(teams, a2)
+
+local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
 
 local points = require("src.model.points")
 local grids = require("src.model.grids")
 
 local selected_player = null
 
---local json_reader = require("src.helper.json_reader")
---local result = json_reader:decode()
-
 local scene = composer.newScene()
 
 local move_result = null
-
-local player_list = {}
-local p1  = {};
-p1["name"] = "sam"
-p1["hp"] = 20
-p1["attack"] = 4
-p1["speed"] = 16
-p1["range"] = 4
-p1["start_pos"] = "P1"
-p1["pos"] = points.createPoint(0, 0)
-p1["team"] = 1
-p1["movement_points"] = 0
-p1["sprite"] = null
-
-local p2  = {};
-p2["name"] = "ben"
-p2["hp"] = 25
-p2["attack"] = 3
-p2["speed"] = 12
-p2["range"] = 4
-p2["start_pos"] = "P4"
-p2["pos"] = points.createPoint(0, 0)
-p2["team"] = 2
-p2["movement_points"] = 0
-p2["sprite"] = null
-
-table.insert(player_list, p1)
-table.insert(player_list, p2)
 
 local grid_level1 = grids.createGrid(15, 10)
 
@@ -55,8 +38,6 @@ local grid_level1 = grids.createGrid(15, 10)
 function scene:create( event )
 	
 	local levelname =  "arena"
-	
-	
 	
 	-- The order here is important dont move it up or down as it affects the draw order
 	self.view.background = display.newGroup()
