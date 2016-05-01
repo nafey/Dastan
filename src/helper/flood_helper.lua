@@ -46,10 +46,52 @@ local function floodAgain(pointList, addPointsBool)
 
 end
 
+--[[
+grid looks something like this : 
+
+0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 
+0 0 1 1 0 0 0 0 1 1 1 1 0 0 1 
+0 0 1 1 0 0 0 0 1 0 1 1 0 0 1 
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 
+1 1 1 0 0 0 1 0 0 0 0 0 1 1 0 
+0 1 0 1 0 1 1 0 0 0 0 0 1 1 0 
+0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 
+
+result on return should look something like this for point = 4, 4
+
+0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 
+0 1 0 0 1 1 0 0 0 0 0 0 0 0 0 
+1 1 0 0 1 1 1 0 0 0 0 0 0 0 0 
+1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 
+1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 
+0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 
+0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 
+0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+
+what we are getting now as the result:
+
+0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 
+0 0 1 1 0 0 0 0 1 1 1 1 0 0 1 
+0 0 1 1 0 0 0 0 1 0 1 1 0 0 1 
+0 0 1 0 1 0 0 0 0 0 0 0 0 1 0 
+0 0 0 1 0 0 0 0 0 0 0 0 0 1 1 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 
+1 1 1 0 0 0 1 0 0 0 0 0 1 1 0 
+0 1 0 1 0 1 1 0 0 0 0 0 1 1 0 
+0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 
+
+]]
 function flood_helper.getMovementGrid(grid, point, movementPoints)
     
     result = grid
-    local pointsToConsider = point
+    local pointsToConsider = {}
+	table.insert(pointsToConsider, point)
 
     for i=movementPoints,1,-1 do
         local test = false
@@ -63,4 +105,6 @@ function flood_helper.getMovementGrid(grid, point, movementPoints)
 
     return result
 end
+
+return flood_helper
 

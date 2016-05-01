@@ -6,6 +6,8 @@ local geometry = require("src.helper.geometry")
 local levelloader = require("src.helper.levelloader")
 local player_helper = require("src.helper.player_helper")
 
+local flood_helper = require("src.helper.flood_helper")
+
 local points = require("src.model.points")
 local grids = require("src.model.grids")
 
@@ -49,9 +51,7 @@ local grid_level1 = grids.createGrid(15, 10)
 
 function scene:create( event )
 	
-	local levelname =  "arena"
-	
-	
+	local levelname =  "arena"	
 	
 	-- The order here is important dont move it up or down as it affects the draw order
 	self.view.background = display.newGroup()
@@ -85,8 +85,11 @@ function scene:create( event )
 	
 	selected_player = player_helper.selectNextMover(player_list)
 	
-	move_result = geometry.flood(grid_level1, points.createPoint(selected_player["pos"].x, selected_player["pos"].y), selected_player["range"])
+	--move_result = geometry.flood(grid_level1, points.createPoint(selected_player["pos"].x, selected_player["pos"].y), selected_player["range"])
+	move_result = flood_helper.getMovementGrid(grid_level1, selected_player["pos"], 4)
 	geometry.drawGrid(move_result, self.view.selection)
+	
+	move_result.print()
 	
 	--player = sprites.draw("res/chars/sam.png", 4 - 1, 4 - 1, 0, self.view.player)
 	

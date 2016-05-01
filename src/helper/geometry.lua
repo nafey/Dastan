@@ -77,6 +77,15 @@ function geometry.flood(grid, p, range)
 		i = i + 1
 	end
 	
+	
+	for i = 1, tested.width do
+		for j = 1, tested.height do
+			if (tested[i][j] == -1) then
+				tested[i][j] = 0
+			end
+		end
+	end
+	
 	return tested
 end
 
