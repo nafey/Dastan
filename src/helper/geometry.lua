@@ -119,6 +119,7 @@ function geometry.drawGrid(grid, displayGroup)
 	local path_end = "res/ui/aura_end.png" 
 	local path_pipe = "res/ui/aura_pipe.png"
 	local path_side = "res/ui/aura_side.png"
+	local path_single = "res/ui/aura_single.png"
 	
 	local adj = grids.createGrid(grid.width, grid.height)
 	for i = 1, grid.width do

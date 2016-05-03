@@ -34,4 +34,16 @@ function grids.createGrid(size_x, size_y)
 	return g
 end
 
+function grids.copyGrid(grid) 
+	local g = grids.createGrid(grid.width, grid.height)
+	
+	for i = 1, grid.width do
+		for j = 1, grid.height do
+			g[i][j] = grid.safe(i, j)
+		end
+	end
+		
+	return g
+end
+
 return grids

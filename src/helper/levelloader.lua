@@ -75,7 +75,7 @@ function levelloader.getPlayerPositions(levelgrid)
 	return ret
 end
 
-function levelloader.getMovementGrid(levelgrid)
+function levelloader.getMovementGrid(levelgrid, player_list, player_name)
 	local ret = grids.createGrid(levelgrid.width, levelgrid.height)
 	
 	for i = 1, levelgrid.width do
@@ -84,6 +84,21 @@ function levelloader.getMovementGrid(levelgrid)
 				ret[i][j] = levelgrid[i][j]
 			else 
 				ret[i][j] = 0
+			end
+		end
+	end
+	
+	return ret
+end
+
+
+function levelloader.markPlayers(levelgrid, player_list,  player_name) 
+	local ret = grids.copyGrid(levelgrid)
+	
+	if (player_list ~= nil) then
+		for i = 1, #player_list do
+			if (player_list[i].name ~= player_name) then
+				ret[player_list[i].pos.x][player_list[i].pos.y] = 1
 			end
 		end
 	end
