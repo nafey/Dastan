@@ -59,25 +59,75 @@ local scene = composer.newScene()
 
 local move_result = null
 
-local grid_level1 = grids.createGrid(15, 10)
+local grid_level1 = null
 
+
+local function drawIcon(name, team, position, group)
+	local icon_path = "res/chars/" .. name .. "_icon.png"
+	
+	local frame_path = "res/ui/blue_frame.png"
+	if (team == 2) then
+		frame_path = "res/ui/red_frame.png"
+	end
+	
+	local x = (position - 1) * TILE_X
+	
+	local red = display.newImageRect(group, frame_path, TILE_X, TILE_Y)
+	red.anchorX = 0
+	red.anchorY = 0
+	red.x = x
+	
+	local icon = display.newImageRect(group, icon_path, 24, 20)
+	icon.anchorX = 0
+	icon. anchorY = 0
+	icon.x = x + 4
+	icon.y = 6
+	
+end
 
 function scene:create( event )
 	
-	local levelname =  "arena"
+	local levelname =  "small"
+	local level_width = 480
+	local level_height = 256
+	local frame_height = 64
 	
+	-- Background setup
 	-- The order here is important dont move it up or down as it affects the draw order
 	self.view.background = display.newGroup()
+	self.view.background.bg = display.newImageRect(self.view.background, "res/maps/" .. levelname .. ".png", level_width, level_height )
+	self.view.background.bg.anchorX = 0
+	self.view.background.bg.anchorY = 0
+	
+	
+	-- Other Display Groups
 	self.view.selection = display.newGroup()
 	self.view.player = display.newGroup()
-
-	-- display a background image
-	local bg = display.newImageRect("res/maps/" .. levelname .. ".png", display.contentWidth, display.contentHeight )
-	bg.anchorX = 0
-	bg.anchorY = 0
-	self.view.background:insert(bg)
-
+	self.view.ui = display.newGroup()
+	self.view.ui.frame = display.newGroup()
 	
+	
+	self.view.ui.frame.ui_frame = display.newImageRect(self.view.ui.frame, "res/ui/ui_frame.png", level_width, frame_height)
+	self.view.ui.frame.ui_frame.anchorX = 0
+	self.view.ui.frame.ui_frame.anchorY = 0
+	self.view.ui.frame.y = level_height
+	
+	self.view.ui.frame.move_order = display.newGroup()
+	self.view.ui.frame.move_order.y = 19
+	self.view.ui.frame.move_order.x = 277
+	self.view.ui.frame:insert(self.view.ui.frame.move_order)
+	
+	-- self.view.ui.frame.move_order.red = display.newImageRect(self.view.ui.frame.move_order, "res/ui/red_frame.png", TILE_X, TILE_Y)
+	-- self.view.ui.frame.move_order.red.anchorX = 0
+	-- self.view.ui.frame.move_order.red.anchorY = 0	
+	
+	drawIcon("pan", 2, 1, self.view.ui.frame.move_order)
+	drawIcon("asha", 1, 2, self.view.ui.frame.move_order)
+	drawIcon("lan", 1, 3, self.view.ui.frame.move_order)
+	drawIcon("feyd", 2, 4, self.view.ui.frame.move_order)
+	drawIcon("balzar", 1, 5, self.view.ui.frame.move_order)
+	drawIcon("uruk", 2, 6, self.view.ui.frame.move_order)
+		
 	-- load the level
 	local raw_level1 = levelloader.loadlevel(levelname)
 	local player_pos = levelloader.getPlayerPositions(raw_level1)
@@ -94,7 +144,8 @@ function scene:create( event )
 		p.sprite = sprites.draw("res/chars/"..p["name"] .. ".png", p.pos.x - 1, p.pos.y - 1, 0, self.view.player)
 	end
 	
-	selected_player = player_helper.selectNextMover(player_list)
+	selected_player = player_helper.selectNextMover(player_list, false)
+	
 	grid_level1 = levelloader.getMovementGrid(raw_level1)
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 	
@@ -122,6 +173,7 @@ function myTapEvent(event)
 		end
 		
 		selected_player = player_helper.selectNextMover(player_list)
+		
 		
 		
 		local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)

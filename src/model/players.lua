@@ -14,6 +14,7 @@ function players.createPlayer(name, label, hp, attack, speed, range)
 	p.pos = points.createPoint(0, 0)
 	p.team = nil
 	p.movement_points = 0
+	p.movement_points_later = 0
 	p.sprite = nil
 	
 	return p
