@@ -164,7 +164,7 @@ function scene:create( event )
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 	
 	move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player.range)
-	geometry.drawGrid(move_result, self.view.selection)
+	geometry.drawGrid(move_result, self.view.selection, player_list, selected_player.team)
 	
 	
 	self.view.background:addEventListener("tap", myTapEvent)	
@@ -189,7 +189,7 @@ function myTapEvent(event)
 		local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 		
 		move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player["range"])
-		geometry.drawGrid(move_result, scene.view.selection)
+		geometry.drawGrid(move_result, scene.view.selection, player_list, selected_player.team)
 	end
 end
 
