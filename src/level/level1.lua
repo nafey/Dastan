@@ -154,13 +154,11 @@ function scene:create( event )
 		p.sprite = sprites.draw("res/chars/"..p["name"] .. ".png", p.pos.x - 1, p.pos.y - 1, 0, self.view.player)
 	end
 	
-	
+	-- Draw Move Order
 	drawMoveOrder(player_list)
 	
-	
+	-- Draw movement Grid
 	selected_player = player_helper.selectNextMover(player_list, false)
-	
-	
 	
 	grid_level1 = levelloader.getMovementGrid(raw_level1)
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
@@ -168,7 +166,6 @@ function scene:create( event )
 	move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player.range)
 	geometry.drawGrid(move_result, self.view.selection)
 	
-	--player = sprites.draw("res/chars/sam.png", 4 - 1, 4 - 1, 0, self.view.player)
 	
 	self.view.background:addEventListener("tap", myTapEvent)	
 end
@@ -183,9 +180,10 @@ function myTapEvent(event)
 		selected_player.pos.x = x + 1
 		selected_player.pos.y = y + 1
 		
-		
+		-- Draw Move Order
 		drawMoveOrder(player_list)
 		
+		-- Draw Selected Player
 		selected_player = player_helper.selectNextMover(player_list)		
 						
 		local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)

@@ -259,6 +259,10 @@ function geometry.drawGrid(grid, displayGroup)
 		end
 	end
 	
+	local function drawSingleAura(x, y)
+		sprites.draw(path_single, x - 1, y - 1, 0, displayGroup)
+	end
+	
 	--where adjacency is 1
 	for i = 1, adj.width do
 		for j = 1, adj.height do
@@ -268,12 +272,16 @@ function geometry.drawGrid(grid, displayGroup)
 				drawCornerOrPipeAura(i, j)
 			elseif (adj[i][j] == 3) then
 				drawSideAura(i, j)
-			end
-			
+			end	
 			if (adj[i][j] ~= 0) then
 				drawDotAura(i, j)
 			end
 			
+			if (adj[i][j] == 0) then
+				if (grid[i][j] == 1) then
+					drawSingleAura(i, j)
+				end
+			end
 		end
 	end
 end
