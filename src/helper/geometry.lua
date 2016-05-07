@@ -121,6 +121,10 @@ function geometry.drawGrid(grid, displayGroup)
 	local path_side = "res/ui/aura_side.png"
 	local path_single = "res/ui/aura_single.png"
 	
+	for i = 1, displayGroup.numChildren do
+		displayGroup:remove(1)
+	end
+	
 	local adj = grids.createGrid(grid.width, grid.height)
 	for i = 1, grid.width do
 		for j = 1, grid.height do

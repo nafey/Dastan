@@ -61,27 +61,47 @@ local move_result = null
 
 local grid_level1 = null
 
-
-local function drawIcon(name, team, position, group)
-	local icon_path = "res/chars/" .. name .. "_icon.png"
-	
-	local frame_path = "res/ui/blue_frame.png"
-	if (team == 2) then
-		frame_path = "res/ui/red_frame.png"
+local function drawMoveOrder(player_list)
+	local function drawIcon(name, team, position, group)
+		local icon_path = "res/chars/" .. name .. "_icon.png"
+		
+		local frame_path = "res/ui/blue_frame.png"
+		if (team == 2) then
+			frame_path = "res/ui/red_frame.png"
+		end
+		
+		local x = (position - 1) * TILE_X
+		
+		local red = display.newImageRect(group, frame_path, TILE_X, TILE_Y)
+		red.anchorX = 0
+		red.anchorY = 0
+		red.x = x
+		
+		local icon = display.newImageRect(group, icon_path, 24, 20)
+		icon.anchorX = 0
+		icon. anchorY = 0
+		icon.x = x + 4
+		icon.y = 6
+		
 	end
 	
-	local x = (position - 1) * TILE_X
+	for i = 1, scene.view.ui.frame.move_order.numChildren do
+		scene.view.ui.frame.move_order:remove(1)
+	end
 	
-	local red = display.newImageRect(group, frame_path, TILE_X, TILE_Y)
-	red.anchorX = 0
-	red.anchorY = 0
-	red.x = x
+	-- Predict the move_order for 6 turns to draw move order 
+	for i = 1, #player_list do 
+		local p = player_list[i]
+		p.movement_points_later = p.movement_points
+	end
 	
-	local icon = display.newImageRect(group, icon_path, 24, 20)
-	icon.anchorX = 0
-	icon. anchorY = 0
-	icon.x = x + 4
-	icon.y = 6
+	local next_6_movers = {}
+	
+	for i = 1, 6 do 
+		p = player_helper.selectNextMover(player_list, true)
+		table.insert(next_6_movers, p)
+		drawIcon(p.name, p.team, i, scene.view.ui.frame.move_order)
+	end
 	
 end
 
@@ -117,17 +137,7 @@ function scene:create( event )
 	self.view.ui.frame.move_order.x = 277
 	self.view.ui.frame:insert(self.view.ui.frame.move_order)
 	
-	-- self.view.ui.frame.move_order.red = display.newImageRect(self.view.ui.frame.move_order, "res/ui/red_frame.png", TILE_X, TILE_Y)
-	-- self.view.ui.frame.move_order.red.anchorX = 0
-	-- self.view.ui.frame.move_order.red.anchorY = 0	
 	
-	drawIcon("pan", 2, 1, self.view.ui.frame.move_order)
-	drawIcon("asha", 1, 2, self.view.ui.frame.move_order)
-	drawIcon("lan", 1, 3, self.view.ui.frame.move_order)
-	drawIcon("feyd", 2, 4, self.view.ui.frame.move_order)
-	drawIcon("balzar", 1, 5, self.view.ui.frame.move_order)
-	drawIcon("uruk", 2, 6, self.view.ui.frame.move_order)
-		
 	-- load the level
 	local raw_level1 = levelloader.loadlevel(levelname)
 	local player_pos = levelloader.getPlayerPositions(raw_level1)
@@ -144,7 +154,13 @@ function scene:create( event )
 		p.sprite = sprites.draw("res/chars/"..p["name"] .. ".png", p.pos.x - 1, p.pos.y - 1, 0, self.view.player)
 	end
 	
+	
+	drawMoveOrder(player_list)
+	
+	
 	selected_player = player_helper.selectNextMover(player_list, false)
+	
+	
 	
 	grid_level1 = levelloader.getMovementGrid(raw_level1)
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
@@ -167,15 +183,11 @@ function myTapEvent(event)
 		selected_player.pos.x = x + 1
 		selected_player.pos.y = y + 1
 		
-		-- Remove all the children sprites without removing the parent itself
-		for i = 1, scene.view.selection.numChildren do
-			scene.view.selection:remove(1)
-		end
 		
-		selected_player = player_helper.selectNextMover(player_list)
+		drawMoveOrder(player_list)
 		
-		
-		
+		selected_player = player_helper.selectNextMover(player_list)		
+						
 		local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 		
 		move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player["range"])

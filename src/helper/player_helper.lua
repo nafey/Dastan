@@ -7,7 +7,8 @@ local player_helper = {}
 local move_threshold = 100
 
 
-
+-- set later to true if you just want to move without setting movement_points
+-- usually you would want to do this when you want to forecast movement
 function player_helper.selectNextMover(player_list, later) 
 	local attr = "movement_points"
 	
