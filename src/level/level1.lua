@@ -63,53 +63,9 @@ local move_result = nil
 
 local scene = composer.newScene()
 
-local function drawMoveOrder(player_list)
-	local function drawIcon(name, team, position, group)
-		local icon_path = "res/chars/" .. name .. "_icon.png"
-		
-		local frame_path = "res/ui/blue_frame.png"
-		if (team == 2) then
-			frame_path = "res/ui/red_frame.png"
-		end
-		
-		local x = (position - 1) * TILE_X
-		
-		local red = display.newImageRect(group, frame_path, TILE_X, TILE_Y)
-		red.anchorX = 0
-		red.anchorY = 0
-		red.x = x
-		
-		local icon = display.newImageRect(group, icon_path, 24, 20)
-		icon.anchorX = 0
-		icon. anchorY = 0
-		icon.x = x + 4
-		icon.y = 6
-		
-	end
-	
-	for i = 1, scene.view.ui.frame.move_order.numChildren do
-		scene.view.ui.frame.move_order:remove(1)
-	end
-	
-	-- Predict the move_order for 6 turns to draw move order 
-	for i = 1, #player_list do 
-		local p = player_list[i]
-		p.movement_points_later = p.movement_points
-	end
-	
-	local next_6_movers = {}
-	
-	for i = 1, 6 do 
-		p = player_helper.selectNextMover(player_list, true)
-		table.insert(next_6_movers, p)
-		drawIcon(p.name, p.team, i, scene.view.ui.frame.move_order)
-	end
-	
-end
-
 local function selectNextCharacter()	
 	-- Draw Move Order
-	drawMoveOrder(player_list)
+	draw_helper.drawMoveOrder(player_list, scene.view.ui.frame.move_order)
 	
 	-- Draw movement Grid
 	selected_player = player_helper.selectNextMover(player_list, false)
@@ -122,8 +78,6 @@ local function selectNextCharacter()
 	
 	selected_player_state = player_state.awaiting_player_move
 end
-
-
 
 function scene:create( event )
 	local level_width = 480
