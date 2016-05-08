@@ -9,7 +9,6 @@ local player_state = require("src.model.player_state")
 local points = require("src.model.points")
 local grids = require("src.model.grids")
 
-
 local selected_player_state = player_state.awaiting_player_move
 
 
@@ -53,16 +52,13 @@ table.insert(teams, a4)
 table.insert(teams, a5)
 table.insert(teams, a6)
 
+local selected_player = nil
 local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
 
-
-local selected_player = null
+local raw_level1 = levelloader.loadlevel("small")
+local move_result = nil
 
 local scene = composer.newScene()
-
-local move_result = null
-
-local grid_level1 = null
 
 local function drawMoveOrder(player_list)
 	local function drawIcon(name, team, position, group)
@@ -108,17 +104,14 @@ local function drawMoveOrder(player_list)
 	
 end
 
-local function selectNextCharacter()
-	local levelname = "small"
-	local raw_level1 = levelloader.loadlevel(levelname)
-	
+local function selectNextCharacter()	
 	-- Draw Move Order
 	drawMoveOrder(player_list)
 	
 	-- Draw movement Grid
 	selected_player = player_helper.selectNextMover(player_list, false)
 	
-	grid_level1 = levelloader.getMovementGrid(raw_level1)
+	local grid_level1 = levelloader.getMovementGrid(raw_level1)
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 	
 	move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player.range)
@@ -160,11 +153,7 @@ function scene:create( event )
 	self.view.ui.frame.move_order.x = 277
 	self.view.ui.frame:insert(self.view.ui.frame.move_order)
 	
-	
-	-- load the level
-	local raw_level1 = levelloader.loadlevel(levelname)
 	local player_pos = levelloader.getPlayerPositions(raw_level1)
-	
 	
 	for i = 1, #player_list do
 		local p = player_list[i]
@@ -197,7 +186,6 @@ function myTapEvent(event)
 				geometry.drawAttackGrid(selected_player.pos, scene.view.selection, player_list, selected_player.team, scene.view.ui.play_area)
 				selected_player_state = player_state.awaiting_attack_confirmation
 			else
-			
 				selectNextCharacter()
 			end
 		end
@@ -214,8 +202,6 @@ function myTapEvent(event)
 			selectNextCharacter()
 		end
 	end
-	
-	
 end
 
 
