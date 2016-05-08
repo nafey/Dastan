@@ -46,4 +46,34 @@ function grids.copyGrid(grid)
 	return g
 end
 
+-- Checks number of 1 value grid adjacent the particular position
+-- called by the draw grid function
+function grids.adjacency(grid, x, y)
+	local ret = 0
+	
+	if (grid[x][y] == 1) then
+		-- check top
+		if (grid.safe(x, y - 1) == 1) then
+			ret = ret + 1
+		end
+		
+		-- check left
+		if (grid.safe(x - 1, y) == 1) then
+			ret = ret + 1
+		end
+		
+		-- check bottom
+			if (grid.safe(x, y + 1) == 1) then
+				ret = ret + 1
+			end
+		
+		-- check right
+		if (grid.safe(x + 1, y) == 1) then
+			ret = ret + 1
+		end
+	end
+	
+	return ret
+end
+
 return grids

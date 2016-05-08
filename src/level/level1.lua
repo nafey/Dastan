@@ -1,13 +1,15 @@
 
 local composer = require( "composer" )
 
+local player_state = require("src.model.player_state")
+local points = require("src.model.points")
+local grids = require("src.model.grids")
+
 local sprites = require("src.helper.sprites")
 local geometry = require("src.helper.geometry")
 local levelloader = require("src.helper.levelloader")
 local player_helper = require("src.helper.player_helper")
-local player_state = require("src.model.player_state")
-local points = require("src.model.points")
-local grids = require("src.model.grids")
+local draw_helper = require("src.helper.draw_helper")
 
 local selected_player_state = player_state.awaiting_player_move
 
@@ -55,7 +57,8 @@ table.insert(teams, a6)
 local selected_player = nil
 local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
 
-local raw_level1 = levelloader.loadlevel("small")
+local levelname = "small"
+local raw_level1 = levelloader.loadlevel(levelname)
 local move_result = nil
 
 local scene = composer.newScene()
@@ -115,14 +118,14 @@ local function selectNextCharacter()
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 	
 	move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player.range)
-	geometry.drawGrid(move_result, scene.view.selection, player_list, selected_player.team)
+	draw_helper.drawMovementGrid(move_result, scene.view.selection, player_list, selected_player.team)
 	
 	selected_player_state = player_state.awaiting_player_move
 end
 
+
+
 function scene:create( event )
-	
-	local levelname =  "small"
 	local level_width = 480
 	local level_height = 256
 	local frame_height = 64
@@ -162,11 +165,15 @@ function scene:create( event )
 	
 	for i = 1, #player_list do
 		local p = player_list[i]
-		
 		p.sprite = sprites.draw("res/chars/"..p["name"] .. ".png", p.pos.x - 1, p.pos.y - 1, 0, self.view.player)
 	end
 	
 	selectNextCharacter()
+	
+	local healthBar = display.newRect((selected_player.pos.x - 1)  * 32, (selected_player.pos.y - 1) * 32 + 30, 32, 2)
+	healthBar.anchorX = 0
+	healthBar.anchorY = 0
+	
 	
 	self.view.background:addEventListener("tap", myTapEvent)	
 end
@@ -183,7 +190,7 @@ function myTapEvent(event)
 			selected_player.pos.y = y + 1
 			
 			if (geometry.isAdjacentToEnemy(selected_player.pos.x, selected_player.pos.y, player_list, selected_player.team)) then
-				geometry.drawAttackGrid(selected_player.pos, scene.view.selection, player_list, selected_player.team, scene.view.ui.play_area)
+				draw_helper.drawAttackGrid(selected_player.pos, scene.view.selection, player_list, selected_player.team, scene.view.ui.play_area)
 				selected_player_state = player_state.awaiting_attack_confirmation
 			else
 				selectNextCharacter()

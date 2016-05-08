@@ -16,6 +16,7 @@ function players.createPlayer(name, label, hp, attack, speed, range)
 	p.movement_points = 0
 	p.movement_points_later = 0
 	p.sprite = nil
+	p.max_hp = hp
 	
 	return p
 end
