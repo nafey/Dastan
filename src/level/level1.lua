@@ -5,6 +5,9 @@ local sprites = require("src.helper.sprites")
 local geometry = require("src.helper.geometry")
 local levelloader = require("src.helper.levelloader")
 local player_helper = require("src.helper.player_helper")
+local player_state = require("src.model.player_state")
+
+local selected_player_state = player_state.awaiting_player_move
 
 
 local teams = {}
@@ -38,7 +41,6 @@ local a6 = {}
 a6["name"] = "pan"
 a6["team"] = 2
 a6["start_pos"] = "P6"
-
 
 
 table.insert(teams, a1)
@@ -124,6 +126,7 @@ function scene:create( event )
 	self.view.selection = display.newGroup()
 	self.view.player = display.newGroup()
 	self.view.ui = display.newGroup()
+	self.view.ui.play_area = display.newGroup()
 	self.view.ui.frame = display.newGroup()
 	
 	
@@ -174,23 +177,35 @@ function myTapEvent(event)
 	local x = math.floor(event.x / TILE_X)
 	local y = math.floor(event.y / TILE_Y)
 	
-	if (move_result[x + 1][y + 1] ~= 0) then
-		selected_player.sprite.x = x * TILE_X
-		selected_player.sprite.y = y * TILE_Y
-		selected_player.pos.x = x + 1
-		selected_player.pos.y = y + 1
-		
-		-- Draw Move Order
-		drawMoveOrder(player_list)
-		
-		-- Draw Selected Player
-		selected_player = player_helper.selectNextMover(player_list)		
-						
-		local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
-		
-		move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player["range"])
-		geometry.drawGrid(move_result, scene.view.selection, player_list, selected_player.team)
+	if (selected_player_state == player_state.awaiting_player_move) then
+		if (move_result[x + 1][y + 1] ~= 0) then
+			selected_player.sprite.x = x * TILE_X
+			selected_player.sprite.y = y * TILE_Y
+			selected_player.pos.x = x + 1
+			selected_player.pos.y = y + 1
+			
+			if (geometry.isAdjacentToEnemy(selected_player.pos.x, selected_player.pos.y, player_list, selected_player.team)) then
+				geometry.drawAttackGrid(selected_player.pos, scene.view.selection, player_list, selected_player.team, scene.view.ui.play_area)
+				selected_player_state = player_state.awaiting_attack_confirmation
+			else
+			
+				-- Draw Move Order
+				drawMoveOrder(player_list)
+				
+				-- Draw Selected Player
+				selected_player = player_helper.selectNextMover(player_list)		
+								
+				local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
+				
+				move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player["range"])
+				geometry.drawGrid(move_result, scene.view.selection, player_list, selected_player.team)
+			end
+		end
+	elseif (selected_player_state == player_state.awaiting_attack_confirmation) then
+	
 	end
+	
+	
 end
 
 

@@ -132,7 +132,7 @@ local function isAdjacent(x, y, x1, y1)
 	return ret
 end
 
- local function isAdjacentToEnemy(x, y, player_list, your_team)
+function geometry.isAdjacentToEnemy(x, y, player_list, your_team)
 	local ret = false
 	for i = 1, #player_list do 
 		if (not(ret) and isAdjacent(x, y, player_list[i].pos.x, player_list[i].pos.y)) then
@@ -178,7 +178,7 @@ function geometry.drawGrid(grid, displayGroup, player_list, your_team)
 	local function drawEndAura(x, y) 
 		local png = path_end
 		
-		if (isAdjacentToEnemy(x, y, player_list, your_team)) then
+		if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
 			png = path_end_red
 		end
 		
@@ -206,7 +206,7 @@ function geometry.drawGrid(grid, displayGroup, player_list, your_team)
 	local function drawCornerOrPipeAura(x, y)
 		local rot = 0
 		local png = path_corner
-		if (isAdjacentToEnemy(x, y, player_list, your_team)) then
+		if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
 			png = path_corner_red
 		end
 		
@@ -217,7 +217,7 @@ function geometry.drawGrid(grid, displayGroup, player_list, your_team)
 				rot = 90
 				png = path_pipe
 				
-				if (isAdjacentToEnemy(x, y, player_list, your_team)) then
+				if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
 					png = path_pipe_red
 				end
 			else
@@ -239,7 +239,7 @@ function geometry.drawGrid(grid, displayGroup, player_list, your_team)
 		else
 			-- identified vert pipe
 			png = path_pipe
-			if (isAdjacentToEnemy(x, y, player_list, your_team)) then
+			if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
 				png = path_pipe_red
 			end
 		end
@@ -254,7 +254,7 @@ function geometry.drawGrid(grid, displayGroup, player_list, your_team)
 		local rot = 0
 		
 		local png = path_side
-		if (isAdjacentToEnemy(x, y, player_list, your_team)) then
+		if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
 			png = path_side_red
 		end
 		
@@ -320,7 +320,7 @@ function geometry.drawGrid(grid, displayGroup, player_list, your_team)
 	
 	local function drawSingleAura(x, y)
 		local png = path_single
-		if (isAdjacentToEnemy(x, y, player_list, your_team)) then
+		if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
 			png = path_side_red
 		end
 		
@@ -348,6 +348,32 @@ function geometry.drawGrid(grid, displayGroup, player_list, your_team)
 			end
 		end
 	end
+end
+
+function geometry.drawAttackGrid(pos, displayGroup, player_list, your_team, attackIconDisplayGroup)
+	for i = 1, displayGroup.numChildren do
+		displayGroup:remove(1)
+	end
+	
+	local blue = "res/ui/aura_single.png"
+	local red = "res/ui/aura_single_red.png"
+	
+	local attack_icon = "res/ui/attack_icon.png"
+	
+	sprites.draw(blue, pos.x - 1, pos.y - 1, 0, displayGroup)
+	
+	for i = 1, #player_list do
+		if (isAdjacent(pos.x, pos.y, player_list[i].pos.x, player_list[i].pos.y)) then
+			if (player_list[i].team ~= your_team) then
+				sprites.draw(red, player_list[i].pos.x - 1, player_list[i].pos.y - 1, 0, displayGroup)
+				
+				if (attackIconDisplayGroup ~= nil) then
+					sprites.draw(attack_icon, player_list[i].pos.x - 1, player_list[i].pos.y - 1, 0, attackIconDisplayGroup)
+				end
+			end
+		end
+	end
+	
 end
 
 
