@@ -74,4 +74,36 @@ function player_helper.loadPlayers(path, teams)
 	return player_list
 end	
 
+-- Finds if at the x, y an enemy is located
+-- return 1 if this is an enemy position
+-- return 0 if this is friendly position
+function player_helper.isEnemyAtPosition(x, y, player_list, your_team)
+	local ret = 0
+	
+	for i = 1, #player_list do 
+		if (x == player_list[i].pos.x and y == player_list[i].pos.y) then
+			if (player_list[i].team ~= your_team) then
+				ret = 1
+			end
+		end
+	end
+	
+	return ret
+end
+
+function player_helper.getPlayerAtPosition(x, y, player_list)
+	local ret = nil
+	for i = 1, #player_list do 
+		if (x == player_list[i].pos.x and y == player_list[i].pos.y) then
+			ret = player_list[i]
+		end
+	end
+	
+	return ret
+end
+
+function player_helper.playerAttack(attacker, attacked) 
+	attacked.hp = attacked.hp - attacker.attack
+end
+
 return player_helper

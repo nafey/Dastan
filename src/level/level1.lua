@@ -6,6 +6,9 @@ local geometry = require("src.helper.geometry")
 local levelloader = require("src.helper.levelloader")
 local player_helper = require("src.helper.player_helper")
 local player_state = require("src.model.player_state")
+local points = require("src.model.points")
+local grids = require("src.model.grids")
+
 
 local selected_player_state = player_state.awaiting_player_move
 
@@ -52,8 +55,6 @@ table.insert(teams, a6)
 
 local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
 
-local points = require("src.model.points")
-local grids = require("src.model.grids")
 
 local selected_player = null
 
@@ -107,6 +108,25 @@ local function drawMoveOrder(player_list)
 	
 end
 
+local function selectNextCharacter()
+	local levelname = "small"
+	local raw_level1 = levelloader.loadlevel(levelname)
+	
+	-- Draw Move Order
+	drawMoveOrder(player_list)
+	
+	-- Draw movement Grid
+	selected_player = player_helper.selectNextMover(player_list, false)
+	
+	grid_level1 = levelloader.getMovementGrid(raw_level1)
+	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
+	
+	move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player.range)
+	geometry.drawGrid(move_result, scene.view.selection, player_list, selected_player.team)
+	
+	selected_player_state = player_state.awaiting_player_move
+end
+
 function scene:create( event )
 	
 	local levelname =  "small"
@@ -157,18 +177,7 @@ function scene:create( event )
 		p.sprite = sprites.draw("res/chars/"..p["name"] .. ".png", p.pos.x - 1, p.pos.y - 1, 0, self.view.player)
 	end
 	
-	-- Draw Move Order
-	drawMoveOrder(player_list)
-	
-	-- Draw movement Grid
-	selected_player = player_helper.selectNextMover(player_list, false)
-	
-	grid_level1 = levelloader.getMovementGrid(raw_level1)
-	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
-	
-	move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player.range)
-	geometry.drawGrid(move_result, self.view.selection, player_list, selected_player.team)
-	
+	selectNextCharacter()
 	
 	self.view.background:addEventListener("tap", myTapEvent)	
 end
@@ -189,20 +198,21 @@ function myTapEvent(event)
 				selected_player_state = player_state.awaiting_attack_confirmation
 			else
 			
-				-- Draw Move Order
-				drawMoveOrder(player_list)
-				
-				-- Draw Selected Player
-				selected_player = player_helper.selectNextMover(player_list)		
-								
-				local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
-				
-				move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player["range"])
-				geometry.drawGrid(move_result, scene.view.selection, player_list, selected_player.team)
+				selectNextCharacter()
 			end
 		end
 	elseif (selected_player_state == player_state.awaiting_attack_confirmation) then
-	
+		if (player_helper.isEnemyAtPosition(x + 1, y + 1, player_list, selected_player.team) == 1) then
+			-- remove image icons
+			for i = 1, scene.view.ui.play_area.numChildren do
+				scene.view.ui.play_area:remove(1)
+			end
+			
+			local attacked = player_helper.getPlayerAtPosition(x + 1, y + 1, player_list)
+			
+			player_helper.playerAttack(selected_player, attacked)
+			selectNextCharacter()
+		end
 	end
 	
 	
