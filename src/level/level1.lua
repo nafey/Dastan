@@ -164,7 +164,7 @@ function myTapEvent(event)
 			
 			local attacked = player_helper.getPlayerAtPosition(x + 1, y + 1, player_list)
 			
-			player_helper.playerAttack(selected_player, attacked)
+			player_helper.playerAttack(selected_player, attacked, player_list)
 			selectNextCharacter()
 			draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 		end

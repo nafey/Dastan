@@ -102,8 +102,26 @@ function player_helper.getPlayerAtPosition(x, y, player_list)
 	return ret
 end
 
-function player_helper.playerAttack(attacker, attacked) 
+function player_helper.kill(name, player_list) 
+	local rem = -1
+	for i = 1, #player_list do
+		if (player_list[i].name == name) then
+			rem = i
+		end
+	end
+	
+	if (rem ~= -1) then
+		player_list[rem].sprite:removeSelf()
+		table.remove(player_list, rem)
+	end
+end
+
+function player_helper.playerAttack(attacker, attacked, player_list) 
 	attacked.hp = attacked.hp - attacker.attack
+	
+	if (attacked.hp <= 0) then
+		player_helper.kill(attacked.name, player_list)
+	end
 end
 
 return player_helper
