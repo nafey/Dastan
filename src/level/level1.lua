@@ -13,6 +13,8 @@ local draw_helper = require("src.helper.draw_helper")
 
 local selected_player_state = player_state.awaiting_player_move
 
+local main_team = 1
+
 
 local teams = {}
 local a1 = {}
@@ -63,6 +65,7 @@ local move_result = nil
 
 local scene = composer.newScene()
 
+
 local function selectNextCharacter()	
 	-- Draw Move Order
 	draw_helper.drawMoveOrder(player_list, scene.view.ui.frame.move_order)
@@ -75,6 +78,7 @@ local function selectNextCharacter()
 	
 	move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player.range)
 	draw_helper.drawMovementGrid(move_result, scene.view.selection, player_list, selected_player.team)
+	
 	
 	selected_player_state = player_state.awaiting_player_move
 end
@@ -96,6 +100,7 @@ function scene:create( event )
 	self.view.selection = display.newGroup()
 	self.view.player = display.newGroup()
 	self.view.ui = display.newGroup()
+	self.view.ui.hp = display.newGroup()
 	self.view.ui.play_area = display.newGroup()
 	self.view.ui.frame = display.newGroup()
 	
@@ -123,10 +128,7 @@ function scene:create( event )
 	end
 	
 	selectNextCharacter()
-	
-	local healthBar = display.newRect((selected_player.pos.x - 1)  * 32, (selected_player.pos.y - 1) * 32 + 30, 32, 2)
-	healthBar.anchorX = 0
-	healthBar.anchorY = 0
+	draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 	
 	
 	self.view.background:addEventListener("tap", myTapEvent)	
@@ -143,11 +145,14 @@ function myTapEvent(event)
 			selected_player.pos.x = x + 1
 			selected_player.pos.y = y + 1
 			
+			draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
+			
 			if (geometry.isAdjacentToEnemy(selected_player.pos.x, selected_player.pos.y, player_list, selected_player.team)) then
 				draw_helper.drawAttackGrid(selected_player.pos, scene.view.selection, player_list, selected_player.team, scene.view.ui.play_area)
 				selected_player_state = player_state.awaiting_attack_confirmation
 			else
 				selectNextCharacter()
+				draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 			end
 		end
 	elseif (selected_player_state == player_state.awaiting_attack_confirmation) then
@@ -161,6 +166,7 @@ function myTapEvent(event)
 			
 			player_helper.playerAttack(selected_player, attacked)
 			selectNextCharacter()
+			draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 		end
 	end
 end

@@ -6,6 +6,25 @@ local player_helper = require("src.helper.player_helper")
 
 local draw_helper = {}
 
+function draw_helper.drawHpBars(player_list, main_team, displayGroup)
+	for i = 1, displayGroup.numChildren do
+		displayGroup:remove(1)
+	end
+			
+
+	for i = 1, #player_list do 
+		local p = player_list[i]
+		local healthBar = display.newRect(displayGroup, (p.pos.x - 1)  * 32, (p.pos.y - 1) * 32 + 28, 32 * (p.hp / p.max_hp), 4)
+		healthBar.anchorX = 0
+		healthBar.anchorY = 0
+		if (p.team == main_team) then
+			healthBar:setFillColor( 000/255, 255/255, 0/255 )
+		else
+			healthBar:setFillColor( 255/255, 000/255, 0/255 )
+		end
+	end
+end
+
 -- Draw Move order thingy
 function draw_helper.drawMoveOrder(player_list, displayGroup)
 	local function drawIcon(name, team, position, group)
