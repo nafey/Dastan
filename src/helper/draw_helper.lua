@@ -93,7 +93,6 @@ function draw_helper.drawAttackGrid(pos, displayGroup, player_list, your_team, a
 			end
 		end
 	end
-	
 end
 
 -- Being a passed a grid of accepted tiles draw the selected area

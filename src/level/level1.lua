@@ -61,7 +61,7 @@ local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
 
 local levelname = "small"
 local raw_level1 = levelloader.loadlevel(levelname)
-local move_result = nil
+local move_map = nil
 
 local scene = composer.newScene()
 
@@ -76,9 +76,9 @@ local function selectNextCharacter()
 	local grid_level1 = levelloader.getMovementGrid(raw_level1)
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 	
-	move_result = geometry.floodFill(grid_level1_with_players, selected_player.pos, selected_player.range)
+	move_map = geometry.floodFill(grid_level1_with_players, selected_player.pos, selected_player.range)
 	
-	draw_helper.drawMovementGrid(move_result, scene.view.selection, player_list, selected_player.team, selected_player.pos)
+	draw_helper.drawMovementGrid(move_map, scene.view.selection, player_list, selected_player.team, selected_player.pos)
 	
 	selected_player_state = player_state.awaiting_player_move
 end
@@ -139,7 +139,10 @@ function myTapEvent(event)
 	local y = math.floor(event.y / TILE_Y)
 	
 	if (selected_player_state == player_state.awaiting_player_move) then
-		if (move_result[x + 1][y + 1] ~= 0) then
+		if (move_map[x + 1][y + 1] ~= 0) then
+			
+			geometry.getPath(move_map, selected_player.pos, points.createPoint(x + 1, y + 1))
+			
 			selected_player.sprite.x = x * TILE_X
 			selected_player.sprite.y = y * TILE_Y
 			selected_player.pos.x = x + 1

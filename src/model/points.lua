@@ -16,6 +16,11 @@ function points.createPoint(x, y)
 	return p
 end
 
+function points.copyPoint(p)
+	local ret = points.createPoint(p.x, p.y)
+	return ret
+end
+
 --Prints all the points in an array of points
 function points.printPoints(pointsTable) 
 	io.write("{")

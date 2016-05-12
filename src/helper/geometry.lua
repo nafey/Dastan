@@ -5,41 +5,6 @@ local sprites = require("src.helper.sprites")
 local geometry = {}
 
 
-local function manhattan(x, y, x_, y_)
-	return math.abs(x - x_) + math.abs(y - y_)
-end
-
-
-
--- Checks number of 1 value grid adjacent the particular position
--- called by the draw grid function
-local function adjacency(grid, x, y)
-	local ret = 0
-	
-	if (grid[x][y] == 1) then
-		-- check top
-		if (grid.safe(x, y - 1) == 1) then
-			ret = ret + 1
-		end
-		
-		-- check left
-		if (grid.safe(x - 1, y) == 1) then
-			ret = ret + 1
-		end
-		
-		-- check bottom
-			if (grid.safe(x, y + 1) == 1) then
-				ret = ret + 1
-			end
-		
-		-- check right
-		if (grid.safe(x + 1, y) == 1) then
-			ret = ret + 1
-		end
-	end
-	
-	return ret
-end
 
 function geometry.isAdjacent(x, y, x1, y1) 
 	local ret = false
@@ -76,6 +41,10 @@ function geometry.isAdjacentToEnemy(x, y, player_list, your_team)
 	return ret
 end
 
+-- Decides which tiles are accessible from a given point
+-- Grid represents the active map
+-- p is the character position
+-- range is the distance it can cover in manhattan distance
 function geometry.floodFill(g, p, range) 
 	local grid = grids.copyGrid(g)
 	local function toIndex(i, j) 
@@ -108,8 +77,6 @@ function geometry.floodFill(g, p, range)
 	-- infinity breaker
 	-- change while condition to something like (#open_list > 0 and a < 40) for debug
 	local a = 0
-	
-	print("here")
 	
 	while (#open_list > 0) do
 		local pop = table.remove(open_list, 1)
@@ -191,75 +158,46 @@ function geometry.floodFill(g, p, range)
 	return grid
 end
 
--- Decides which tiles are accessible from a given point
--- Grid represents the active map
--- p is the character position
--- range is the distance it can cover in manhattan distance
-function geometry.flood(grid, p, range) 
-
-	--[[
-		tested table cell values represent the following
-		0: untested, unencountered squares
-		0.5: to test and also available in testnext
-			at the end no cell with this value should remain
-		1: Accepted
-		-1: Rejected
-	]]
-	local tested = grids.createGrid(grid.width, grid.height)
-	local testnext = {p}
-	
-	local i = 0
-	while ((#testnext > 0)) do
-		local current = testnext[1]
-		
-		table.remove(testnext, 1)
-
---		Variable Never used
-		a = 1
-		--if the location is not obstructed and not far
-		if (grid[p.x][p.y] == 0) and (manhattan(p.x, p.y, current.x, current.y) <= range) then
-			tested[current.x][current.y] = 1
-			
-			-- check top
-			if (current.y ~= 1) then
-				if (grid[current.x][current.y - 1] == 0) and(tested[current.x][current.y - 1] == 0) then
-					tested[current.x][current.y - 1] = 0.5
-					table.insert(testnext, points.createPoint(current.x, current.y - 1))
-				end
-			end
-			-- check left
-			if (current.x ~= 1) then
-				if (grid[current.x - 1][current.y] == 0) and(tested[current.x - 1][current.y] == 0) then
-					tested[current.x - 1][current.y] = 0.5
-					table.insert(testnext, points.createPoint(current.x - 1, current.y))
-				end
-			end
-			
-			-- check bottom
-			if (current.y ~= grid.height) then
-				if (grid[current.x][current.y + 1] == 0) and(tested[current.x][current.y + 1] == 0) then
-					tested[current.x][current.y + 1] = 0.5
-					table.insert(testnext, points.createPoint(current.x, current.y + 1))
-				end
-			end
-			
-			-- check right
-			if (current.x ~= grid.width) then
-				if (grid[current.x + 1][current.y] == 0) and(tested[current.x + 1][current.y] == 0) then
-					tested[current.x + 1][current.y] = 0.5
-					table.insert(testnext, points.createPoint(current.x + 1, current.y))
-				end
-			end
-		
-		else 
-			tested[current.x][current.y] = -1
-		end
-		
---		Variable i not being used
-		i = i + 1
+-- Get an array of points showing path from p to debug
+-- map: a Grid of FloodFill result
+-- p: Point for current position
+-- d: Point for destination
+function geometry.getPath(map, p, d)
+	if (map.safe(p.x, p.y) == 0 or map.safe(d.x, d.y) == 0) then
+		return nil
 	end
 	
-	return tested
+	local ret = {}
+	local curr = points.copyPoint(d)
+	table.insert(ret, points.copyPoint(curr))
+	
+	-- infinity breaker
+	local a = 0
+	
+	while(map.safe(curr.x, curr.y) ~= 1 and a < 10) do
+		if(map.safe(curr.x, curr.y - 1) == map.safe(curr.x, curr.y) - 1) then
+			-- top
+			curr.y = curr.y - 1
+		elseif (map.safe(curr.x - 1, curr.y) == map.safe(curr.x, curr.y) - 1) then
+			-- left
+			curr.x = curr.x - 1
+		elseif (map.safe(curr.x, curr.y + 1) == map.safe(curr.x, curr.y) - 1) then
+			curr.y = curr.y + 1
+		else 
+			curr.x = curr.x + 1
+		end
+		
+		table.insert(ret, points.copyPoint(curr))
+		a = a + 1
+	end
+	
+	for i = 1, #ret do
+		ret[i].print(true)
+	end
+	
+	return ret
+	
 end
+
 
 return geometry
