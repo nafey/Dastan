@@ -76,7 +76,8 @@ local function selectNextCharacter()
 	local grid_level1 = levelloader.getMovementGrid(raw_level1)
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 	
-	move_result = geometry.flood(grid_level1_with_players, selected_player.pos, selected_player.range)
+	move_result = geometry.floodFill(grid_level1_with_players, selected_player.pos, selected_player.range)
+	
 	draw_helper.drawMovementGrid(move_result, scene.view.selection, player_list, selected_player.team, selected_player.pos)
 	
 	selected_player_state = player_state.awaiting_player_move
@@ -125,15 +126,6 @@ function scene:create( event )
 		local p = player_list[i]
 		p.sprite = sprites.draw("res/chars/"..p["name"] .. ".png", p.pos.x - 1, p.pos.y - 1, 0, self.view.player)
 	end
-	
-	-- DEBUG here
-	
-	local grid_level1 = levelloader.getMovementGrid(raw_level1)
-	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, "uruk")
-	
-	geometry.floodFill(grid_level1_with_players, points.createPoint(9, 6), 4)
-	
-	-- END here
 	
 	selectNextCharacter()
 	draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)

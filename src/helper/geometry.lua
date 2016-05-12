@@ -76,7 +76,8 @@ function geometry.isAdjacentToEnemy(x, y, player_list, your_team)
 	return ret
 end
 
-function geometry.floodFill(grid, p, range) 
+function geometry.floodFill(g, p, range) 
+	local grid = grids.copyGrid(g)
 	local function toIndex(i, j) 
 		return (j - 1) * grid.width + (i - 1)
 	end
@@ -104,19 +105,24 @@ function geometry.floodFill(grid, p, range)
 	
 	local closed_lookup = {}
 	
-	-- infinity  breaker
+	-- infinity breaker
+	-- change while condition to something like (#open_list > 0 and a < 40) for debug
 	local a = 0
 	
 	print("here")
 	
 	while (#open_list > 0) do
 		local pop = table.remove(open_list, 1)
-		open_lookup[tostring(pop)] = false
 		
+		open_lookup[tostring(pop)] = false
 		table.insert(closed_lookup, tostring(pop), true)
 		
 		local pt = toPoint(pop)
-
+		
+		if (grid.safe(pt.x, pt.y) > range) then
+			break
+		end
+		
 		-- top
 		if (pt.y ~= 1) then
 			if (grid.safe(pt.x , pt.y - 1) == 0) then
@@ -173,9 +179,16 @@ function geometry.floodFill(grid, p, range)
 		a = a + 1
 	end
 	
-	print(a)
-	grid.print()
 	
+	for j = 1, grid.height do
+		for i = 1, grid.width do
+			if (grid.safe(i, j) == -1) then
+				grid[i][j] = 0
+			end
+		end
+	end
+	
+	return grid
 end
 
 -- Decides which tiles are accessible from a given point

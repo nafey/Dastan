@@ -99,7 +99,7 @@ end
 -- Being a passed a grid of accepted tiles draw the selected area
 -- Mark the areas next to enemy players in red
 -- send one mark_pos to highlight it in the grid
-function draw_helper.drawMovementGrid(grid, displayGroup, player_list, your_team, mark_pos) 
+function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, mark_pos) 
 	local path_dot = "res/ui/aura_dot.png"
 	local path_corner = "res/ui/aura_corner.png"
 	local path_end = "res/ui/aura_end.png" 
@@ -113,6 +113,15 @@ function draw_helper.drawMovementGrid(grid, displayGroup, player_list, your_team
 	local path_pipe_red = "res/ui/aura_pipe_red.png"
 	local path_side_red = "res/ui/aura_side_red.png"
 	local path_single_red = "res/ui/aura_single_red.png"
+	
+	local grid = grids.copyGrid(g)
+	for j = 1, grid.height do
+		for i = 1, grid.width do
+			if (grid.safe(i, j) ~= 0) then
+				grid[i][j] = 1
+			end
+		end
+	end			
 	
 	for i = 1, displayGroup.numChildren do
 		displayGroup:remove(1)
