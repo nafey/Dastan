@@ -76,6 +76,108 @@ function geometry.isAdjacentToEnemy(x, y, player_list, your_team)
 	return ret
 end
 
+function geometry.floodFill(grid, p, range) 
+	local function toIndex(i, j) 
+		return (j - 1) * grid.width + (i - 1)
+	end
+	
+	local function toPoint(index)
+		return points.createPoint(index % grid.width + 1 , math.floor(index / grid.width) + 1 )
+	end
+	for j = 1, grid.height do
+		for i = 1, grid.width do
+			if (grid.safe(i, j) == 1) then
+				grid[i][j] = -1
+			end
+			
+			if (i == p.x and j == p.y) then
+				grid[i][j] = 1
+			end
+							
+		end
+	end
+		
+	local open_list = {}
+	local open_lookup = {}
+	table.insert(open_list, toIndex(p.x, p.y))
+	table.insert(open_lookup, tostring(toIndex(p.x, p.y)), true)
+	
+	local closed_lookup = {}
+	
+	-- infinity  breaker
+	local a = 0
+	
+	print("here")
+	
+	while (#open_list > 0) do
+		local pop = table.remove(open_list, 1)
+		open_lookup[tostring(pop)] = false
+		
+		table.insert(closed_lookup, tostring(pop), true)
+		
+		local pt = toPoint(pop)
+
+		-- top
+		if (pt.y ~= 1) then
+			if (grid.safe(pt.x , pt.y - 1) == 0) then
+				local idx = toIndex(pt.x, pt.y - 1)
+				
+				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+					grid[pt.x][pt.y - 1] = grid[pt.x][pt.y] + 1
+					table.insert(open_lookup, tostring(idx), true)
+					table.insert(open_list, idx)
+				end
+			end
+		end
+		
+		-- left
+		if (pt.x ~= 1) then
+			if (grid.safe(pt.x - 1, pt.y ) == 0) then
+				local idx = toIndex(pt.x - 1, pt.y)
+				
+				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+					grid[pt.x - 1][pt.y] = grid[pt.x][pt.y] + 1
+
+					table.insert(open_lookup, tostring(idx), true)
+					table.insert(open_list, idx)
+				end
+			end
+		end
+		
+		-- bot
+		if (pt.y ~= grid.height) then
+			if (grid.safe(pt.x, pt.y + 1) == 0) then
+				local idx = toIndex(pt.x, pt.y + 1)
+				
+				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+					grid[pt.x][pt.y + 1] = grid[pt.x][pt.y] + 1
+					table.insert(open_lookup, tostring(idx), true)
+					table.insert(open_list, idx)
+				end
+			end
+		end
+		
+		-- right
+		if (pt.x ~= grid.width) then
+			if (grid.safe(pt.x + 1, pt.y) == 0) then
+				local idx = toIndex(pt.x + 1, pt.y)
+				
+				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+					grid[pt.x + 1][pt.y] = grid[pt.x][pt.y] + 1
+					table.insert(open_lookup, tostring(idx), true)
+					table.insert(open_list, idx)
+				end
+			end
+		end
+		
+		a = a + 1
+	end
+	
+	print(a)
+	grid.print()
+	
+end
+
 -- Decides which tiles are accessible from a given point
 -- Grid represents the active map
 -- p is the character position

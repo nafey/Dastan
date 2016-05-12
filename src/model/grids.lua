@@ -21,6 +21,7 @@ function grids.createGrid(size_x, size_y)
 		end
 	end
 	
+	-- TODO: consider changing OOB to -1
 	--safe get on a grid value if OOB then return 0
 	function g.safe(i, j)
 		local ret = 0
