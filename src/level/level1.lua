@@ -10,6 +10,7 @@ local geometry = require("src.helper.geometry")
 local levelloader = require("src.helper.levelloader")
 local player_helper = require("src.helper.player_helper")
 local draw_helper = require("src.helper.draw_helper")
+local animation_manager = require("src.helper.animation_manager")
 
 local selected_player_state = player_state.awaiting_player_move
 
@@ -63,7 +64,12 @@ local levelname = "small"
 local raw_level1 = levelloader.loadlevel(levelname)
 local move_map = nil
 
+local lock_tap_event = false
+
 local scene = composer.newScene()
+
+
+
 
 
 local function selectNextCharacter()	
@@ -131,32 +137,28 @@ function scene:create( event )
 	draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 	
 	
-	self.view.background:addEventListener("tap", myTapEvent)	
+	self.view.background:addEventListener("tap", tapEvent)	
+	Runtime:addEventListener("enterFrame", enterFrame)
 end
 
-function myTapEvent(event)
+function tapEvent(event)
+	if (lock_tap_event) then
+		return
+	end
+
 	local x = math.floor(event.x / TILE_X)
 	local y = math.floor(event.y / TILE_Y)
+		
 	
 	if (selected_player_state == player_state.awaiting_player_move) then
 		if (move_map[x + 1][y + 1] ~= 0) then
+			draw_helper.emptyGroup(scene.view.selection)
 			
-			geometry.getPath(move_map, selected_player.pos, points.createPoint(x + 1, y + 1))
+			lock_tap_event = true
+			selected_player_state = player_state.awaiting_attack_confirmation
 			
-			selected_player.sprite.x = x * TILE_X
-			selected_player.sprite.y = y * TILE_Y
-			selected_player.pos.x = x + 1
-			selected_player.pos.y = y + 1
-			
-			draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
-			
-			if (geometry.isAdjacentToEnemy(selected_player.pos.x, selected_player.pos.y, player_list, selected_player.team)) then
-				draw_helper.drawAttackGrid(selected_player.pos, scene.view.selection, player_list, selected_player.team, scene.view.ui.play_area)
-				selected_player_state = player_state.awaiting_attack_confirmation
-			else
-				selectNextCharacter()
-				draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
-			end
+			local path = geometry.getPath(move_map, selected_player.pos, points.createPoint(x + 1, y + 1))
+			animation_manager.animateCharacterMove(selected_player, path, moveEndCallback)
 		end
 	elseif (selected_player_state == player_state.awaiting_attack_confirmation) then
 		if (player_helper.isEnemyAtPosition(x + 1, y + 1, player_list, selected_player.team) == 1) then
@@ -171,7 +173,24 @@ function myTapEvent(event)
 			selectNextCharacter()
 			draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 		end
+	end	
+end
+
+function enterFrame()
+	animation_manager.step()
+	draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
+end
+
+function moveEndCallback() 
+	if (geometry.isAdjacentToEnemy(selected_player.pos.x, selected_player.pos.y, player_list, selected_player.team)) then
+		draw_helper.drawAttackGrid(selected_player.pos, scene.view.selection, player_list, selected_player.team, scene.view.ui.play_area)
+		selected_player_state = player_state.awaiting_attack_confirmation
+	else
+		selectNextCharacter()
+		draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 	end
+	
+	lock_tap_event = false
 end
 
 

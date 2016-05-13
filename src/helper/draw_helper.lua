@@ -6,10 +6,14 @@ local player_helper = require("src.helper.player_helper")
 
 local draw_helper = {}
 
-function draw_helper.drawHpBars(player_list, main_team, displayGroup)
+function draw_helper.emptyGroup(displayGroup) 
 	for i = 1, displayGroup.numChildren do
 		displayGroup:remove(1)
 	end
+end
+
+function draw_helper.drawHpBars(player_list, main_team, displayGroup)
+	draw_helper.emptyGroup(displayGroup)
 			
 
 	for i = 1, #player_list do 
@@ -50,9 +54,7 @@ function draw_helper.drawMoveOrder(player_list, displayGroup)
 		
 	end
 	
-	for i = 1, displayGroup.numChildren do
-		displayGroup:remove(1)
-	end
+	draw_helper.emptyGroup(displayGroup)
 	
 	-- Predict the move_order for 6 turns to draw move order 
 	for i = 1, #player_list do 

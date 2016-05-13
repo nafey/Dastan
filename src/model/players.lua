@@ -18,6 +18,13 @@ function players.createPlayer(name, label, hp, attack, speed, range)
 	p.sprite = nil
 	p.max_hp = hp
 	
+	function p.move(x, y)
+		p.sprite.x = (x - 1) * TILE_X	
+		p.sprite.y = (y - 1) * TILE_Y
+		p.pos.x = x
+		p.pos.y = y
+	end	
+	
 	return p
 end
 

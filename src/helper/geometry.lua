@@ -187,15 +187,18 @@ function geometry.getPath(map, p, d)
 			curr.x = curr.x + 1
 		end
 		
-		table.insert(ret, points.copyPoint(curr))
+		table.insert(ret,points.copyPoint(curr))
 		a = a + 1
 	end
 	
-	for i = 1, #ret do
-		ret[i].print(true)
+	local ret_reversed = {}
+	
+	
+	for i = #ret, 1, -1 do
+		table.insert(ret_reversed, ret[i])
 	end
 	
-	return ret
+	return ret_reversed
 	
 end
 
