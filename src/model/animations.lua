@@ -4,7 +4,6 @@ local animations = {}
 
 function animations.characterMoveAnimation(character, path, speed, callback) 
 	local a = {}
-	
 	a.has_more = true
 		
 	a.start = points.copyPoint(character.pos)
@@ -92,6 +91,85 @@ function animations.characterBob(character)
 	function a.stop()
 		a.has_more = false
 		a.character.move(a.character.pos.x, a.character.pos.y)
+	end
+	
+	return a
+end
+
+function animations.characterTranslate(character, to_point, period)
+	local a = {}
+	
+	a.has_more = true
+	
+	a.character = character
+	a.start = points.copyPoint(a.character.pos)
+	a.to_point = points.copyPoint(to_point)
+	a.period = period
+	a.period_elapsed = 0
+	
+	a.last_time = nil 
+	
+	function a.step()
+		if (a.last_time == nil) then
+			a.last_time = system.getTimer()
+		else
+			local now = system.getTimer() 
+			local delta = now - a.last_time
+			a.last_time = now
+			
+			if (a.period_elapsed < a.period) then
+				local p = points.lerp(a.start, a.to_point, a.period_elapsed/a.period)
+				p.print()
+				a.character.move(p.x, p.y)
+				a.period_elapsed = a.period_elapsed + delta
+			else
+				a.period_elapsed = a.period
+				a.stop()
+			end
+			
+		end
+	end
+	
+	function a.stop()
+		a.has_more = false
+		a.period_elapsed = 0
+		a.character.move(a.to_point.x, a.to_point.y)
+	end
+	
+	return a
+end
+
+function animations.playSequence(animation_list)
+	local a = {}
+	a.has_more = true
+	
+	a.list = animation_list
+	
+	print(a.list[1].has_more)
+	print(a.list[2].has_more)
+	
+	
+	if (#animation_list < 1) then
+		return nil
+	end
+	
+	a.idx = 1
+	
+	function a.step() 
+		if (a.idx <= #a.list) then
+			if (a.list[a.idx].has_more) then
+				a.list[a.idx].step()
+			else
+				a.list[a.idx].stop()
+				a.idx = a.idx + 1
+			end
+		else 
+			a.stop()
+		end
+	end
+		
+	function a.stop() 
+		a.has_more = false
 	end
 	
 	return a

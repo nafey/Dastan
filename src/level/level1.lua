@@ -135,8 +135,7 @@ function scene:create( event )
 	end
 	
 	selectNextCharacter()
-	
-	draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
+	--animation_manager.debug(selected_player)
 	
 	
 	self.view.background:addEventListener("tap", tapEvent)	
@@ -148,33 +147,30 @@ function tapEvent(event)
 		return
 	end
 
-	local x = math.floor(event.x / TILE_X)
-	local y = math.floor(event.y / TILE_Y)
+	local x = math.floor(event.x / TILE_X) + 1
+	local y = math.floor(event.y / TILE_Y) + 1
 		
 	
 	if (selected_player_state == player_state.awaiting_player_move) then
-		if (move_map[x + 1][y + 1] ~= 0) then
+		if (move_map[x][y] ~= 0) then
 			draw_helper.emptyGroup(scene.view.selection)
 			
 			lock_tap_event = true
 			selected_player_state = player_state.awaiting_attack_confirmation
 			
-			local path = geometry.getPath(move_map, selected_player.pos, points.createPoint(x + 1, y + 1))
+			local path = geometry.getPath(move_map, selected_player.pos, points.createPoint(x, y))
 			animation_manager.beforeMainCharMove()
 			animation_manager.animateCharacterMove(selected_player, path, moveEndCallback)
 		end
 	elseif (selected_player_state == player_state.awaiting_attack_confirmation) then
-		if (player_helper.isEnemyAtPosition(x + 1, y + 1, player_list, selected_player.team) == 1) then
+		if (player_helper.isEnemyAtPosition(x, y, player_list, selected_player.team) == 1) then
 			-- remove image icons
-			for i = 1, scene.view.ui.play_area.numChildren do
-				scene.view.ui.play_area:remove(1)
-			end
+			draw_helper.emptyGroup(scene.view.ui.play_area)
 			
-			local attacked = player_helper.getPlayerAtPosition(x + 1, y + 1, player_list)
+			local attacked = player_helper.getPlayerAtPosition(x, y, player_list)
 			
 			player_helper.playerAttack(selected_player, attacked, player_list)
 			selectNextCharacter()
-			draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 		end
 	end	
 end
