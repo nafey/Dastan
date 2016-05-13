@@ -86,6 +86,7 @@ local function selectNextCharacter()
 	
 	draw_helper.drawMovementGrid(move_map, scene.view.selection, player_list, selected_player.team, selected_player.pos)
 	
+	animation_manager.characterBob(selected_player)
 	selected_player_state = player_state.awaiting_player_move
 end
 
@@ -134,6 +135,7 @@ function scene:create( event )
 	end
 	
 	selectNextCharacter()
+	
 	draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 	
 	
@@ -158,6 +160,7 @@ function tapEvent(event)
 			selected_player_state = player_state.awaiting_attack_confirmation
 			
 			local path = geometry.getPath(move_map, selected_player.pos, points.createPoint(x + 1, y + 1))
+			animation_manager.beforeMainCharMove()
 			animation_manager.animateCharacterMove(selected_player, path, moveEndCallback)
 		end
 	elseif (selected_player_state == player_state.awaiting_attack_confirmation) then
