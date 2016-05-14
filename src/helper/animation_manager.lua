@@ -12,12 +12,13 @@ function animation_manager.characterBob(character)
 	main_character_bob = bob
 end
 
-function animation_manager.beforeMainCharMove()
+function animation_manager.stopBob()
 	if (main_character_bob ~= nil) then
 		main_character_bob.stop()
 		animation_manager.clearDead()
 	end
 end
+
 
 function animation_manager.animateCharacterMove(character, path, callback)
 	local move = animations.characterMoveAnimation(character, path, 0.25, callback)
@@ -25,16 +26,31 @@ function animation_manager.animateCharacterMove(character, path, callback)
 end
 
 function animation_manager.animateCharacterAttack(character, attacked, callback)
-	local poke = animations.poke(character, false, false)
+	local isHort = true
+	local isPos = true
+	
+	if (character.pos.x > attacked.pos.x) then
+		isPos = false
+	elseif (character.pos.y > attacked.pos.y) then
+		isHort = false
+	elseif (character.pos.y < attacked.pos.y) then
+		isHort = false
+		isPos = false
+	end
+	
+	local poke = animations.poke(character, isHort, isPos)
 	
 	local pow_sheet = sprite_data.getPowSheetData()
 	local pow_anim = animations.showAnimationOnce(pow_sheet, attacked.pos)
 	
+	local blink = animations.blink(attacked.sprite, 3, 100)
+	
 	local attack_anims = {}
 	table.insert(attack_anims, poke)
 	table.insert(attack_anims, pow_anim)
+	table.insert(attack_anims, blink)
 	
-	local attack_seq = animations.playSequence(attack_anims)
+	local attack_seq = animations.playSequence(attack_anims, callback)
 	
 	table.insert(animation_manager.list, attack_seq)
 end
@@ -58,10 +74,9 @@ function animation_manager.debug(character)
 	--table.insert(animation_manager.list, poke)
 	
 	--table.insert(animation_manager.list, move)
-	local blink = animations.blink(character.sprite, 3, 100)
-	table.insert(animation_manager.list, blink)
 	
-
+	--local blink = animations.blink(character.sprite, 3, 100)
+	--table.insert(animation_manager.list, blink)
 end
 
 function animation_manager.step() 

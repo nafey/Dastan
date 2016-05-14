@@ -58,6 +58,7 @@ table.insert(teams, a5)
 table.insert(teams, a6)
 
 local selected_player = nil
+local attacked_player = nil
 local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
 
 local levelname = "small"
@@ -82,7 +83,7 @@ local function selectNextCharacter()
 	
 	draw_helper.drawMovementGrid(move_map, scene.view.selection, player_list, selected_player.team, selected_player.pos)
 	
-	--animation_manager.characterBob(selected_player)
+	animation_manager.characterBob(selected_player)
 	selected_player_state = player_state.awaiting_player_move
 end
 
@@ -149,22 +150,28 @@ function tapEvent(event)
 	
 	if (selected_player_state == player_state.awaiting_player_move) then
 		if (move_map[x][y] ~= 0) then
+			animation_manager.stopBob()
+			lock_tap_event = true
+			
 			draw_helper.emptyGroup(scene.view.selection)
 			
-			lock_tap_event = true
+			local path = geometry.getPath(move_map, selected_player.pos, points.createPoint(x, y))
 			selected_player_state = player_state.awaiting_attack_confirmation
 			
-			local path = geometry.getPath(move_map, selected_player.pos, points.createPoint(x, y))
-			animation_manager.beforeMainCharMove()
+			
 			animation_manager.animateCharacterMove(selected_player, path, moveEndCallback)
 		end
 	elseif (selected_player_state == player_state.awaiting_attack_confirmation) then
 		if (player_helper.isEnemyAtPosition(x, y, player_list, selected_player.team) == 1) then
+			animation_manager.stopBob()
+			lock_tap_event = true
+			
 			-- remove image icons
 			draw_helper.emptyGroup(scene.view.ui.play_area)
 			
-			local attacked = player_helper.getPlayerAtPosition(x, y, player_list)
-			animation_manager.animateCharacterAttack(selected_player, attacked, attackDoneCallback)
+			attacked_player = player_helper.getPlayerAtPosition(x, y, player_list)
+			
+			animation_manager.animateCharacterAttack(selected_player, attacked_player, attackDoneCallback)
 			--player_helper.playerAttack(selected_player, attacked, player_list)
 			--selectNextCharacter()
 		end
@@ -182,14 +189,18 @@ function moveEndCallback()
 		selected_player_state = player_state.awaiting_attack_confirmation
 	else
 		selectNextCharacter()
-		draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 	end
 	
 	lock_tap_event = false
 end
 
 function attackDoneCallback()
-	print("Attack!!")
+	player_helper.playerAttack(selected_player, attacked_player, player_list)
+	attacked_player = nil
+	
+	selectNextCharacter()
+	
+	lock_tap_event = false
 end
 
 

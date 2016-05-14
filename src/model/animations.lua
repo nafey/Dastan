@@ -269,17 +269,16 @@ function animations.blink(sprite, times, period)
 	end
 	
 	function a.stop()
-	
+		a.sprite.alpha = 1
 	end
-	
-	sprite.alpha = 1
 	
 	return a
 end
 
-function animations.playSequence(animation_list)
+function animations.playSequence(animation_list, callback)
 	local a = {}
 	a.has_more = true
+	a.callback = callback
 	
 	a.list = animation_list
 	
@@ -305,6 +304,9 @@ function animations.playSequence(animation_list)
 		
 	function a.stop() 
 		a.has_more = false
+		if (a.callback ~= nil) then
+			a.callback()
+		end
 	end
 	
 	return a
