@@ -1,5 +1,6 @@
 local animations = require("src.model.animations")
 local points = require("src.model.points")
+local sprite_data = require("src.helper.sprite_data")
 
 local animation_manager = {}
 animation_manager.list = {}
@@ -23,17 +24,40 @@ function animation_manager.animateCharacterMove(character, path, callback)
 	table.insert(animation_manager.list, move)
 end
 
+function animation_manager.animateCharacterAttack(character, attacked, callback)
+	local poke = animations.poke(character, false, false)
+	
+	local pow_sheet = sprite_data.getPowSheetData()
+	local pow_anim = animations.showAnimationOnce(pow_sheet, attacked.pos)
+	
+	local attack_anims = {}
+	table.insert(attack_anims, poke)
+	table.insert(attack_anims, pow_anim)
+	
+	local attack_seq = animations.playSequence(attack_anims)
+	
+	table.insert(animation_manager.list, attack_seq)
+end
+
 function animation_manager.debug(character)
-	local move1 = animations.characterTranslate(character, points.createPoint(9, 3), 350)
-	local move2 = animations.characterTranslate(character, points.createPoint(10, 6), 350)
+	--local move1 = animations.characterTranslate(character, points.createPoint(9, 3), 350)
+	--local move2 = animations.characterTranslate(character, points.createPoint(10, 6), 350)
+	--	
+	--local move_anims = {}
+	--table.insert(move_anims, move1)
+	--table.insert(move_anims, move2)
+	--
+	--local seq = animations.playSequence(move_anims)
+	--table.insert(animation_manager.list, seq)
 	
-		
-	local move_anims = {}
-	table.insert(move_anims, move1)
-	table.insert(move_anims, move2)
+	--local pow_sheet = sprite_data.getPowSheetData()
+	--local move = animations.showAnimationOnce(pow_sheet, character.pos)
+	--table.insert(animation_manager.list, move)
 	
-	local seq = animations.playSequence(move_anims)
-	table.insert(animation_manager.list, seq)
+	--local poke = animations.poke(character, false, false)
+	--table.insert(animation_manager.list, poke)
+	
+	--table.insert(animation_manager.list, move)
 end
 
 function animation_manager.step() 

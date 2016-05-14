@@ -68,10 +68,6 @@ local lock_tap_event = false
 
 local scene = composer.newScene()
 
-
-
-
-
 local function selectNextCharacter()	
 	-- Draw Move Order
 	draw_helper.drawMoveOrder(player_list, scene.view.ui.frame.move_order)
@@ -86,7 +82,7 @@ local function selectNextCharacter()
 	
 	draw_helper.drawMovementGrid(move_map, scene.view.selection, player_list, selected_player.team, selected_player.pos)
 	
-	animation_manager.characterBob(selected_player)
+	--animation_manager.characterBob(selected_player)
 	selected_player_state = player_state.awaiting_player_move
 end
 
@@ -135,7 +131,7 @@ function scene:create( event )
 	end
 	
 	selectNextCharacter()
-	--animation_manager.debug(selected_player)
+	animation_manager.debug(selected_player)
 	
 	
 	self.view.background:addEventListener("tap", tapEvent)	
@@ -168,9 +164,9 @@ function tapEvent(event)
 			draw_helper.emptyGroup(scene.view.ui.play_area)
 			
 			local attacked = player_helper.getPlayerAtPosition(x, y, player_list)
-			
-			player_helper.playerAttack(selected_player, attacked, player_list)
-			selectNextCharacter()
+			animation_manager.animateCharacterAttack(selected_player, attacked, attackDoneCallback)
+			--player_helper.playerAttack(selected_player, attacked, player_list)
+			--selectNextCharacter()
 		end
 	end	
 end
@@ -190,6 +186,10 @@ function moveEndCallback()
 	end
 	
 	lock_tap_event = false
+end
+
+function attackDoneCallback()
+	print("Attack!!")
 end
 
 
