@@ -73,6 +73,7 @@ local function setupUI(character)
 	draw_helper.drawMovementGrid(move_map, scene.view.selection, player_list, character.team, character.pos)
 	draw_helper.drawFace(scene.view.ui.frame.char_dat.face, character)
 	draw_helper.writeStuff(scene.view.ui.frame.char_dat.desc, character)
+	draw_helper.drawButtons(scene.view.ui.frame.button, character)
 end
 
 local function selectNextCharacter()	
@@ -145,7 +146,18 @@ function scene:create( event )
 	
 		-- BUTTON
 	self.view.ui.frame.button = display.newGroup()
+	self.view.ui.frame.button.x = 170
+	self.view.ui.frame.button.y = 7
 	self.view.ui.frame:insert(self.view.ui.frame.button)
+			
+			-- BUTTON 1
+	self.view.ui.frame.button.button1 = display.newGroup()
+	self.view.ui.frame.button:insert(self.view.ui.frame.button.button1)
+	
+	self.view.ui.frame.button.button2 = display.newGroup()
+	self.view.ui.frame.button.button2.x = 50
+	self.view.ui.frame.button:insert(self.view.ui.frame.button.button2)
+	
 	
 	local player_pos = levelloader.getPlayerPositions(raw_level1)
 	

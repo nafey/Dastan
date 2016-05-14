@@ -58,9 +58,12 @@ function player_helper.loadPlayers(path, teams)
 		
 		for j = 1, #teams do
 			if (teams[j]["name"] == json["name"]) then
+				local ability_1 = json["ability_1"]
+				local ability_2 = json["ability_2"]
 				local p = players.createPlayer(json["name"], json["label"], 
 											   json["hp"], json["attack"], 
-											   json["speed"], json["range"])
+											   json["speed"], json["range"],
+											   ability_1, ability_2)
 				p.team = teams[j]["team"]
 				p.start_pos  = teams[j]["start_pos"]
 				

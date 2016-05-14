@@ -2,7 +2,7 @@ local points = require("src.model.points")
 
 local players = {}
 
-function players.createPlayer(name, label, hp, attack, speed, range) 
+function players.createPlayer(name, label, hp, attack, speed, range, ability_1, ability_2) 
 	local p = {}
 	p.name = name
 	p.label = label
@@ -17,6 +17,15 @@ function players.createPlayer(name, label, hp, attack, speed, range)
 	p.movement_points_later = 0
 	p.sprite = nil
 	p.max_hp = hp
+	
+	if (ability_1 ~= nil) then
+		p.ability_1 = ability_1
+	end
+	
+	if (ability_2 ~= nil) then
+		p.ability_2 = ability_2
+	end
+	
 	
 	function p.move(x, y)
 		p.sprite.x = (x - 1) * TILE_X	

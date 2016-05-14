@@ -12,6 +12,30 @@ function draw_helper.emptyGroup(displayGroup)
 	end
 end
 
+function draw_helper.drawButtons(displayGroup, character)
+	local open = "res/ui/button_open.png"
+	local down = "res/ui/button_down.png"
+
+	local icon1 = "res/ui/" .. character.ability_1.name .. ".png"
+	local icon2 = "res/ui/" .. character.ability_2.name .. ".png"
+	
+	if (character.ability_1.open) then
+		local button1 = sprites.drawSprite(displayGroup.button1, open, 0, 0, 45, 49)
+		local button1_icon = sprites.drawSprite(displayGroup.button1, icon1, 6, 6, 33, 33)
+	else
+		local button1 = sprites.drawSprite(displayGroup.button1, down, 0, 4, 45, 45)
+		local button1_icon = sprites.drawSprite(displayGroup.button1, icon1, 6, 10, 33, 33)
+	end
+	
+	if (character.ability_2.open) then
+		local button2 = sprites.drawSprite(displayGroup.button2, open, 0, 0, 45, 49)
+		local button2_icon = sprites.drawSprite(displayGroup.button2, icon2, 6, 6, 33, 33)
+	else
+		local button2 = sprites.drawSprite(displayGroup.button2, down, 0, 4, 45, 45)
+		local button2_icon = sprites.drawSprite(displayGroup.button2, icon2, 6, 10, 33, 33)
+	end
+end
+
 function draw_helper.drawFace(displayGroup, character)
 	draw_helper.emptyGroup(displayGroup)
 	

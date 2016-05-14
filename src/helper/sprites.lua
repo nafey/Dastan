@@ -1,5 +1,39 @@
 --Helper functions for displaying sprites
 local sprites = {}
+
+function sprites.drawSprite(displayGroup, path, x, y, w, h)
+	local options =
+	{
+		width = w,
+		height = h,
+		numFrames = 1
+	}
+	
+	local sheet = graphics.newImageSheet( path, options )
+	
+	local sequenceData =
+	{
+		name="default",
+		start=1,
+		count=1
+	}
+	
+	local sprite = nil
+	
+	if (displayGroup == nil) then
+		sprite = display.newSprite(sheet, sequenceData);
+	else
+		sprite = display.newSprite(displayGroup, sheet, sequenceData);
+	end
+	
+	sprite.x = x
+	sprite.y = y
+	sprite.anchorX = 0
+	sprite.anchorY = 0
+	
+	return sprite
+end
+
 function sprites.draw(path, x, y, rotate, displayGroup) 
 	rotate = rotate or 0;
 	
