@@ -69,6 +69,12 @@ local lock_tap_event = false
 
 local scene = composer.newScene()
 
+local function setupUI(character)
+	draw_helper.drawMovementGrid(move_map, scene.view.selection, player_list, character.team, character.pos)
+	draw_helper.drawFace(scene.view.ui.frame.char_dat.face, character)
+	draw_helper.writeStuff(scene.view.ui.frame.char_dat.desc, character)
+end
+
 local function selectNextCharacter()	
 	-- Draw Move Order
 	draw_helper.drawMoveOrder(player_list, scene.view.ui.frame.move_order)
@@ -81,7 +87,7 @@ local function selectNextCharacter()
 	
 	move_map = geometry.floodFill(grid_level1_with_players, selected_player.pos, selected_player.range)
 	
-	draw_helper.drawMovementGrid(move_map, scene.view.selection, player_list, selected_player.team, selected_player.pos)
+	setupUI(selected_player)
 	
 	animation_manager.characterBob(selected_player)
 	selected_player_state = player_state.awaiting_player_move
@@ -108,16 +114,38 @@ function scene:create( event )
 	self.view.ui.play_area = display.newGroup()
 	self.view.ui.frame = display.newGroup()
 	
+	-- UI FRAME SETUP
 	
 	self.view.ui.frame.ui_frame = display.newImageRect(self.view.ui.frame, "res/ui/ui_frame.png", level_width, frame_height)
 	self.view.ui.frame.ui_frame.anchorX = 0
 	self.view.ui.frame.ui_frame.anchorY = 0
 	self.view.ui.frame.y = level_height
 	
+		-- CHAR DATA
+	self.view.ui.frame.char_dat = display.newGroup()
+	self.view.ui.frame:insert(self.view.ui.frame.char_dat)
+			
+			-- FACE
+	self.view.ui.frame.char_dat.face = display.newGroup()
+	self.view.ui.frame.char_dat.face.x = 13
+	self.view.ui.frame.char_dat.face.y = 13
+	self.view.ui.frame.char_dat:insert(self.view.ui.frame.char_dat.face)
+			
+			-- DESC
+	self.view.ui.frame.char_dat.desc = display.newGroup()
+	self.view.ui.frame.char_dat.desc.x = 63
+	self.view.ui.frame.char_dat.desc.y = 13
+	self.view.ui.frame.char_dat:insert(self.view.ui.frame.char_dat.desc)
+	
+		-- MOVE ORDER
 	self.view.ui.frame.move_order = display.newGroup()
 	self.view.ui.frame.move_order.y = 19
 	self.view.ui.frame.move_order.x = 277
 	self.view.ui.frame:insert(self.view.ui.frame.move_order)
+	
+		-- BUTTON
+	self.view.ui.frame.button = display.newGroup()
+	self.view.ui.frame:insert(self.view.ui.frame.button)
 	
 	local player_pos = levelloader.getPlayerPositions(raw_level1)
 	

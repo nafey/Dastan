@@ -12,6 +12,85 @@ function draw_helper.emptyGroup(displayGroup)
 	end
 end
 
+function draw_helper.drawFace(displayGroup, character)
+	draw_helper.emptyGroup(displayGroup)
+	
+	local png = "res/chars/" .. character.name .. "_icon.png"
+	local face = display.newImageRect(displayGroup, png, 48, 40)
+	face.anchorX = 0
+	face.anchorY = 0
+end
+
+function draw_helper.writeStuff(displayGroup, character)
+	draw_helper.emptyGroup(displayGroup)
+	local text_options = {
+		parent = displayGroup,
+		text = "Name:",
+		font = "AR JULIAN",
+		width = 70,
+		align = "center",
+		fontSize = "14",
+		x = 0,
+		y = 0
+	}
+	
+	-- NAME LABEL
+	text_options.x = 20
+	text_options.y = 8
+	
+	local name_lbl = display.newText(text_options)
+	name_lbl:setFillColor(0, 0, 0)
+	
+	-- ATTACK LABEL
+	text_options.text = "Attack:"
+	text_options.x = 26
+	text_options.y = 22
+	
+	local attack_lbl = display.newText(text_options)
+	attack_lbl:setFillColor(0, 0, 0)
+	
+	
+	-- HP LABEL
+	text_options.text = "HP:"
+	text_options.x = 12
+	text_options.y = 36
+	
+	local hp_lbl = display.newText(text_options)
+	hp_lbl:setFillColor(0, 0, 0)
+	
+	
+	-- NAME TEXT 
+	text_options.text = character.label
+
+	text_options.x = 60
+	text_options.y = 8
+	
+	local name = display.newText(text_options)
+	if (character.team == 1) then
+		name:setFillColor(0, 1, 0)
+	else
+		name:setFillColor(1, 0, 0)
+	end
+	
+	-- ATTACK TEXT
+	text_options.text = character.attack
+	
+	text_options.x = 60
+	text_options.y = 22
+	
+	local attack = display.newText(text_options)
+	attack:setFillColor(0, 0, 0)
+	
+	-- HP TEXT
+	text_options.text = character.hp .. " / " .. character.max_hp
+	
+	text_options.x = 60
+	text_options.y = 36
+	
+	local hp = display.newText(text_options)
+	hp:setFillColor(0, 0, 0)
+end
+
 function draw_helper.drawHpBars(player_list, main_team, displayGroup)
 	draw_helper.emptyGroup(displayGroup)
 			
