@@ -224,6 +224,59 @@ function animations.showAnimationOnce(anim_data, pos)
 	return a
 end
 
+function animations.blink(sprite, times, period)
+	local a = {}
+	
+	a.has_more = true
+	
+	a.sprite = sprite
+	a.times = times
+	a.times_curr = 1
+	
+	a.period = period
+	a.period_elapsed = 0
+	
+	a.last_time = nil
+	
+	function a.step() 
+		if (a.last_time == nil) then
+			a.last_time = system.getTimer()
+		else
+			local now = system.getTimer() 
+			local delta = now - a.last_time
+			a.last_time = now
+			
+			if (a.period_elapsed < a.period) then
+				if (a.period_elapsed < a.period / 2) then
+					a.sprite.alpha = 0
+				else 
+					a.sprite.alpha = 1
+				end
+				a.period_elapsed = a.period_elapsed + delta
+			else
+				if (a.times_curr < a.times) then
+					a.period_elapsed = 0
+					a.sprite.alpha = 1
+					a.times_curr = a.times_curr + 1
+				else
+					a.period_elapsed = a.period
+					a.has_more = false
+				end
+				
+			end
+			
+		end
+	end
+	
+	function a.stop()
+	
+	end
+	
+	sprite.alpha = 1
+	
+	return a
+end
+
 function animations.playSequence(animation_list)
 	local a = {}
 	a.has_more = true

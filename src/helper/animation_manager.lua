@@ -58,6 +58,10 @@ function animation_manager.debug(character)
 	--table.insert(animation_manager.list, poke)
 	
 	--table.insert(animation_manager.list, move)
+	local blink = animations.blink(character.sprite, 3, 100)
+	table.insert(animation_manager.list, blink)
+	
+
 end
 
 function animation_manager.step() 
