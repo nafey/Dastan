@@ -15,7 +15,10 @@
   "range" : 4,
   "ability_1" : {
 	"name" : "double_strike",
-	"open" : true
+	"open" : true,
+	"type" : "targeted",
+	"range": 1,
+	"select": "enemy"
   },
   "ability_2" : {
 	"name" : "roar",

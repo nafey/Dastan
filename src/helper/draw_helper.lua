@@ -12,7 +12,47 @@ function draw_helper.emptyGroup(displayGroup)
 	end
 end
 
+function draw_helper.targetCharacters(user, player_list, level, selection, range, displayGroup)
+	draw_helper.emptyGroup(displayGroup)
+
+	local g = grids.createGrid(level.width, level.height)
+	local area = geometry.floodFill(g, user.pos, range)
+	
+	local blue = "res/ui/aura_single.png"
+	local red = "res/ui/aura_single_red.png"
+	local green = "res/ui/aura_single_green.png"
+	
+	for i = 1, #player_list do
+		local point_val = area[player_list[i].pos.x][player_list[i].pos.y]
+		local png = ""
+		local selectCriteriaFlag = true
+		
+		if (point_val ~= 0) then
+			if (point_val == 1) then
+				png = blue
+			elseif (point_val > 1) then
+				if (user.team == player_list[i].team) then
+					png = green
+					if (selection == "enemy") then
+						selectCriteriaFlag = false
+					end
+				else
+					png = red
+					if (selection == "ally") then
+						selectCriteriaFlag = false
+					end
+				end
+			end
+			if (selectCriteriaFlag) then
+				sprites.draw(png, player_list[i].pos.x - 1, player_list[i].pos.y - 1, 0, displayGroup)
+			end
+		end
+	end
+end
+
 function draw_helper.drawButtons(displayGroup, character)
+	draw_helper.emptyGroup(displayGroup.button1)
+	draw_helper.emptyGroup(displayGroup.button2)
 	local open = "res/ui/button_open.png"
 	local down = "res/ui/button_down.png"
 

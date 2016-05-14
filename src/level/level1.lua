@@ -153,10 +153,13 @@ function scene:create( event )
 			-- BUTTON 1
 	self.view.ui.frame.button.button1 = display.newGroup()
 	self.view.ui.frame.button:insert(self.view.ui.frame.button.button1)
+	self.view.ui.frame.button.button1:addEventListener("tap", ability1click)
 	
+			-- BUTTON 2
 	self.view.ui.frame.button.button2 = display.newGroup()
 	self.view.ui.frame.button.button2.x = 50
 	self.view.ui.frame.button:insert(self.view.ui.frame.button.button2)
+	self.view.ui.frame.button.button2:addEventListener("tap", ability2click)
 	
 	
 	local player_pos = levelloader.getPlayerPositions(raw_level1)
@@ -241,6 +244,28 @@ function attackDoneCallback()
 	selectNextCharacter()
 	
 	lock_tap_event = false
+end
+
+function abilityClick(ability)
+	ability.open = not ability.open
+	draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
+	
+	animation_manager.stopBob()
+	
+	if (ability.type == "targeted") then
+		draw_helper.targetCharacters(selected_player, player_list, raw_level1, 
+									ability.select, ability.range,
+									scene.view.selection)
+	end
+end
+
+function ability1click()
+	abilityClick(selected_player.ability_1)
+end
+
+function ability2click()
+	selected_player.ability_2.open = not selected_player.ability_2.open
+	draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
 end
 
 
