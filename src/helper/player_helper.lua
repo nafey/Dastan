@@ -1,11 +1,42 @@
 local file_helper = require("src.helper.file_helper")
 local json_helper = require("src.helper.json_helper")
 local players = require("src.model.players")
+local geometry = require("src.helper.geometry")
 
 local player_helper = {}
 
 local move_threshold = 100
 
+function player_helper.useTargetedAbility(character, target, ability) 
+	if (ability.name == "double_strike") then
+		target.hp = target.hp - character.attack * 2
+	end
+end
+
+function player_helper.isTargetable(character, player_list, ability, x, y)
+	local valid_target_flag = false
+	
+	for i = 1, #player_list do
+		if (player_list[i].pos.x == x and player_list[i].pos.y == y) then
+			valid_target_flag = true
+			if (geometry.manhattan(x, y, character.pos.x, character.pos.y) > tonumber(ability.range)) then
+				valid_target_flag = false
+			end
+			
+			if (ability.select == "enemy") then
+				if (character.team == player_list[i].team) then
+					valid_target_flag = false
+				end
+			elseif (ability.select == "ally") then
+				if (character.team ~= player_list[i].team) then
+					valid_target_flag = false
+				end
+			end
+		end
+	end
+	
+	return valid_target_flag
+end
 
 -- set later to true if you just want to move without setting movement_points
 -- usually you would want to do this when you want to forecast movement

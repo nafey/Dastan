@@ -4,7 +4,9 @@ local sprites = require("src.helper.sprites")
 
 local geometry = {}
 
-
+function geometry.manhattan(x, y, x1, y1) 
+	return math.abs(x - x1) + math.abs(y - y1)
+end
 
 function geometry.isAdjacent(x, y, x1, y1) 
 	local ret = false

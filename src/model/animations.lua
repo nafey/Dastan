@@ -1,6 +1,36 @@
 local points = require("src.model.points")
+local sprite_data = require("src.helper.sprite_data")
 
 local animations = {}
+
+function animations.characterAttackAnimation(character, attacked, callback)
+	local isHort = true
+	local isPos = true
+	
+	if (character.pos.x > attacked.pos.x) then
+		isPos = false
+	elseif (character.pos.y > attacked.pos.y) then
+		isHort = false
+	elseif (character.pos.y < attacked.pos.y) then
+		isHort = false
+		isPos = false
+	end
+	
+	local poke = animations.poke(character, isHort, isPos)
+	
+	local pow_sheet = sprite_data.getPowSheetData()
+	local pow_anim = animations.showAnimationOnce(pow_sheet, attacked.pos)
+	
+	local blink = animations.blink(attacked.sprite, 3, 100)
+	
+	local attack_anims = {}
+	table.insert(attack_anims, poke)
+	table.insert(attack_anims, pow_anim)
+	table.insert(attack_anims, blink)
+	
+	local attack_seq = animations.playSequence(attack_anims, callback)
+	return attack_seq
+end
 
 function animations.characterMoveAnimation(character, path, speed, callback) 
 	local a = {}

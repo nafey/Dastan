@@ -19,6 +19,21 @@ function animation_manager.stopBob()
 	end
 end
 
+function animation_manager.animateTargetedAbility(character, target, ability, callback)
+	if (ability.name == "double_strike") then
+		local attack1 = animations.characterAttackAnimation(character, target)
+		local attack2 = animations.characterAttackAnimation(character, target)
+		
+		local anims = {}
+		
+		table.insert(anims, attack1)
+		table.insert(anims, attack2)
+		
+		local anim_seq = animations.playSequence(anims, callback)
+		table.insert(animation_manager.list, anim_seq)
+	end
+	
+end
 
 function animation_manager.animateCharacterMove(character, path, callback)
 	local move = animations.characterMoveAnimation(character, path, 0.25, callback)
@@ -26,32 +41,7 @@ function animation_manager.animateCharacterMove(character, path, callback)
 end
 
 function animation_manager.animateCharacterAttack(character, attacked, callback)
-	local isHort = true
-	local isPos = true
-	
-	if (character.pos.x > attacked.pos.x) then
-		isPos = false
-	elseif (character.pos.y > attacked.pos.y) then
-		isHort = false
-	elseif (character.pos.y < attacked.pos.y) then
-		isHort = false
-		isPos = false
-	end
-	
-	local poke = animations.poke(character, isHort, isPos)
-	
-	local pow_sheet = sprite_data.getPowSheetData()
-	local pow_anim = animations.showAnimationOnce(pow_sheet, attacked.pos)
-	
-	local blink = animations.blink(attacked.sprite, 3, 100)
-	
-	local attack_anims = {}
-	table.insert(attack_anims, poke)
-	table.insert(attack_anims, pow_anim)
-	table.insert(attack_anims, blink)
-	
-	local attack_seq = animations.playSequence(attack_anims, callback)
-	
+	local attack_seq = animations.characterAttackAnimation(character, attacked, callback)
 	table.insert(animation_manager.list, attack_seq)
 end
 

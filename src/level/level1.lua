@@ -12,7 +12,7 @@ local player_helper = require("src.helper.player_helper")
 local draw_helper = require("src.helper.draw_helper")
 local animation_manager = require("src.helper.animation_manager")
 
-local selected_player_state = player_state.awaiting_player_move
+local selected_player_state = player_state.awaitingawaiting_player_move
 
 local main_team = 1
 
@@ -58,7 +58,10 @@ table.insert(teams, a5)
 table.insert(teams, a6)
 
 local selected_player = nil
-local attacked_player = nil
+local targeted_player = nil
+
+local used_ability = nil
+
 local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
 
 local levelname = "small"
@@ -212,18 +215,36 @@ function tapEvent(event)
 			-- remove image icons
 			draw_helper.emptyGroup(scene.view.ui.play_area)
 			
-			attacked_player = player_helper.getPlayerAtPosition(x, y, player_list)
-			
-			animation_manager.animateCharacterAttack(selected_player, attacked_player, attackDoneCallback)
-			--player_helper.playerAttack(selected_player, attacked, player_list)
-			--selectNextCharacter()
+			targeted_player = player_helper.getPlayerAtPosition(x, y, player_list)
+			animation_manager.animateCharacterAttack(selected_player, targeted_player, attackDoneCallback)
 		end
-	end	
+	elseif (selected_player_state == player_state.awaiting_ability_target_confirmation) then
+		if (player_helper.isTargetable(selected_player, player_list, used_ability, x, y)) then
+			lock_tap_event = true
+			
+			targeted_player = player_helper.getPlayerAtPosition(x, y, player_list)
+			animation_manager.animateTargetedAbility(selected_player, targeted_player, used_ability, targetAbilityCallback)
+			
+		end
+	end
 end
 
 function enterFrame()
 	animation_manager.step()
 	draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
+end
+
+function targetAbilityCallback()
+	lock_tap_event = false
+	
+	player_helper.useTargetedAbility(selected_player, targeted_player, used_ability)
+	used_ability.open = true
+	
+	draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
+	targeted_player = nil
+	used_ability = nil
+	
+	selectNextCharacter()
 end
 
 function moveEndCallback() 
@@ -238,8 +259,8 @@ function moveEndCallback()
 end
 
 function attackDoneCallback()
-	player_helper.playerAttack(selected_player, attacked_player, player_list)
-	attacked_player = nil
+	player_helper.playerAttack(selected_player, targeted_player, player_list)
+	targeted_player = nil
 	
 	selectNextCharacter()
 	
@@ -256,6 +277,9 @@ function abilityClick(ability)
 		draw_helper.targetCharacters(selected_player, player_list, raw_level1, 
 									ability.select, ability.range,
 									scene.view.selection)
+		used_ability = ability
+		
+		selected_player_state = player_state.awaiting_ability_target_confirmation
 	end
 end
 
