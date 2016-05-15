@@ -74,5 +74,29 @@ function sprite_data.getRoarFxFinalData()
 	return ret;
 end
 
+function sprite_data.getScatterShotFxData()
+	local ret = {}
+	 ret["options"] = {
+		width = "96",
+		height = "96",
+		numFrames = "3"
+	}
+	
+	ret["sequence"] = {
+		{
+			name = "default",
+			start = 1,
+			count = 3,
+			time = 200,
+			loopCount = 1,
+			loopDirection = "forward"
+		}
+	}
+	
+	ret["image"] = "res/fx/scatter_shot_fx.png"
+	
+	return ret;
+end
+
 
 return sprite_data

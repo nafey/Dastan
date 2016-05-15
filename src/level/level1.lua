@@ -248,6 +248,7 @@ function enterFrame()
 end
 
 function triggeredAbilityCallback()
+	
 	player_helper.useTriggeredAbility(selected_player, affected, used_ability)
 	used_ability.open = true
 	affected = nil
@@ -255,11 +256,11 @@ function triggeredAbilityCallback()
 	
 	draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
 	
+	lock_tap_event = false 
 	selectNextCharacter()
 end
 
 function targetAbilityCallback()	
-	lock_tap_event = false
 	
 	player_helper.useTargetedAbility(selected_player, targeted_player, used_ability)
 	used_ability.open = true
@@ -268,6 +269,7 @@ function targetAbilityCallback()
 	targeted_player = nil
 	used_ability = nil
 	
+	lock_tap_event = false
 	selectNextCharacter()
 end
 
@@ -323,7 +325,8 @@ function abilityClick(ability)
 		affected = player_helper.findInRange(selected_player, player_list, ability.range, ability.select)
 				
 		animation_manager.stopBob()
-		animation_manager.animateTriggeredAbility(selected_player, affected, used_ability, triggeredAbilityCallback)	end
+		animation_manager.animateTriggeredAbility(selected_player, affected, used_ability, triggeredAbilityCallback)	
+	end
 end
 
 function ability1click()

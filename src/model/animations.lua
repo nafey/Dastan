@@ -4,7 +4,6 @@ local sprite_data = require("src.helper.sprite_data")
 local animations = {}
 
 function animations.attackImpactAnimation(character, attacked, callback)
-	local poke = animations.poke(character, isHort, isPos)
 	
 	local pow_sheet = sprite_data.getPowSheetData()
 	local pow_anim = animations.showAnimationOnce(pow_sheet, attacked.pos)
@@ -12,7 +11,6 @@ function animations.attackImpactAnimation(character, attacked, callback)
 	local blink = animations.blink(attacked.sprite, 3, 100)
 	
 	local attack_anims = {}
-	table.insert(attack_anims, poke)
 	table.insert(attack_anims, pow_anim)
 	table.insert(attack_anims, blink)
 	

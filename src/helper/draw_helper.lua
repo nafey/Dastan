@@ -53,6 +53,10 @@ end
 function draw_helper.drawButtons(displayGroup, character)
 	draw_helper.emptyGroup(displayGroup.button1)
 	draw_helper.emptyGroup(displayGroup.button2)
+	
+	if (character.ability_1 == nil or character.ability_2 == nil) then
+		return
+	end
 	local open = "res/ui/button_open.png"
 	local down = "res/ui/button_down.png"
 

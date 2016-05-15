@@ -40,6 +40,25 @@ function animation_manager.animateTriggeredAbility(character, affected, ability,
 		
 		local seq = animations.playSequence(anim_list, callback)
 		table.insert(animation_manager.list, seq)
+	elseif (ability.name == "scatter_shot") then
+		local anim_list = {}
+		
+		local pt = points.createPoint(character.pos.x - 1, character.pos.y - 1)
+		local scatter = animations.showAnimationOnce(sprite_data.getScatterShotFxData(), pt)
+		table.insert(anim_list, scatter)
+		
+		local hit_list = {}
+		
+		for i = 1, #affected do
+			local scatter_after = animations.attackImpactAnimation(character, affected[i])
+			table.insert(hit_list, scatter_after)
+		end
+		
+		local parallel = animations.playParallel(hit_list)
+		table.insert(anim_list, parallel)
+		
+		local seq = animations.playSequence(anim_list, callback)
+		table.insert(animation_manager.list, seq) 
 	end
 end
 
