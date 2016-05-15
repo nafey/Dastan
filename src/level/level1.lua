@@ -19,7 +19,7 @@ local main_team = 1
 
 local teams = {}
 local a1 = {}
-a1["name"] = "lan"
+a1["name"] = "uruk"
 a1["team"] = 1
 a1["start_pos"] = "P1"
 
@@ -35,7 +35,7 @@ a3["start_pos"] = "P3"
 
 
 local a4 = {}
-a4["name"] = "uruk"
+a4["name"] = "lan"
 a4["team"] = 2
 a4["start_pos"] = "P4"
 
@@ -60,6 +60,8 @@ table.insert(teams, a6)
 local selected_player = nil
 local targeted_player = nil
 
+local affected = nil
+
 local used_ability = nil
 
 local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
@@ -79,13 +81,7 @@ local function setupUI(character)
 	draw_helper.drawButtons(scene.view.ui.frame.button, character)
 end
 
-local function selectNextCharacter()	
-	-- Draw Move Order
-	draw_helper.drawMoveOrder(player_list, scene.view.ui.frame.move_order)
-	
-	-- Draw movement Grid
-	selected_player = player_helper.selectNextMover(player_list, false)
-	
+local function selectCharacter(character) 
 	local grid_level1 = levelloader.getMovementGrid(raw_level1)
 	local grid_level1_with_players = levelloader.markPlayers(grid_level1, player_list, selected_player.name)
 	
@@ -95,6 +91,15 @@ local function selectNextCharacter()
 	
 	animation_manager.characterBob(selected_player)
 	selected_player_state = player_state.awaiting_player_move
+end
+
+local function selectNextCharacter()	
+	-- Draw Move Order
+	draw_helper.drawMoveOrder(player_list, scene.view.ui.frame.move_order)
+	
+	-- Draw movement Grid
+	selected_player = player_helper.selectNextMover(player_list, false)
+	selectCharacter(selected_player)
 end
 
 function scene:create( event )
@@ -219,7 +224,9 @@ function tapEvent(event)
 			animation_manager.animateCharacterAttack(selected_player, targeted_player, attackDoneCallback)
 		end
 	elseif (selected_player_state == player_state.awaiting_ability_target_confirmation) then
+		
 		if (player_helper.isTargetable(selected_player, player_list, used_ability, x, y)) then
+			
 			lock_tap_event = true
 			
 			targeted_player = player_helper.getPlayerAtPosition(x, y, player_list)
@@ -230,11 +237,28 @@ function tapEvent(event)
 end
 
 function enterFrame()
+	--if (used_ability == nil) then
+	--	print("nil")
+	--else
+	--	print(used_ability.name)
+	--end
+	
 	animation_manager.step()
 	draw_helper.drawHpBars(player_list, main_team, scene.view.ui.hp)
 end
 
-function targetAbilityCallback()
+function triggeredAbilityCallback()
+	player_helper.useTriggeredAbility(selected_player, affected, used_ability)
+	used_ability.open = true
+	affected = nil
+	used_ability = nil
+	
+	draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
+	
+	selectNextCharacter()
+end
+
+function targetAbilityCallback()	
 	lock_tap_event = false
 	
 	player_helper.useTargetedAbility(selected_player, targeted_player, used_ability)
@@ -268,19 +292,38 @@ function attackDoneCallback()
 end
 
 function abilityClick(ability)
-	ability.open = not ability.open
-	draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
-	
-	animation_manager.stopBob()
-	
 	if (ability.type == "targeted") then
-		draw_helper.targetCharacters(selected_player, player_list, raw_level1, 
-									ability.select, ability.range,
-									scene.view.selection)
+		if (selected_player_state ~= player_state.awaiting_ability_target_confirmation) then
+			ability.open = false
+			draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
+			
+			animation_manager.stopBob()
+			
+			draw_helper.targetCharacters(selected_player, player_list, raw_level1, 
+											ability.select, ability.range,
+											scene.view.selection)
+			used_ability = ability
+			selected_player_state = player_state.awaiting_ability_target_confirmation
+			
+		else
+			selected_player_state = player_state.awaiting_player_move
+			ability.open = true
+			selectCharacter(selected_player)
+		end
+	elseif (ability.type == "triggered") then
+		ability.open = false
+		draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
+		
 		used_ability = ability
 		
-		selected_player_state = player_state.awaiting_ability_target_confirmation
-	end
+		lock_tap_event = true
+		
+		draw_helper.emptyGroup(scene.view.selection)
+		
+		affected = player_helper.findInRange(selected_player, player_list, ability.range, ability.select)
+				
+		animation_manager.stopBob()
+		animation_manager.animateTriggeredAbility(selected_player, affected, used_ability, triggeredAbilityCallback)	end
 end
 
 function ability1click()
@@ -288,8 +331,7 @@ function ability1click()
 end
 
 function ability2click()
-	selected_player.ability_2.open = not selected_player.ability_2.open
-	draw_helper.drawButtons(scene.view.ui.frame.button, selected_player)
+	abilityClick(selected_player.ability_2)
 end
 
 

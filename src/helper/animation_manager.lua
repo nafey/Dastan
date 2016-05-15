@@ -19,6 +19,30 @@ function animation_manager.stopBob()
 	end
 end
 
+function animation_manager.animateTriggeredAbility(character, affected, ability, callback)
+	if (ability.name == "roar") then
+		local anim_list = {}
+		
+		local pt = points.createPoint(character.pos.x - 1, character.pos.y - 1)
+		local roar = animations.showAnimationOnce(sprite_data.getRoarFxData(), pt)
+		table.insert(anim_list, roar)
+		
+		
+		local roar_list = {}
+		
+		for i = 1, #affected do
+			local roar_after = animations.showAnimationOnce(sprite_data.getRoarFxFinalData(), affected[i].pos)
+			table.insert(roar_list, roar_after)
+		end
+		
+		local parallel = animations.playParallel(roar_list)
+		table.insert(anim_list, parallel)
+		
+		local seq = animations.playSequence(anim_list, callback)
+		table.insert(animation_manager.list, seq)
+	end
+end
+
 function animation_manager.animateTargetedAbility(character, target, ability, callback)
 	if (ability.name == "double_strike") then
 		local attack1 = animations.characterAttackAnimation(character, target)
@@ -82,6 +106,12 @@ end
 function animation_manager.clearDead()
 	for i = #animation_manager.list, 1, -1 do
 		if (not animation_manager.list[i].has_more) then
+			animation_manager.list[i].stop()
+			
+			if (animation_manager.list[i].callback ~= nil) then
+				animation_manager.list[i].callback()
+			end
+			
 			table.remove(animation_manager.list, i)
 		end
 	end

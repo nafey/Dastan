@@ -7,6 +7,37 @@ local player_helper = {}
 
 local move_threshold = 100
 
+function player_helper.findInRange(character, player_list, range, selector)
+	local affected = {}
+	
+	for i = 1, #player_list do
+		
+		if (geometry.manhattan(player_list[i].pos.x, player_list[i].pos.y, 
+			character.pos.x, character.pos.y) <= range) then
+			local add_flag = true
+			if (selector == "enemy" and character.team == player_list[i].team) then
+				add_flag = false
+			end
+			
+			if (selector == "ally" and character.team ~= player_list[i].team) then
+				add_flag = false
+			end
+			
+			if (add_flag) then
+				table.insert(affected, player_list[i])
+			end
+		end
+	end
+	
+	return affected
+end
+
+function player_helper.useTriggeredAbility(selected_player, affected, ability)
+	for i = 1, #affected do
+		affected[i].attack = affected[i].attack + 1
+	end
+end
+
 function player_helper.useTargetedAbility(character, target, ability) 
 	if (ability.name == "double_strike") then
 		target.hp = target.hp - character.attack * 2

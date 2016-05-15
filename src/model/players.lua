@@ -8,6 +8,7 @@ function players.createPlayer(name, label, hp, attack, speed, range, ability_1, 
 	p.label = label
 	p.hp = hp
 	p.attack = attack
+	p.attack_buff = 0
 	p.speed = speed
 	p.range = range
 	p.start_pos = nil

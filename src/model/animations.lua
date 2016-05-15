@@ -220,8 +220,6 @@ function animations.showAnimationOnce(anim_data, pos)
 	a.sheet = graphics.newImageSheet(anim_data["image"], anim_data["options"])
 	a.sequence = anim_data["sequence"]
 	
-	
-	
 	function a.step() 
 		if (a.last_time == nil) then
 			a.last_time = system.getTimer()
@@ -312,7 +310,6 @@ function animations.playSequence(animation_list, callback)
 	
 	a.list = animation_list
 	
-	
 	if (#animation_list < 1) then
 		return nil
 	end
@@ -334,12 +331,45 @@ function animations.playSequence(animation_list, callback)
 		
 	function a.stop() 
 		a.has_more = false
-		if (a.callback ~= nil) then
-			a.callback()
-		end
 	end
 	
 	return a
+end
+
+function animations.playParallel(animation_list, callback)
+	local a = {}
+	a.has_more = true
+	a.callback = callback
+	
+	a.list = animation_list
+	
+	if (#animation_list < 1) then
+		return nil
+	end
+	
+	function a.step()
+		a.is_dead = true
+		
+		for i = 1, #animation_list do
+			if (animation_list[i].has_more) then
+				a.is_dead = false
+				animation_list[i].step()
+			else
+				animation_list[i].stop()
+			end
+		end
+		
+		if (a.is_dead) then
+			a.has_more = false
+		end
+	end
+	
+	function a.stop()
+		a.has_more = false
+	end
+	
+	return a
+	
 end
 
 
