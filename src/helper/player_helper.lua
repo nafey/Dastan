@@ -41,6 +41,9 @@ end
 function player_helper.useTargetedAbility(character, target, ability) 
 	if (ability.name == "double_strike") then
 		target.hp = target.hp - character.attack * 2
+	elseif (ability.name == "shoot") then
+		target.hp = target.hp - ability.damage
+		print("After shot hp is " .. target.hp) 
 	end
 end
 

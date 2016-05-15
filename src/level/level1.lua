@@ -12,7 +12,7 @@ local player_helper = require("src.helper.player_helper")
 local draw_helper = require("src.helper.draw_helper")
 local animation_manager = require("src.helper.animation_manager")
 
-local selected_player_state = player_state.awaitingawaiting_player_move
+local selected_player_state = player_state.awaiting_player_move
 
 local main_team = 1
 
@@ -20,33 +20,33 @@ local main_team = 1
 local teams = {}
 local a1 = {}
 a1["name"] = "uruk"
-a1["team"] = 1
+a1["team"] = 2
 a1["start_pos"] = "P1"
 
 local a2 = {}
 a2["name"] = "asha"
-a2["team"] = 1
+a2["team"] = 2
 a2["start_pos"] = "P2"
 
 local a3 = {}
 a3["name"] = "balzar"
-a3["team"] = 1
+a3["team"] = 2
 a3["start_pos"] = "P3"
 
 
 local a4 = {}
 a4["name"] = "lan"
-a4["team"] = 2
+a4["team"] = 1
 a4["start_pos"] = "P4"
 
 local a5 = {}
 a5["name"] = "feyd"
-a5["team"] = 2
+a5["team"] = 1
 a5["start_pos"] = "P5"
 
 local a6 = {}
 a6["name"] = "pan"
-a6["team"] = 2
+a6["team"] = 1
 a6["start_pos"] = "P6"
 
 

@@ -55,8 +55,12 @@ function animation_manager.animateTargetedAbility(character, target, ability, ca
 		
 		local anim_seq = animations.playSequence(anims, callback)
 		table.insert(animation_manager.list, anim_seq)
-	end
+	elseif (ability.name == "shoot") then
+		local pow_sheet = sprite_data.getPowSheetData()
 	
+		local attack_seq = animations.attackImpactAnimation(character, target, callback)
+		table.insert(animation_manager.list, attack_seq)
+	end
 end
 
 function animation_manager.animateCharacterMove(character, path, callback)

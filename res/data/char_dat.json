@@ -11,7 +11,7 @@
   "label" : "Lan",
   "hp" : 25,
   "attack" : 3,
-  "speed" : 50,
+  "speed" : 16,
   "range" : 4,
   "ability_1" : {
 	"name" : "double_strike",
@@ -59,7 +59,24 @@
   "hp" : 16,
   "attack" : 3,
   "speed" : 22,
-  "range" : 3
+  "range" : 4,
+  "ability_1" : {
+	"name" : "shoot",
+	"open" : true,
+	"type" : "targeted",
+	"range": 4,
+	"select": "enemy",
+	"damage":6
+  },
+  "ability_2" : {
+	"name" : "scatter_shot",
+	"open" : true,
+	"type" : "triggered",
+	"range": 3,
+	"select": "enemy",
+	"roar_buff": 1,
+	"damage":2
+  }
 }
 
 ]
