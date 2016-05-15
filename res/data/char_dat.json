@@ -34,8 +34,24 @@
   "label" : "Feyd",
   "hp" : 15,
   "attack" : 2,
-  "speed" : 15,
-  "range" : 4
+  "speed" : 24,
+  "range" : 4,
+  "ability_1" : {
+	"name" : "heal",
+	"open" : true,
+	"type" : "targeted",
+	"range": 2,
+	"select": "ally",
+	"heal": 7
+  },
+  "ability_2" : {
+	"name" : "speed_rush",
+	"open" : true,
+	"type" : "triggered",
+	"range": 3,
+	"select": "ally",
+	"speed_buff": 1
+  }
 },
 {
   "name": "asha",
@@ -74,7 +90,6 @@
 	"type" : "triggered",
 	"range": 3,
 	"select": "enemy",
-	"roar_buff": 1,
 	"damage":2
   }
 }

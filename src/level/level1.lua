@@ -224,9 +224,7 @@ function tapEvent(event)
 			animation_manager.animateCharacterAttack(selected_player, targeted_player, attackDoneCallback)
 		end
 	elseif (selected_player_state == player_state.awaiting_ability_target_confirmation) then
-		
 		if (player_helper.isTargetable(selected_player, player_list, used_ability, x, y)) then
-			
 			lock_tap_event = true
 			
 			targeted_player = player_helper.getPlayerAtPosition(x, y, player_list)
@@ -294,6 +292,10 @@ function attackDoneCallback()
 end
 
 function abilityClick(ability)
+	if (selected_player_state ~= player_state.awaiting_player_move) then
+		return nil
+	end
+	
 	if (ability.type == "targeted") then
 		if (selected_player_state ~= player_state.awaiting_ability_target_confirmation) then
 			ability.open = false

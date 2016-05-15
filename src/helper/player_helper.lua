@@ -33,8 +33,18 @@ function player_helper.findInRange(character, player_list, range, selector)
 end
 
 function player_helper.useTriggeredAbility(selected_player, affected, ability)
-	for i = 1, #affected do
-		affected[i].attack = affected[i].attack + 1
+	if (ability.name == "roar") then
+		for i = 1, #affected do
+			affected[i].attack = affected[i].attack + 1
+		end
+	elseif (ability.name == "scatter_shot") then
+		for i = 1, #affected do 
+			affected[i].hp = affected[i].hp - ability.damage
+		end
+	elseif (ability.name == "speed_rush") then
+		for i = 1, #affected do
+			affected[i].speed = affected[i].speed + 1
+		end
 	end
 end
 
@@ -44,6 +54,12 @@ function player_helper.useTargetedAbility(character, target, ability)
 	elseif (ability.name == "shoot") then
 		target.hp = target.hp - ability.damage
 		print("After shot hp is " .. target.hp) 
+	elseif (ability.name == "heal") then
+		if (target.hp < target.max_hp - ability.heal) then
+			target.hp = target.hp + ability.heal
+		else 
+			target.hp = target.max_hp
+		end
 	end
 end
 

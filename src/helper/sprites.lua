@@ -4,8 +4,8 @@ local sprites = {}
 function sprites.drawSprite(displayGroup, path, x, y, w, h)
 	local options =
 	{
-		width = w,
-		height = h,
+		width = tonumber(w),
+		height = tonumber(h),
 		numFrames = 1
 	}
 	

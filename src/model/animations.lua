@@ -223,9 +223,10 @@ function animations.poke(character, isHort, isPositive)
 	return a 
 end
 
-function animations.showAnimationOnce(anim_data, pos)
+function animations.showAnimationOnce(anim_data, pos, callback)
 	local a = {}
 	a.has_more = true
+	a.callback = callback
 	
 	a.period = anim_data["sequence"][1].time
 	a.period_elapsed = 0

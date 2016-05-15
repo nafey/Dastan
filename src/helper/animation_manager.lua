@@ -59,6 +59,27 @@ function animation_manager.animateTriggeredAbility(character, affected, ability,
 		
 		local seq = animations.playSequence(anim_list, callback)
 		table.insert(animation_manager.list, seq) 
+	elseif (ability.name == "speed_rush") then
+		local anim_list = {}
+		
+		local pt = points.createPoint(character.pos.x, character.pos.y - 1)
+		local rush_fx = sprite_data.getSpeedRushFxData()
+		local rush = animations.showAnimationOnce(rush_fx, pt, callback)
+		table.insert(anim_list, rush)
+		
+		
+		local roar_list = {}
+		
+		for i = 1, #affected do
+			local roar_after = animations.showAnimationOnce(sprite_data.getRoarFxFinalData(), affected[i].pos)
+			table.insert(roar_list, roar_after)
+		end
+		
+		local parallel = animations.playParallel(roar_list)
+		table.insert(anim_list, parallel)
+		
+		local seq = animations.playSequence(anim_list, callback)
+		table.insert(animation_manager.list, seq)
 	end
 end
 
@@ -79,6 +100,10 @@ function animation_manager.animateTargetedAbility(character, target, ability, ca
 	
 		local attack_seq = animations.attackImpactAnimation(character, target, callback)
 		table.insert(animation_manager.list, attack_seq)
+	elseif (ability.name == "heal") then
+		local heal_fx = sprite_data.getHealFxData()
+		local heal = animations.showAnimationOnce(heal_fx, target.pos, callback)
+		table.insert(animation_manager.list, heal)
 	end
 end
 
