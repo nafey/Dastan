@@ -59,11 +59,11 @@ function geometry.floodFill(g, p, range)
 	for j = 1, grid.height do
 		for i = 1, grid.width do
 			if (grid.safe(i, j) == 1) then
-				grid[i][j] = -1
+				grid.put(i, j, -1)
 			end
 			
 			if (i == p.x and j == p.y) then
-				grid[i][j] = 1
+				grid.put(i, j, 1)
 			end
 							
 		end
@@ -92,58 +92,71 @@ function geometry.floodFill(g, p, range)
 			break
 		end
 		
+		for dir = 1, 4 do
+			local pt_adj = points.rotate(pt, dir)
+			if (grid.rotate(pt.x, pt.y, dir) == 0) then
+				local idx = toIndex(pt_adj.x, pt_adj.y)
+				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+					grid.rotate_put(pt.x, pt.y, dir, grid.safe(pt.x, pt.y) + 1)
+					table.insert(open_lookup, tostring(idx), true)
+					table.insert(open_list, idx)
+				end
+			end
+		
+		end
+		
 		-- top
-		if (pt.y ~= 1) then
-			if (grid.safe(pt.x , pt.y - 1) == 0) then
-				local idx = toIndex(pt.x, pt.y - 1)
-				
-				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
-					grid[pt.x][pt.y - 1] = grid[pt.x][pt.y] + 1
-					table.insert(open_lookup, tostring(idx), true)
-					table.insert(open_list, idx)
-				end
-			end
-		end
-		
-		-- left
-		if (pt.x ~= 1) then
-			if (grid.safe(pt.x - 1, pt.y ) == 0) then
-				local idx = toIndex(pt.x - 1, pt.y)
-				
-				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
-					grid[pt.x - 1][pt.y] = grid[pt.x][pt.y] + 1
-
-					table.insert(open_lookup, tostring(idx), true)
-					table.insert(open_list, idx)
-				end
-			end
-		end
-		
-		-- bot
-		if (pt.y ~= grid.height) then
-			if (grid.safe(pt.x, pt.y + 1) == 0) then
-				local idx = toIndex(pt.x, pt.y + 1)
-				
-				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
-					grid[pt.x][pt.y + 1] = grid[pt.x][pt.y] + 1
-					table.insert(open_lookup, tostring(idx), true)
-					table.insert(open_list, idx)
-				end
-			end
-		end
-		
-		-- right
-		if (pt.x ~= grid.width) then
-			if (grid.safe(pt.x + 1, pt.y) == 0) then
-				local idx = toIndex(pt.x + 1, pt.y)
-				
-				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
-					grid[pt.x + 1][pt.y] = grid[pt.x][pt.y] + 1
-					table.insert(open_lookup, tostring(idx), true)
-					table.insert(open_list, idx)
-				end
-			end
-		end
+	--	if (pt.y ~= 1) then
+	--		if (grid.safe(pt.x , pt.y - 1) == 0) then
+	--			local idx = toIndex(pt.x, pt.y - 1)
+	--			
+	--			if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+	--				grid[pt.x][pt.y - 1] = grid[pt.x][pt.y] + 1
+	--				table.insert(open_lookup, tostring(idx), true)
+	--				table.insert(open_list, idx)
+	--			end
+	--		end
+	--	end
+	--	
+	--	-- left
+	--	if (pt.x ~= 1) then
+	--		if (grid.safe(pt.x - 1, pt.y ) == 0) then
+	--			local idx = toIndex(pt.x - 1, pt.y)
+	--			
+	--			if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+	--				grid[pt.x - 1][pt.y] = grid[pt.x][pt.y] + 1
+    --
+	--				table.insert(open_lookup, tostring(idx), true)
+	--				table.insert(open_list, idx)
+	--			end
+	--		end
+	--	end
+	--	
+	--	-- bot
+	--	if (pt.y ~= grid.height) then
+	--		if (grid.safe(pt.x, pt.y + 1) == 0) then
+	--			local idx = toIndex(pt.x, pt.y + 1)
+	--			
+	--			if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+	--				grid[pt.x][pt.y + 1] = grid[pt.x][pt.y] + 1
+	--				table.insert(open_lookup, tostring(idx), true)
+	--				table.insert(open_list, idx)
+	--			end
+	--		end
+	--	end
+	--	
+	--	-- right
+	--	if (pt.x ~= grid.width) then
+	--		if (grid.safe(pt.x + 1, pt.y) == 0) then
+	--			local idx = toIndex(pt.x + 1, pt.y)
+	--			
+	--			if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
+	--				grid[pt.x + 1][pt.y] = grid[pt.x][pt.y] + 1
+	--				table.insert(open_lookup, tostring(idx), true)
+	--				table.insert(open_list, idx)
+	--			end
+	--		end
+	--	end
 		
 		a = a + 1
 	end
@@ -152,7 +165,7 @@ function geometry.floodFill(g, p, range)
 	for j = 1, grid.height do
 		for i = 1, grid.width do
 			if (grid.safe(i, j) == -1) then
-				grid[i][j] = 0
+				grid.put(i, j, 0)
 			end
 		end
 	end

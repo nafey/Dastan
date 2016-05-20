@@ -200,7 +200,7 @@ function tapEvent(event)
 		
 	
 	if (selected_player_state == player_state.awaiting_player_move) then
-		if (move_map[x][y] ~= 0) then
+		if (move_map.safe(x, y) ~= 0) then
 			animation_manager.stopBob()
 			lock_tap_event = true
 			

@@ -30,9 +30,9 @@ function levelloader.loadlevel(levelname)
 		else
 			for i = 1, width do
 				if tonumber(line_split[i]) ~= nil then
-					ret[i][j] = tonumber(line_split[i])
+					ret.put(i, j, tonumber(line_split[i]))
 				else 
-					ret[i][j] = line_split[i]
+					ret.put(i, j, line_split[i])
 				end
 			end
 		end
@@ -50,10 +50,10 @@ function levelloader.getPlayerPositions(levelgrid)
 	function isPlayerPosition(i, j) 
 		local ret = false
 		
-		if (tonumber(levelgrid[i][j]) == nil) then
-			if (string.find(levelgrid[i][j], "P")) then
-				if (tonumber(string.sub(levelgrid[i][j], 2)) ~= nil) then
-					if (tonumber(string.sub(levelgrid[i][j], 2)) <= 6 and tonumber(string.sub(levelgrid[i][j], 2)) >= 1) then
+		if (tonumber(levelgrid.safe(i, j)) == nil) then
+			if (string.find(levelgrid.safe(i, j), "P")) then
+				if (tonumber(string.sub(levelgrid.safe(i, j), 2)) ~= nil) then
+					if (tonumber(string.sub(levelgrid.safe(i, j), 2)) <= 6 and tonumber(string.sub(levelgrid.safe(i, j), 2)) >= 1) then
 						ret = true
 					end
 				end
@@ -67,7 +67,7 @@ function levelloader.getPlayerPositions(levelgrid)
 	for i = 1, levelgrid.width do
 		for j = 1, levelgrid.height do
 			if (isPlayerPosition(i,j)) then
-				ret[levelgrid[i][j]] = points.createPoint(i, j)
+				ret[levelgrid.safe(i, j)] = points.createPoint(i, j)
 			end
 		end
 	end
@@ -80,10 +80,10 @@ function levelloader.getMovementGrid(levelgrid, player_list, player_name)
 	
 	for i = 1, levelgrid.width do
 		for j = 1, levelgrid.height do
-			if (tonumber(levelgrid[i][j]) ~= nil) then
-				ret[i][j] = levelgrid[i][j]
+			if (tonumber(levelgrid.safe(i, j)) ~= nil) then
+				ret.put(i, j, levelgrid.safe(i, j))
 			else 
-				ret[i][j] = 0
+				ret.put(i, j, 0)
 			end
 		end
 	end
@@ -98,7 +98,7 @@ function levelloader.markPlayers(levelgrid, player_list,  player_name)
 	if (player_list ~= nil) then
 		for i = 1, #player_list do
 			if (player_list[i].name ~= player_name) then
-				ret[player_list[i].pos.x][player_list[i].pos.y] = 1
+				ret.put(player_list[i].pos.x, player_list[i].pos.y, 1)
 			end
 		end
 	end

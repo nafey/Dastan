@@ -266,7 +266,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 	for j = 1, grid.height do
 		for i = 1, grid.width do
 			if (grid.safe(i, j) ~= 0) then
-				grid[i][j] = 1
+				grid.put(i, j, 1)
 			end
 		end
 	end			
@@ -278,8 +278,8 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 	local adj = grids.createGrid(grid.width, grid.height)
 	for i = 1, grid.width do
 		for j = 1, grid.height do
-			if (grid[i][j] == 1) then
-				adj[i][j] = grids.adjacency(grid, i, j)
+			if (grid.safe(i, j) == 1) then
+				adj.put(i, j, grids.adjacency(grid, i, j))
 			end
 		end
 	end
@@ -368,17 +368,17 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		end
 		
 		--rotate top
-		if (y == 1 or adj[x][y - 1] == 0) then
+		if (y == 1 or adj.safe(x, y - 1) == 0) then
 			rot = 90
 		end
 		
 		--rotate right
-		if (x == adj.width or adj[x + 1][y] == 0) then
+		if (x == adj.width or adj.safe(x + 1, y) == 0) then
 			rot = 180
 		end
 		
 		--rotate bot
-		if (y == adj.height or adj[x][y + 1] == 0) then
+		if (y == adj.height or adj.safe(x, y + 1) == 0) then
 			rot = 270
 		end
 		
@@ -436,22 +436,24 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		sprites.draw(png, x - 1, y - 1, 0, displayGroup)
 	end
 	
+	adj.print()
+	
 	--where adjacency is 1
 	for i = 1, adj.width do
 		for j = 1, adj.height do
-			if (adj[i][j] == 1) then
+			if (adj.safe(i, j) == 1) then
 				drawEndAura(i , j)
-			elseif (adj[i][j] == 2) then
+			elseif (adj.safe(i, j) == 2) then
 				drawCornerOrPipeAura(i, j)
-			elseif (adj[i][j] == 3) then
+			elseif (adj.safe(i, j) == 3) then
 				drawSideAura(i, j)
 			end	
-			if (adj[i][j] ~= 0) then
+			if (adj.safe(i, j) ~= 0) then
 				drawDotAura(i, j)
 			end
 			
-			if (adj[i][j] == 0) then
-				if (grid[i][j] == 1) then
+			if (adj.safe(i, j) == 0) then
+				if (grid.safe(i, j) == 1) then
 					drawSingleAura(i, j)
 				end
 			end

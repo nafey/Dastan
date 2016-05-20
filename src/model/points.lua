@@ -49,4 +49,16 @@ function points.lerp(p1, p2, ratio)
 	return ret
 end
 
+function points.rotate(pt, dir) 
+	if (dir == 1) then
+		return points.createPoint(pt.x, pt.y - 1)
+	elseif (dir == 2) then	
+		return points.createPoint(pt.x - 1, pt.y)
+	elseif (dir == 3) then
+		return points.createPoint(pt.x, pt.y + 1)
+	else 
+		return points.createPoint(pt.x + 1, pt.y)
+	end
+end
+
 return points
