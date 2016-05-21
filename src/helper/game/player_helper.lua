@@ -1,7 +1,7 @@
-local file_helper = require("src.helper.file_helper")
-local json_helper = require("src.helper.json_helper")
-local players = require("src.model.players")
-local geometry = require("src.helper.geometry")
+local file_helper = require("src.helper.util.file_helper")
+local json_helper = require("src.helper.util.json_helper")
+local players = require("src.model.game.players")
+local geometry = require("src.model.geometry.geometry")
 
 local player_helper = {}
 

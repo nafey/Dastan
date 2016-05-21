@@ -1,6 +1,6 @@
-local animations = require("src.model.animations")
-local points = require("src.model.points")
-local sprite_data = require("src.helper.sprite_data")
+local points = require("src.model.geometry.points")
+local animations = require("src.helper.ui.animations")
+local sprite_data = require("src.helper.ui.sprite_data")
 
 local animation_manager = {}
 animation_manager.list = {}

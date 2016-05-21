@@ -1,4 +1,4 @@
-local points = require("src.model.points")
+local points = require("src.model.geometry.points")
 
 local players = {}
 

@@ -1,16 +1,17 @@
-
 local composer = require( "composer" )
 
-local player_state = require("src.model.player_state")
-local points = require("src.model.points")
-local grids = require("src.model.grids")
+local player_state = require("src.model.game.player_state")
 
-local sprites = require("src.helper.sprites")
-local geometry = require("src.helper.geometry")
-local levelloader = require("src.helper.levelloader")
-local player_helper = require("src.helper.player_helper")
-local draw_helper = require("src.helper.draw_helper")
-local animation_manager = require("src.helper.animation_manager")
+local points = require("src.model.geometry.points")
+local grids = require("src.model.geometry.grids")
+local geometry = require("src.model.geometry.geometry")
+
+local player_helper = require("src.helper.game.player_helper")
+local levelloader = require("src.helper.util.level_loader")
+
+local sprites = require("src.helper.ui.sprites")
+local draw_helper = require("src.helper.ui.draw_helper")
+local animation_manager = require("src.helper.ui.animation_manager")
 
 local selected_player_state = player_state.awaiting_player_move
 

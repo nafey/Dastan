@@ -1,9 +1,3 @@
-
-
-
-
---
---
 -- include the Corona "composer" module
 -- load menu screen
 -- main.lua

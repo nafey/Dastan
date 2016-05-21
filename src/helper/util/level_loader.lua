@@ -1,7 +1,8 @@
-local strings = require("src.helper.strings")
-local grids = require("src.model.grids")
-local points = require("src.model.points")
-local file_helper = require("src.helper.file_helper")
+local file_helper = require("src.helper.util.file_helper")
+local strings = require("src.helper.util.strings_helper")
+
+local grids = require("src.model.geometry.grids")
+local points = require("src.model.geometry.points")
 
 local levelloader = {}
 

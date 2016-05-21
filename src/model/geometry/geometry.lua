@@ -1,6 +1,5 @@
-local points = require("src.model.points")
-local grids = require("src.model.grids")
-local sprites = require("src.helper.sprites")
+local points = require("src.model.geometry.points")
+local grids = require("src.model.geometry.grids")
 
 local geometry = {}
 
@@ -105,59 +104,6 @@ function geometry.floodFill(g, p, range)
 		
 		end
 		
-		-- top
-	--	if (pt.y ~= 1) then
-	--		if (grid.safe(pt.x , pt.y - 1) == 0) then
-	--			local idx = toIndex(pt.x, pt.y - 1)
-	--			
-	--			if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
-	--				grid[pt.x][pt.y - 1] = grid[pt.x][pt.y] + 1
-	--				table.insert(open_lookup, tostring(idx), true)
-	--				table.insert(open_list, idx)
-	--			end
-	--		end
-	--	end
-	--	
-	--	-- left
-	--	if (pt.x ~= 1) then
-	--		if (grid.safe(pt.x - 1, pt.y ) == 0) then
-	--			local idx = toIndex(pt.x - 1, pt.y)
-	--			
-	--			if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
-	--				grid[pt.x - 1][pt.y] = grid[pt.x][pt.y] + 1
-    --
-	--				table.insert(open_lookup, tostring(idx), true)
-	--				table.insert(open_list, idx)
-	--			end
-	--		end
-	--	end
-	--	
-	--	-- bot
-	--	if (pt.y ~= grid.height) then
-	--		if (grid.safe(pt.x, pt.y + 1) == 0) then
-	--			local idx = toIndex(pt.x, pt.y + 1)
-	--			
-	--			if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
-	--				grid[pt.x][pt.y + 1] = grid[pt.x][pt.y] + 1
-	--				table.insert(open_lookup, tostring(idx), true)
-	--				table.insert(open_list, idx)
-	--			end
-	--		end
-	--	end
-	--	
-	--	-- right
-	--	if (pt.x ~= grid.width) then
-	--		if (grid.safe(pt.x + 1, pt.y) == 0) then
-	--			local idx = toIndex(pt.x + 1, pt.y)
-	--			
-	--			if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
-	--				grid[pt.x + 1][pt.y] = grid[pt.x][pt.y] + 1
-	--				table.insert(open_lookup, tostring(idx), true)
-	--				table.insert(open_list, idx)
-	--			end
-	--		end
-	--	end
-		
 		a = a + 1
 	end
 	
@@ -189,17 +135,12 @@ function geometry.getPath(map, p, d)
 	-- infinity breaker
 	local a = 0
 	
-	while(map.safe(curr.x, curr.y) ~= 1 and a < 10) do
-		if(map.safe(curr.x, curr.y - 1) == map.safe(curr.x, curr.y) - 1) then
-			-- top
-			curr.y = curr.y - 1
-		elseif (map.safe(curr.x - 1, curr.y) == map.safe(curr.x, curr.y) - 1) then
-			-- left
-			curr.x = curr.x - 1
-		elseif (map.safe(curr.x, curr.y + 1) == map.safe(curr.x, curr.y) - 1) then
-			curr.y = curr.y + 1
-		else 
-			curr.x = curr.x + 1
+	while(map.safe(curr.x, curr.y) ~= 1) do
+		for dir = 1, 4 do
+			local curr_adj = points.rotate(curr, dir)
+			if (map.safe(curr_adj.x, curr_adj.y) == map.safe(curr.x, curr.y) - 1) then
+				curr = curr_adj
+			end
 		end
 		
 		table.insert(ret,points.copyPoint(curr))

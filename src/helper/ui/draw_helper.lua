@@ -1,8 +1,8 @@
-local grids = require("src.model.grids")
-local sprites = require("src.helper.sprites")
-local geometry = require("src.helper.geometry")
-local player_helper = require("src.helper.player_helper")
+local grids = require("src.model.geometry.grids")
+local geometry = require("src.model.geometry.geometry")
+local player_helper = require("src.helper.game.player_helper")
 
+local sprites = require("src.helper.ui.sprites")
 
 local draw_helper = {}
 
