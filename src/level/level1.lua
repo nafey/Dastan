@@ -70,12 +70,13 @@ local used_ability = nil
 local player_list = player_helper.loadPlayers("res/data/char_dat.json", teams)
 
 local levelname = "small"
-local raw_level1 = levelloader.loadlevel(levelname)
+local levelpath = "res/maps/small.csv"
+local raw_level1 = levelloader.loadLevel(levelpath)
 local move_map = nil
 
 local lock_tap_event = false
 
-game_manager.create("res/data/char_dat.json", "res/maps/small.png", "res/data/team_dat.json", 1)
+game_manager.create("res/data/char_dat.json", "res/maps/small.csv", "res/data/team_dat.json", 1)
 
 
 

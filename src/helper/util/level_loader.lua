@@ -6,10 +6,10 @@ local points = require("src.model.geometry.points")
 
 local levelloader = {}
 
-function levelloader.loadlevel(levelname)
+function levelloader.loadLevel(levelpath)
 	-- Path for the file to read
 	
-	local level_file = file_helper.getFile("res/maps/" .. levelname .. ".csv", "r")
+	local level_file = file_helper.getFile(levelpath, "r")
 
 	local ret = nil
 	
