@@ -75,7 +75,7 @@ local move_map = nil
 
 local lock_tap_event = false
 
---game_manager.create("res/data/char_dat.json", "res/maps/small.png")
+game_manager.create("res/data/char_dat.json", "res/maps/small.png", "res/data/team_dat.json", 1)
 
 
 
