@@ -9,9 +9,12 @@ local level_loader = require("src.helper.util.level_loader")
 
 local game_manager = {}
 
+-- All logic stuff
 game_manager.game = game
 
-function game_manager.create(hero_data_file_path, level_data_file_path, team_data_file_path, main_team)
+-- All UI stuff 
+game_manager.scene = nil
+function game_manager.create(scene, hero_data_file_path, level_data_file_path, team_data_file_path, main_team)
 	-- Load team data
 	local teams = json_helper:decode(file_helper.getFileText(team_data_file_path))
 	
