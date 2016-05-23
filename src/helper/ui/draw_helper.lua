@@ -1,6 +1,6 @@
 local grids = require("src.model.geometry.grids")
 local geometry = require("src.model.geometry.geometry")
-local player_helper = require("src.helper.game.player_helper")
+local player_helper = require("src.model.game.player_helper")
 
 local sprites = require("src.helper.ui.sprites")
 
@@ -435,9 +435,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		
 		sprites.draw(png, x - 1, y - 1, 0, displayGroup)
 	end
-	
-	adj.print()
-	
+		
 	--where adjacency is 1
 	for i = 1, adj.width do
 		for j = 1, adj.height do

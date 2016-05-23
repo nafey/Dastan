@@ -135,13 +135,19 @@ function geometry.getPath(map, p, d)
 	-- infinity breaker
 	local a = 0
 	
-	while(map.safe(curr.x, curr.y) ~= 1) do
+	while(tonumber(map.safe(curr.x, curr.y)) ~= 1) do
+		local found_flag = false
 		for dir = 1, 4 do
-			local curr_adj = points.rotate(curr, dir)
-			if (map.safe(curr_adj.x, curr_adj.y) == map.safe(curr.x, curr.y) - 1) then
-				curr = curr_adj
+			if (not found_flag) then
+				local curr_adj = points.rotate(curr, dir)
+				if (map.safe(curr_adj.x, curr_adj.y) == map.safe(curr.x, curr.y) - 1) then
+					curr = curr_adj
+					found_flag = true
+				end
 			end
 		end
+		
+		print(curr.str())
 		
 		table.insert(ret,points.copyPoint(curr))
 		a = a + 1

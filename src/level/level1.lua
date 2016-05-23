@@ -1,12 +1,14 @@
 local composer = require( "composer" )
 
+local game_manager = require("src.game_manager")
+
 local player_state = require("src.model.game.player_state")
+local player_helper = require("src.model.game.player_helper")
 
 local points = require("src.model.geometry.points")
 local grids = require("src.model.geometry.grids")
 local geometry = require("src.model.geometry.geometry")
 
-local player_helper = require("src.helper.game.player_helper")
 local levelloader = require("src.helper.util.level_loader")
 
 local sprites = require("src.helper.ui.sprites")
@@ -72,6 +74,10 @@ local raw_level1 = levelloader.loadlevel(levelname)
 local move_map = nil
 
 local lock_tap_event = false
+
+--game_manager.create("res/data/char_dat.json", "res/maps/small.png")
+
+
 
 local scene = composer.newScene()
 
@@ -171,6 +177,8 @@ function scene:create( event )
 	self.view.ui.frame.button.button2:addEventListener("tap", ability2click)
 	
 	
+	
+	
 	local player_pos = levelloader.getPlayerPositions(raw_level1)
 	
 	for i = 1, #player_list do
@@ -201,16 +209,20 @@ function tapEvent(event)
 		
 	
 	if (selected_player_state == player_state.awaiting_player_move) then
+		--print(1)
 		if (move_map.safe(x, y) ~= 0) then
+			--print(2)
 			animation_manager.stopBob()
 			lock_tap_event = true
 			
+			--print(3)
 			draw_helper.emptyGroup(scene.view.selection)
 			
+			--print(4)
 			local path = geometry.getPath(move_map, selected_player.pos, points.createPoint(x, y))
 			selected_player_state = player_state.awaiting_attack_confirmation
 			
-			
+			--print(5)
 			animation_manager.animateCharacterMove(selected_player, path, moveEndCallback)
 		end
 	elseif (selected_player_state == player_state.awaiting_attack_confirmation) then

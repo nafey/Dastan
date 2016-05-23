@@ -17,7 +17,6 @@ function grids.createGrid(size_x, size_y)
 			for i = 1, size_x do 
 				io.write(g.safe(i, j) .. " ")
 			end
-			
 			io.write("\n")
 		end
 	end

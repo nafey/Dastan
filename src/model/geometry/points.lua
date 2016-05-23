@@ -7,11 +7,15 @@ function points.createPoint(x, y)
 	
 	function p.print(newline)
 		newline = newline or false
-		io.write("(" .. p.x .. ", " .. p.y .. ")")
+		io.write(p.str())
 
 		if (newline) then
 			io.write("\n")
 		end
+	end
+	
+	function p.str()
+		return "(" .. p.x .. ", " .. p.y .. ")"
 	end
 	return p
 end
