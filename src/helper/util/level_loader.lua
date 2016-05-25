@@ -46,36 +46,6 @@ function levelloader.loadLevel(levelpath)
 	return ret
 end
 
-function levelloader.getMovementGrid(levelgrid, player_list, player_name)
-	local ret = grids.createGrid(levelgrid.width, levelgrid.height)
-	
-	for i = 1, levelgrid.width do
-		for j = 1, levelgrid.height do
-			if (tonumber(levelgrid.safe(i, j)) ~= nil) then
-				ret.put(i, j, levelgrid.safe(i, j))
-			else 
-				ret.put(i, j, 0)
-			end
-		end
-	end
-	
-	return ret
-end
-
-
-function levelloader.markPlayers(levelgrid, player_list,  player_name) 
-	local ret = grids.copyGrid(levelgrid)
-	
-	if (player_list ~= nil) then
-		for i = 1, #player_list do
-			if (player_list[i].name ~= player_name) then
-				ret.put(player_list[i].pos.x, player_list[i].pos.y, 1)
-			end
-		end
-	end
-	
-	return ret
-end
 
 
 return levelloader

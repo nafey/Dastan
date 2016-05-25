@@ -13,13 +13,30 @@ local game_display = {}
 -- All logic stuff
 game_display.game = game
 
--- All UI stuff 
-game_display.ui = {}
 
--- Scene
+-- All UI Information 
+game_display.ui = {}
+-- All UI sprites 
+game_display.root = nil
+
+
+-- Scene for clicks and stuff
 game_display.scene = nil
 
 function game_display.setupUI()
+	-- Draw Character info
+	draw_helper.showCharDetails(game_display.root.ui.frame.char_dat.face,
+		game_display.root.ui.frame.char_dat.desc,
+		game_display.game.selected_player)
+
+	-- Movement Grid draw
+	draw_helper.drawMovementGrid(game_display.game.move_map, 
+		game_display.root.selection, 
+		game_display.game.player_list, 
+		game_display.game.selected_player.team, 
+		game_display.game.selected_player.pos)
+	
+	-- Move Order draw
 	draw_helper.drawMoveOrder(game_display.game.player_list, 
 		game_display.root.ui.frame.move_order)
 end
@@ -56,6 +73,7 @@ function game_display.create(root)
 	game_display.root.background.bg.anchorY = 0
 	
 	-- Show Players
+	game_display.root.selection = display.newGroup()
 	game_display.root.player = display.newGroup()
 	
 	game_display.ui.player_sprites = {}
@@ -82,8 +100,48 @@ function game_display.create(root)
 	game_display.root.ui.frame.move_order.y = 19
 	game_display.root.ui.frame.move_order.x = 277
 	game_display.root.ui.frame:insert(game_display.root.ui.frame.move_order)
-	game_display.setupUI()
 	
+		-- CHAR DATA
+	game_display.root.ui.frame.char_dat = display.newGroup()
+	game_display.root.ui.frame:insert(game_display.root.ui.frame.char_dat)
+			
+			-- FACE
+	game_display.root.ui.frame.char_dat.face = display.newGroup()
+	game_display.root.ui.frame.char_dat.face.x = 13
+	game_display.root.ui.frame.char_dat.face.y = 13
+	game_display.root.ui.frame.char_dat:insert(game_display.root.ui.frame.char_dat.face)
+			
+			-- DESC
+	game_display.root.ui.frame.char_dat.desc = display.newGroup()
+	game_display.root.ui.frame.char_dat.desc.x = 63
+	game_display.root.ui.frame.char_dat.desc.y = 13
+	game_display.root.ui.frame.char_dat:insert(game_display.root.ui.frame.char_dat.desc)
+	
+		-- MOVE ORDER
+	game_display.root.ui.frame.move_order = display.newGroup()
+	game_display.root.ui.frame.move_order.y = 19
+	game_display.root.ui.frame.move_order.x = 277
+	game_display.root.ui.frame:insert(game_display.root.ui.frame.move_order)
+	
+		-- BUTTON
+	game_display.root.ui.frame.button = display.newGroup()
+	game_display.root.ui.frame.button.x = 170
+	game_display.root.ui.frame.button.y = 7
+	game_display.root.ui.frame:insert(game_display.root.ui.frame.button)
+			
+			-- BUTTON 1
+	game_display.root.ui.frame.button.button1 = display.newGroup()
+	game_display.root.ui.frame.button:insert(game_display.root.ui.frame.button.button1)
+	--game_display.root.ui.frame.button.button1:addEventListener("tap", ability1click)
+	
+			-- BUTTON 2
+	game_display.root.ui.frame.button.button2 = display.newGroup()
+	game_display.root.ui.frame.button.button2.x = 50
+	--game_display.root.ui.frame.button:insert(game_display.root.ui.frame.button.button2)
+	--game_display.root.ui.frame.button.button2:addEventListener("tap", ability2click)
+	
+	
+	game_display.setupUI()
 end
 
 return game_display

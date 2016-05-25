@@ -2,6 +2,7 @@ local points = require("src.model.geometry.points")
 
 local players = require("src.model.game.players")
 local geometry = require("src.model.geometry.geometry")
+local grids = require("src.model.geometry.grids")
 
 local file_helper = require("src.helper.util.file_helper")
 local json_helper = require("src.helper.util.json_helper")
@@ -89,6 +90,40 @@ function player_helper.isTargetable(character, player_list, ability, x, y)
 	end
 	
 	return valid_target_flag
+end
+
+-- TODO: Cleaner solution for representing start pos on map 
+-- TODO: Combine with markPlayers
+-- Cleans the movementGrid to remove P1 to P6
+function player_helper.getMovementGrid(levelgrid, player_list, player_name)
+	local ret = grids.createGrid(levelgrid.width, levelgrid.height)
+	
+	for i = 1, levelgrid.width do
+		for j = 1, levelgrid.height do
+			if (tonumber(levelgrid.safe(i, j)) ~= nil) then
+				ret.put(i, j, levelgrid.safe(i, j))
+			else 
+				ret.put(i, j, 0)
+			end
+		end
+	end
+	
+	return ret
+end
+
+-- Adds 1 to any grid with all the positions for the players
+function player_helper.markPlayers(levelgrid, player_list,  player_name) 
+	local ret = grids.copyGrid(levelgrid)
+	
+	if (player_list ~= nil) then
+		for i = 1, #player_list do
+			if (player_list[i].name ~= player_name) then
+				ret.put(player_list[i].pos.x, player_list[i].pos.y, 1)
+			end
+		end
+	end
+	
+	return ret
 end
 
 -- set later to true if you just want to move without setting movement_points

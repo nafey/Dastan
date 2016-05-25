@@ -81,18 +81,23 @@ function draw_helper.drawButtons(displayGroup, character)
 end
 
 function draw_helper.drawFace(displayGroup, character)
-	draw_helper.emptyGroup(displayGroup)
 	
-	local png = "res/chars/" .. character.name .. "_icon.png"
-	local face = display.newImageRect(displayGroup, png, 48, 40)
-	face.anchorX = 0
-	face.anchorY = 0
 end
 
-function draw_helper.writeStuff(displayGroup, character)
-	draw_helper.emptyGroup(displayGroup)
+-- TODO: the UI should be easier to edit 
+-- 	perhaps look at CoronaSDK UI reference
+function draw_helper.showCharDetails(displayGroupFace, displayGroupDescription, character)
+	draw_helper.emptyGroup(displayGroupFace)
+	
+	local png = "res/chars/" .. character.name .. "_icon.png"
+	local face = display.newImageRect(displayGroupFace, png, 48, 40)
+	face.anchorX = 0
+	face.anchorY = 0
+	
+	
+	draw_helper.emptyGroup(displayGroupDescription)
 	local text_options = {
-		parent = displayGroup,
+		parent = displayGroupDescription,
 		text = "Name:",
 		font = "AR JULIAN",
 		width = 70,
@@ -247,6 +252,8 @@ end
 -- Being a passed a grid of accepted tiles draw the selected area
 -- Mark the areas next to enemy players in red
 -- send one mark_pos to highlight it in the grid
+-- TODO: Do remaining rot stuff
+
 function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, mark_pos) 
 	local path_dot = "res/ui/aura_dot.png"
 	local path_corner = "res/ui/aura_corner.png"
