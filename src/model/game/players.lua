@@ -16,7 +16,6 @@ function players.createPlayer(name, label, hp, attack, speed, range, ability_1, 
 	p.team = nil
 	p.movement_points = 0
 	p.movement_points_later = 0
-	p.sprite = nil
 	p.max_hp = hp
 	
 	if (ability_1 ~= nil) then

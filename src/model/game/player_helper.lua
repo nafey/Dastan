@@ -93,6 +93,7 @@ end
 
 -- set later to true if you just want to move without setting movement_points
 -- usually you would want to do this when you want to forecast movement
+-- TODO: think about not modifying player attr within this method
 function player_helper.selectNextMover(player_list, later) 
 	local attr = "movement_points"
 	
