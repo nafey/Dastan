@@ -46,36 +46,6 @@ function levelloader.loadLevel(levelpath)
 	return ret
 end
 
-function levelloader.getPlayerPositions(levelgrid)
-	-- is true only when i,j corresponds to P1 ...P6
-	function isPlayerPosition(i, j) 
-		local ret = false
-		
-		if (tonumber(levelgrid.safe(i, j)) == nil) then
-			if (string.find(levelgrid.safe(i, j), "P")) then
-				if (tonumber(string.sub(levelgrid.safe(i, j), 2)) ~= nil) then
-					if (tonumber(string.sub(levelgrid.safe(i, j), 2)) <= 6 and tonumber(string.sub(levelgrid.safe(i, j), 2)) >= 1) then
-						ret = true
-					end
-				end
-			end
-		end
-		
-		return ret
-	end
-	
-	local ret = {}
-	for i = 1, levelgrid.width do
-		for j = 1, levelgrid.height do
-			if (isPlayerPosition(i,j)) then
-				ret[levelgrid.safe(i, j)] = points.createPoint(i, j)
-			end
-		end
-	end
-		
-	return ret
-end
-
 function levelloader.getMovementGrid(levelgrid, player_list, player_name)
 	local ret = grids.createGrid(levelgrid.width, levelgrid.height)
 	

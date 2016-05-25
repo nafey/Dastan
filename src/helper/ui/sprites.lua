@@ -2,6 +2,7 @@
 local sprites = {}
 
 function sprites.drawSprite(displayGroup, path, x, y, w, h)
+
 	local options =
 	{
 		width = tonumber(w),

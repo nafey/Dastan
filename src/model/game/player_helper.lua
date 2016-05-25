@@ -1,7 +1,10 @@
-local file_helper = require("src.helper.util.file_helper")
-local json_helper = require("src.helper.util.json_helper")
+local points = require("src.model.geometry.points")
+
 local players = require("src.model.game.players")
 local geometry = require("src.model.geometry.geometry")
+
+local file_helper = require("src.helper.util.file_helper")
+local json_helper = require("src.helper.util.json_helper")
 
 local player_helper = {}
 
@@ -128,6 +131,36 @@ function player_helper.selectNextMover(player_list, later)
 	ret = player_list[passedThreshold(player_list)]
 	ret[attr] = ret[attr] - 100
 	
+	return ret
+end
+
+function player_helper.getPlayerPositions(levelgrid)
+	-- is true only when i,j corresponds to P1 ...P6
+	function isPlayerPosition(i, j) 
+		local ret = false
+		
+		if (tonumber(levelgrid.safe(i, j)) == nil) then
+			if (string.find(levelgrid.safe(i, j), "P")) then
+				if (tonumber(string.sub(levelgrid.safe(i, j), 2)) ~= nil) then
+					if (tonumber(string.sub(levelgrid.safe(i, j), 2)) <= 6 and tonumber(string.sub(levelgrid.safe(i, j), 2)) >= 1) then
+						ret = true
+					end
+				end
+			end
+		end
+		
+		return ret
+	end
+		
+	local ret = {}
+	for i = 1, levelgrid.width do
+		for j = 1, levelgrid.height do
+			if (isPlayerPosition(i,j)) then
+				ret[levelgrid.safe(i, j)] = points.createPoint(i, j)
+			end
+		end
+	end
+			
 	return ret
 end
 
