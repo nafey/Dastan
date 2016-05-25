@@ -35,8 +35,6 @@ function game_manager.initialize(scene, player_data_file_path, level_data_file_p
 	
 	-- initialize game
 	game_manager.game.initialize(player_list, level)
-	
-	
 end
 
 function game_manager.create(root)
@@ -46,17 +44,14 @@ function game_manager.create(root)
 	
 	
 	game_manager.root = root
+	game_groups.initializeGroups(game_manager.root)
 		
-	game_manager.root.background = display.newGroup()
-	
 	-- Background setup
 	game_manager.root.background.bg = display.newImageRect(root.background, game_manager.ui.background, level_width, level_height )
 	game_manager.root.background.bg.anchorX = 0
 	game_manager.root.background.bg.anchorY = 0
 	
-	-- show Players
-	game_manager.root.player = display.newGroup()
-	
+	-- Show Players
 	game_manager.ui.player_sprites = {}
 	
 	for i = 1, #game_manager.game.player_list do
@@ -64,6 +59,13 @@ function game_manager.create(root)
 		game_manager.ui.player_sprites [player.name] = sprites.draw("res/chars/" .. player.name .. ".png", 
 			player.pos.x - 1, player.pos.y - 1, 0, game_manager.root.player)
 	end
+	
+	-- Show Frame
+	game_manager.root.ui.frame.ui_frame = display.newImageRect(root.ui.frame, "res/ui/ui_frame.png", level_width, frame_height)
+	game_manager.root.ui.frame.ui_frame.anchorX = 0
+	game_manager.root.ui.frame.ui_frame.anchorY = 0
+	
+
 	
 end
 
