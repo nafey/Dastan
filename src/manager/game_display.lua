@@ -1,12 +1,18 @@
+local points = require("src.model.geometry.points")
+
 local game = require("src.model.game.game")
 local player_helper = require("src.model.game.player_helper")
 
 local sprites = require("src.helper.ui.sprites")
 local draw_helper = require("src.helper.ui.draw_helper")
+local animation_manager = require("src.helper.ui.animation_manager")
 
 local json_helper = require("src.helper.util.json_helper")
 local file_helper = require("src.helper.util.file_helper")
 local level_loader = require("src.helper.util.level_loader")
+
+
+local game_state = require("src.model.game.game_state")
 
 local game_display = {}
 
@@ -17,11 +23,47 @@ game_display.game = game
 -- All UI Information 
 game_display.ui = {}
 -- All UI sprites 
-game_display.root = nil
+game_display.root = {}
+
+-- TODO: to use {} instead of nil for initialization
 
 
 -- Scene for clicks and stuff
-game_display.scene = nil
+game_display.scene = {}
+
+game_display.action_counter = 0 
+game_display.executing = false
+
+game_display.animation_manager = animation_manager
+
+function game_display.executeAction(action)
+	if (action.code == "move") then
+		animation_manager.animateCharacterMove(
+			game_display.ui.player_sprites[action.player.name], 
+			action.path,
+			nil)
+	end
+end
+
+
+function game_display.tap( event ) 
+	local x = math.floor(event.x / TILE_X) + 1
+	local y = math.floor(event.y / TILE_Y) + 1
+
+	if (game_display.ui.game_state == game_state.awaiting_player_move) then
+		if (game.move_map.safe(x, y) ~= 0) then
+		
+			print(x, y)
+			
+			local interaction = {}
+			
+			interaction.code = "move"
+			interaction.point = points.createPoint(x, y)
+			
+			game.submitInteraction(interaction)
+		end
+	end
+end
 
 function game_display.setupUI()
 	-- Draw Character info
@@ -41,6 +83,8 @@ function game_display.setupUI()
 		game_display.root.ui.frame.move_order)
 end
 
+
+
 function game_display.initialize(scene, player_data_file_path, level_data_file_path, level_background_image, team_data_file_path, main_team)
 	-- Load team data
 	local teams = json_helper:decode(file_helper.getFileText(team_data_file_path))
@@ -53,9 +97,42 @@ function game_display.initialize(scene, player_data_file_path, level_data_file_p
 	
 	-- Background image 
 	game_display.ui.background = level_background_image
+	game_display.ui.game_state = nil
+	
 	
 	-- initialize game
 	game_display.game.initialize(player_list, level)
+end
+
+
+function game_display.frame()
+	game_display.animation_manager.step()
+	
+	if (not game_display.executing) then
+		if (#game.action_queue > game_display.action_counter) then
+			game_display.action_counter = game_display.action_counter + 1
+			game_display.executeAction(
+				game.action_queue[game_display.action_counter])
+			executing = true
+		end
+	end
+end
+
+function game_display.debug()
+	--local act = {}
+	--
+	--act.code = "move"
+	--
+	--local path = {}
+	--table.insert(path, points.createPoint(9, 5))
+	--table.insert(path, points.createPoint(10, 5))
+	--table.insert(path, points.createPoint(11, 5))
+	--table.insert(path, points.createPoint(12, 5))
+	--
+	--act.path = path
+	--act.player = game.selected_player
+	--
+	--game_display.executeAction(act)
 end
 
 function game_display.create(root)
@@ -140,8 +217,16 @@ function game_display.create(root)
 	--game_display.root.ui.frame.button:insert(game_display.root.ui.frame.button.button2)
 	--game_display.root.ui.frame.button.button2:addEventListener("tap", ability2click)
 	
-	
 	game_display.setupUI()
+	
+	-- Expect clicks
+	game_display.ui.game_state = game_state.awaiting_player_move
+	
+	-- Tap Listener
+	game_display.root.background:addEventListener("tap", game_display.tap)
+	
+	game_display.debug()
 end
+
 
 return game_display

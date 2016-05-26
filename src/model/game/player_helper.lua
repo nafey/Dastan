@@ -126,6 +126,20 @@ function player_helper.markPlayers(levelgrid, player_list,  player_name)
 	return ret
 end
 
+-- TODO: consider not passing map to this method and infer it here itself 
+function player_helper.movePlayer(map, player, destination) 
+	if (map.safe(player.pos.x, player.pos.y) == 0 or map.safe(destination.x, destination.y) == 0) then
+		return nil
+	end
+	
+	local ret = geometry.getPath(map, player.pos, destination)
+	
+	player.pos.x = destination.x
+	player.pos.y = destination.y
+	
+	return ret
+end
+
 -- set later to true if you just want to move without setting movement_points
 -- usually you would want to do this when you want to forecast movement
 -- TODO: think about not modifying player attr within this method

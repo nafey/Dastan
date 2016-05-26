@@ -1,5 +1,5 @@
 local player_helper = require("src.model.game.player_helper")
-
+-- TODO: change player to unit everywhere
 -- TODO: Is it really needed here?
 local geometry = require("src.model.geometry.geometry")
 
@@ -9,6 +9,7 @@ game.player_list = nil
 game.level = nil
 game.selected_player = nil
 game.move_map = nil
+game.action_queue = {}
 
 function game.selectNextPlayer()
 	game.selected_player = player_helper.selectNextMover(game.player_list, false)
@@ -33,6 +34,31 @@ function game.initialize(player_list, level)
 	
 	-- Set the selected player_helper
 	game.selectNextPlayer()
+end
+
+function game.submitInteraction(interaction)
+	if (interaction.code == "move") then
+		-- move player
+		local ret = player_helper.movePlayer(game.move_map, 
+			game.selected_player, interaction.point)
+		
+		-- enqueue move action
+		local move_action = {}
+		move_action.code = "move"
+		move_action.player = game.selected_player
+		move_action.path = ret
+		table.insert(game.action_queue, move_action)
+		
+		-- selectNextPlayer
+		game.selectNextPlayer()
+		
+		-- enqueue select action
+		local select_action = {}
+		select_action.code = "select"
+		select_action.player = game.selected_player
+		
+		table.insert(game.action_queue, select_action)
+	end
 end
 
 

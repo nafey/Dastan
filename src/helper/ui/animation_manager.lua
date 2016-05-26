@@ -107,8 +107,8 @@ function animation_manager.animateTargetedAbility(character, target, ability, ca
 	end
 end
 
-function animation_manager.animateCharacterMove(character, path, callback)
-	local move = animations.characterMoveAnimation(character, path, 0.25, callback)
+function animation_manager.animateCharacterMove(sprite, path, callback)
+	local move = animations.characterMoveAnimation(sprite, path, 0.25, callback)
 	table.insert(animation_manager.list, move)
 end
 

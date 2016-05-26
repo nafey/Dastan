@@ -47,12 +47,14 @@ function animations.characterAttackAnimation(character, attacked, callback)
 	return attack_seq
 end
 
-function animations.characterMoveAnimation(character, path, speed, callback) 
+-- TODO: can it be implemented with sequential move?
+function animations.characterMoveAnimation(sprite, path, speed, callback) 
 	local a = {}
 	a.has_more = true
-		
-	a.start = points.copyPoint(character.pos)
-	a.curr = points.copyPoint(character.pos)
+	
+	-- TODO: is this the best way to do it?
+	a.start = points.createPoint(sprite.x / TILE_X + 1 , sprite.y / TILE_Y + 1)
+	a.curr = points.copyPoint(a.start)
 	
 	if (#path == 1) then
 		a.has_more = false
@@ -75,8 +77,12 @@ function animations.characterMoveAnimation(character, path, speed, callback)
 				a.ratio = 0
 			else
 				a.has_more = false
-				character.move(a.curr.x, a.curr.y)
-				callback()
+				sprite.x = (a.curr.x - 1) * TILE_X
+				sprite.y = (a.curr.y - 1) * TILE_Y
+				
+				if (callback ~= nil) then
+					callback()
+				end
 			end
 		end
 		if (a.has_more) then
@@ -84,7 +90,8 @@ function animations.characterMoveAnimation(character, path, speed, callback)
 			a.ratio = a.ratio + speed
 		end
 		
-		character.move(a.curr.x, a.curr.y)
+		sprite.x = (a.curr.x - 1) * TILE_X
+		sprite.y = (a.curr.y - 1) * TILE_Y
 	end
 	
 	function a.stop()
