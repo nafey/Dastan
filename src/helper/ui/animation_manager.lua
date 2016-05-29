@@ -157,7 +157,11 @@ function animation_manager.clearDead()
 			animation_manager.list[i].stop()
 			
 			if (animation_manager.list[i].callback ~= nil) then
-				animation_manager.list[i].callback()
+				if (animation_manager.list[i].args ~= nil) then
+					animation_manager.list[i].callback(animation_manager.list[i].args)
+				else
+					animation_manager.list[i].callback()
+				end
 			end
 			
 			table.remove(animation_manager.list, i)

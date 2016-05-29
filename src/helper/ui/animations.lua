@@ -55,10 +55,10 @@ function animations.characterMoveAnimation(sprite, path, speed, callback, args)
 	-- TODO: is this the best way to do it?
 	a.start = points.createPoint(sprite.x / TILE_X + 1 , sprite.y / TILE_Y + 1)
 	a.curr = points.copyPoint(a.start)
+	a.args = args
 	
 	if (#path == 1) then
 		a.has_more = false
-		callback(args)
 		return nil
 	end
 	
@@ -76,13 +76,11 @@ function animations.characterMoveAnimation(sprite, path, speed, callback, args)
 				a.start = points.copyPoint(a.curr)
 				a.ratio = 0
 			else
-				a.has_more = false
+				
 				sprite.x = (a.curr.x - 1) * TILE_X
 				sprite.y = (a.curr.y - 1) * TILE_Y
 				
-				if (callback ~= nil) then
-					callback(args)
-				end
+				a.stop()
 			end
 		end
 		if (a.has_more) then
@@ -95,7 +93,8 @@ function animations.characterMoveAnimation(sprite, path, speed, callback, args)
 	end
 	
 	function a.stop()
-		--nothing to finalize
+		a.has_more = false
+		print("did false")
 	end
 	
 	return a

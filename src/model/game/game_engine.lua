@@ -18,7 +18,7 @@ end
 function game_engine.damage(player, damage, player_list)
 	player.hp = player.hp - damage
 	
-	if (attacked.hp <= 0) then
+	if (player.hp <= 0) then
 		game_engine.kill(player.name, player_list)
 	end
 end

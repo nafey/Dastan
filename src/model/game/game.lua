@@ -73,7 +73,25 @@ function game.submitInteraction(interaction)
 		
 		table.insert(game.action_queue, select_action)
 	elseif (interaction.code == "attack") then
+		game_engine.playerAttack(interaction.attacker, interaction.defender, game.player_list)
+		print(interaction.defender.hp)
 		
+		local attack_action = {}
+		attack_action.code = "action"
+		attack_action.attacker = interaction.attacker
+		attack_action.defender = interaction.defender
+		
+		table.insert(game.action_queue, attack_action)
+		
+		-- selectNextPlayer
+		game.selectNextPlayer()
+		
+		-- enqueue select action
+		local select_action = {}
+		select_action.code = "select"
+		select_action.player = game.selected_player
+		
+		table.insert(game.action_queue, select_action)
 	end
 end
 

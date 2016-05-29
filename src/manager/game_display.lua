@@ -53,6 +53,7 @@ end
 function game_display.executeAction(action)
 	if (action.code == "move") then
 		draw_helper.emptyGroup(game_display.root.selection)
+		
 		animation_manager.animateCharacterMove(
 			game_display.ui.player_sprites[action.player.name], 
 			action,
@@ -61,7 +62,12 @@ function game_display.executeAction(action)
 	elseif (action.code == "select") then
 		game_display.setupUI()
 		game_display.ui.game_state = game_state.awaiting_player_move
-	end	
+	elseif (action.code == "action") then
+		print("Here here here")
+		draw_helper.emptyGroup(game_display.root.selection)
+		
+		game_display.executing = true
+	end
 end
 
 
@@ -118,6 +124,7 @@ function game_display.tap( event )
 				interaction.attacker = game.selected_player
 				interaction.defender = player_helper.getPlayerAtPosition(x, y, game.player_list)
 				
+				draw_helper.emptyGroup(game_display.root.ui.play_area)
 				game.submitInteraction(interaction)
 			end
 		end
