@@ -63,7 +63,6 @@ function game_display.executeAction(action)
 		game_display.setupUI()
 		game_display.ui.game_state = game_state.awaiting_player_move
 	elseif (action.code == "action") then
-		print("Here here here")
 		draw_helper.emptyGroup(game_display.root.selection)
 		
 		game_display.executing = true
@@ -168,21 +167,13 @@ function game_display.frame()
 	end
 end
 
+function game_display.debug2(args)
+	print(args)
+end
+
 function game_display.debug()
-	--local act = {}
-	--
-	--act.code = "move"
-	--
-	--local path = {}
-	--table.insert(path, points.createPoint(9, 5))
-	--table.insert(path, points.createPoint(10, 5))
-	--table.insert(path, points.createPoint(11, 5))
-	--table.insert(path, points.createPoint(12, 5))
-	--
-	--act.path = path
-	--act.player = game.selected_player
-	--
-	--game_display.executeAction(act)
+	--animation_manager.debug(game_display.ui.player_sprites[game.selected_player.name], game_display.debug2, "Hello World")
+	
 end
 
 function game_display.create(root)

@@ -107,8 +107,14 @@ function animation_manager.animateTargetedAbility(character, target, ability, ca
 	end
 end
 
-function animation_manager.animateCharacterMove(sprite, action, callback)
-	local move = animations.characterMoveAnimation(sprite, action.path, 0.25, callback, action)
+function animation_manager.animateCharacterMove(sprite, action, callback, args)
+	local path = {}
+	
+	for i = 1, #action.path do
+		table.insert(path, 
+			points.createPoint((action.path[i].x - 1) * TILE_X, (action.path[i].y - 1) * TILE_Y))
+	end
+	local move = animations.moveSprite(sprite, path, callback, action)
 	table.insert(animation_manager.list, move)
 end
 
@@ -117,7 +123,7 @@ function animation_manager.animateCharacterAttack(character, attacked, callback)
 	table.insert(animation_manager.list, attack_seq)
 end
 
-function animation_manager.debug(character)
+function animation_manager.debug(sprite, callback, args)
 	--local move1 = animations.characterTranslate(character, points.createPoint(9, 3), 350)
 	--local move2 = animations.characterTranslate(character, points.createPoint(10, 6), 350)
 	--	
@@ -139,6 +145,20 @@ function animation_manager.debug(character)
 	
 	--local blink = animations.blink(character.sprite, 3, 100)
 	--table.insert(animation_manager.list, blink)
+	
+	local move1 = animations.characterTranslate(sprite, points.createPoint(288, 128), 
+		200)
+	local move2 = animations.characterTranslate(sprite, points.createPoint(320, 128),
+		200)
+	
+	local anim_list = {}
+	
+	table.insert(anim_list, move1)
+	table.insert(anim_list, move2)
+	
+	local seq = animations.playSequence(anim_list, callback, args)
+	
+	table.insert(animation_manager.list, seq)
 end
 
 function animation_manager.step() 
@@ -155,15 +175,6 @@ function animation_manager.clearDead()
 	for i = #animation_manager.list, 1, -1 do
 		if (not animation_manager.list[i].has_more) then
 			animation_manager.list[i].stop()
-			
-			if (animation_manager.list[i].callback ~= nil) then
-				if (animation_manager.list[i].args ~= nil) then
-					animation_manager.list[i].callback(animation_manager.list[i].args)
-				else
-					animation_manager.list[i].callback()
-				end
-			end
-			
 			table.remove(animation_manager.list, i)
 		end
 	end

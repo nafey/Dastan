@@ -47,60 +47,6 @@ function animations.characterAttackAnimation(character, attacked, callback)
 	return attack_seq
 end
 
--- TODO: can it be implemented with sequential move?
-function animations.characterMoveAnimation(sprite, path, speed, callback, args) 
-	local a = {}
-	a.has_more = true
-	
-	-- TODO: is this the best way to do it?
-	a.start = points.createPoint(sprite.x / TILE_X + 1 , sprite.y / TILE_Y + 1)
-	a.curr = points.copyPoint(a.start)
-	a.args = args
-	
-	if (#path == 1) then
-		a.has_more = false
-		return nil
-	end
-	
-	a.target_i = 2
-	a.target = points.copyPoint(path[a.target_i])
-	
-	a.ratio = 0
-		
-	function a.step()
-		if(a.ratio >= 1) then
-			a.curr = points.copyPoint(a.target)
-			if (a.target_i < #path) then
-				a.target_i = a.target_i + 1
-				a.target = points.copyPoint(path[a.target_i])
-				a.start = points.copyPoint(a.curr)
-				a.ratio = 0
-			else
-				
-				sprite.x = (a.curr.x - 1) * TILE_X
-				sprite.y = (a.curr.y - 1) * TILE_Y
-				
-				a.stop()
-			end
-		end
-		if (a.has_more) then
-			a.curr = points.lerp(a.start, a.target, a.ratio)
-			a.ratio = a.ratio + speed
-		end
-		
-		sprite.x = (a.curr.x - 1) * TILE_X
-		sprite.y = (a.curr.y - 1) * TILE_Y
-	end
-	
-	function a.stop()
-		a.has_more = false
-		print("did false")
-	end
-	
-	return a
-end
-
-
 function animations.characterBob(character)
 	local a = {}
 	a.has_more = true
@@ -147,52 +93,167 @@ function animations.characterBob(character)
 	return a
 end
 
-function animations.characterTranslate(character, to_point, period)
+
+function animations.playSequence(animation_list, callback, args)
 	local a = {}
 	
 	a.has_more = true
+	a.callback = callback
+	a.args = args
 	
-	a.character = character
-	a.start = nil
-	a.to_point = points.copyPoint(to_point)
-	a.period = period
-	a.period_elapsed = 0
+	a.list = animation_list
 	
-	a.last_time = nil 
-	
-	function a.step()
-		if (a.start == nil) then
-			a.start = points.copyPoint(a.character.pos)
-		end
-		if (a.last_time == nil) then
-			a.last_time = system.getTimer()
-		else
-			local now = system.getTimer() 
-			local delta = now - a.last_time
-			a.last_time = now
-			
-			if (a.period_elapsed < a.period) then
-				local p = points.lerp(a.start, a.to_point, a.period_elapsed/a.period)
-				
-				a.character.move(p.x, p.y)
-				a.period_elapsed = a.period_elapsed + delta
-			else
-				a.period_elapsed = a.period
-				a.stop()
-			end
-			
-		end
+	if (#animation_list < 1) then
+		return nil
 	end
 	
-	function a.stop()
-		a.has_more = false
-		a.period_elapsed = 0
-		a.character.move(a.to_point.x, a.to_point.y)
+	a.idx = 1
+	
+	function a.step() 
+		if (a.idx <= #a.list) then
+			-- TODO: this assumes that every animation has step enabled from start
+			a.list[a.idx].step()
+			
+			if (not a.list[a.idx].has_more) then
+				a.list[a.idx].stop()
+				a.idx = a.idx + 1
+			end
+		else 
+			a.has_more = false
+		end
+	end
+		
+	function a.stop() 
+		if (a.callback ~= nil) then
+			if (a.args ~= nil) then
+				a.callback(a.args)
+			else
+				a.callback()
+			end
+		end
 	end
 	
 	return a
 end
 
+function animations.playParallel(animation_list, callback)
+	local a = {}
+	a.has_more = true
+	a.callback = callback
+	
+	a.list = animation_list
+	
+	if (#animation_list < 1) then
+		return nil
+	end
+	
+	function a.step()
+		a.is_dead = true
+		
+		for i = 1, #animation_list do
+			if (animation_list[i].has_more) then
+				a.is_dead = false
+				animation_list[i].step()
+			else
+				animation_list[i].stop()
+			end
+		end
+		
+		if (a.is_dead) then
+			a.has_more = false
+		end
+	end
+	
+	function a.stop()
+		a.has_more = false
+	end
+	
+	return a
+	
+end
+
+function animations.characterTranslate(sprite, to_point, period, callback, args)
+	local a = {}
+	
+	a.has_more = true
+	
+	a.sprite = sprite
+	a.start = nil
+	a.to_point = points.copyPoint(to_point)
+	a.period = period
+	a.period_elapsed = 0
+	a.callback = callback
+	a.args = args
+	
+	a.last_time = nil 
+	
+		
+	function a.step()
+		if (a.start == nil) then
+			a.start = points.createPoint(a.sprite.x, a.sprite.y)
+		end
+		
+		if (a.last_time == nil) then
+			a.last_time = system.getTimer()
+		end
+		
+		local now = system.getTimer() 
+		local delta = now - a.last_time
+		a.last_time = now
+		
+		if (a.period_elapsed < a.period) then
+			local p = points.lerp(a.start, a.to_point, a.period_elapsed/a.period)
+			
+			a.sprite.x = p.x
+			a.sprite.y = p.y
+
+			a.period_elapsed = a.period_elapsed + delta
+		end
+		
+		if (a.period_elapsed >= a.period) then
+			a.period_elapsed = a.period
+			a.sprite.x = a.to_point.x
+			a.sprite.y = a.to_point.y
+			a.has_more = false
+		end
+	end
+	
+	function a.stop()
+		a.period_elapsed = 0
+		
+		
+		if (a.callback ~= nil) then
+			if (a.args ~= nil) then
+				a.callback(a.args)
+			else
+				a.callback()
+			end
+		end
+	end
+	
+	
+	return a
+end
+
+-- TODO: can it be implemented with sequential move?
+function animations.moveSprite(sprite, path, callback, args) 
+	if (#path == 1) then
+		a.has_more = false
+		return nil
+	end
+	
+	local anim_list = {}
+	
+	for i = 2, #path do
+		local move = animations.characterTranslate(sprite, 
+			points.createPoint(path[i].x, path[i].y), 
+			100)
+		table.insert(anim_list, move)
+	end
+	
+	local seq = animations.playSequence(anim_list, callback, args)
+	return seq
+end
 
 function animations.poke(character, isHort, isPositive) 
 	local a = {}
@@ -325,74 +386,6 @@ function animations.blink(sprite, times, period)
 	return a
 end
 
-function animations.playSequence(animation_list, callback)
-	local a = {}
-	a.has_more = true
-	a.callback = callback
-	
-	a.list = animation_list
-	
-	if (#animation_list < 1) then
-		return nil
-	end
-	
-	a.idx = 1
-	
-	function a.step() 
-		if (a.idx <= #a.list) then
-			if (a.list[a.idx].has_more) then
-				a.list[a.idx].step()
-			else
-				a.list[a.idx].stop()
-				a.idx = a.idx + 1
-			end
-		else 
-			a.stop()
-		end
-	end
-		
-	function a.stop() 
-		a.has_more = false
-	end
-	
-	return a
-end
-
-function animations.playParallel(animation_list, callback)
-	local a = {}
-	a.has_more = true
-	a.callback = callback
-	
-	a.list = animation_list
-	
-	if (#animation_list < 1) then
-		return nil
-	end
-	
-	function a.step()
-		a.is_dead = true
-		
-		for i = 1, #animation_list do
-			if (animation_list[i].has_more) then
-				a.is_dead = false
-				animation_list[i].step()
-			else
-				animation_list[i].stop()
-			end
-		end
-		
-		if (a.is_dead) then
-			a.has_more = false
-		end
-	end
-	
-	function a.stop()
-		a.has_more = false
-	end
-	
-	return a
-	
-end
 
 
 
