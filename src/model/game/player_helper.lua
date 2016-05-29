@@ -57,7 +57,6 @@ function player_helper.useTargetedAbility(character, target, ability)
 		target.hp = target.hp - character.attack * 2
 	elseif (ability.name == "shoot") then
 		target.hp = target.hp - ability.damage
-		print("After shot hp is " .. target.hp) 
 	elseif (ability.name == "heal") then
 		if (target.hp < target.max_hp - ability.heal) then
 			target.hp = target.hp + ability.heal

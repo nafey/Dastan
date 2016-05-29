@@ -48,7 +48,7 @@ function animations.characterAttackAnimation(character, attacked, callback)
 end
 
 -- TODO: can it be implemented with sequential move?
-function animations.characterMoveAnimation(sprite, path, speed, callback) 
+function animations.characterMoveAnimation(sprite, path, speed, callback, args) 
 	local a = {}
 	a.has_more = true
 	
@@ -58,7 +58,7 @@ function animations.characterMoveAnimation(sprite, path, speed, callback)
 	
 	if (#path == 1) then
 		a.has_more = false
-		callback()
+		callback(args)
 		return nil
 	end
 	
@@ -81,7 +81,7 @@ function animations.characterMoveAnimation(sprite, path, speed, callback)
 				sprite.y = (a.curr.y - 1) * TILE_Y
 				
 				if (callback ~= nil) then
-					callback()
+					callback(args)
 				end
 			end
 		end

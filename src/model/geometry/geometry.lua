@@ -145,10 +145,7 @@ function geometry.getPath(map, p, d)
 					found_flag = true
 				end
 			end
-		end
-		
-		print(curr.str())
-		
+		end		
 		table.insert(ret,points.copyPoint(curr))
 		a = a + 1
 	end

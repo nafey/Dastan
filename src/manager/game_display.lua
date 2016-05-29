@@ -36,12 +36,17 @@ game_display.executing = false
 
 game_display.animation_manager = animation_manager
 
+function game_display.actionCallback(action)
+	print(action.code)
+end
+
 function game_display.executeAction(action)
 	if (action.code == "move") then
+		draw_helper.emptyGroup(game_display.root.selection)
 		animation_manager.animateCharacterMove(
 			game_display.ui.player_sprites[action.player.name], 
-			action.path,
-			nil)
+			action,
+			game_display.actionCallback)
 	end
 end
 
@@ -53,7 +58,6 @@ function game_display.tap( event )
 	if (game_display.ui.game_state == game_state.awaiting_player_move) then
 		if (game.move_map.safe(x, y) ~= 0) then
 		
-			print(x, y)
 			
 			local interaction = {}
 			

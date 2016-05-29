@@ -463,11 +463,11 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 				end
 			end
 			
-			if (mark_pos~= nil) then
-				if ((i == mark_pos.x) and (j == mark_pos.y)) then
-					drawSingleAura(i, j)
-				end
-			end
+			--if (mark_pos~= nil) then
+			--	if ((i == mark_pos.x) and (j == mark_pos.y)) then
+			--		drawSingleAura(i, j)
+			--	end
+			--end
 			
 			
 		end
