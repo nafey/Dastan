@@ -11,6 +11,7 @@ local player_helper = {}
 
 local move_threshold = 100
 
+
 function player_helper.findInRange(character, player_list, range, selector)
 	local affected = {}
 	
@@ -183,6 +184,19 @@ function player_helper.selectNextMover(player_list, later)
 	return ret
 end
 
+function player_helper.isAdjacentToEnemy(x, y, player_list, your_team)
+	local ret = false
+	for i = 1, #player_list do 
+		if (not(ret) and geometry.isAdjacent(x, y, player_list[i].pos.x, player_list[i].pos.y)) then
+			if (player_list[i].team ~= your_team) then
+				ret = true
+			end
+		end
+	end
+	
+	return ret
+end
+
 function player_helper.getPlayerPositions(levelgrid)
 	-- is true only when i,j corresponds to P1 ...P6
 	function isPlayerPosition(i, j) 
@@ -268,26 +282,8 @@ function player_helper.getPlayerAtPosition(x, y, player_list)
 	return ret
 end
 
-function player_helper.kill(name, player_list) 
-	local rem = -1
-	for i = 1, #player_list do
-		if (player_list[i].name == name) then
-			rem = i
-		end
-	end
-	
-	if (rem ~= -1) then
-		player_list[rem].sprite:removeSelf()
-		table.remove(player_list, rem)
-	end
-end
 
-function player_helper.playerAttack(attacker, attacked, player_list) 
-	attacked.hp = attacked.hp - attacker.attack
-	
-	if (attacked.hp <= 0) then
-		player_helper.kill(attacked.name, player_list)
-	end
-end
+
+
 
 return player_helper

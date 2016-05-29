@@ -29,18 +29,7 @@ function geometry.isAdjacent(x, y, x1, y1)
 	return ret
 end
 
-function geometry.isAdjacentToEnemy(x, y, player_list, your_team)
-	local ret = false
-	for i = 1, #player_list do 
-		if (not(ret) and geometry.isAdjacent(x, y, player_list[i].pos.x, player_list[i].pos.y)) then
-			if (player_list[i].team ~= your_team) then
-				ret = true
-			end
-		end
-	end
-	
-	return ret
-end
+
 
 -- Decides which tiles are accessible from a given point
 -- Grid represents the active map

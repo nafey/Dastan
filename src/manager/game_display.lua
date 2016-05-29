@@ -37,7 +37,17 @@ game_display.executing = false
 game_display.animation_manager = animation_manager
 
 function game_display.actionCallback(action)
-	print(action.code)
+	if (action.code == "move") then
+		game_display.executing = false
+		
+		if (player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
+			game.player_list, game.selected_player.team)) then
+			draw_helper.drawAttackGrid(game.selected_player.pos, game_display.root.selection, game.player_list, 
+				game.selected_player.team, game_display.root.ui.play_area)
+			
+			game_display.ui.game_state = game_state.awaiting_attack_confirmation
+		end
+	end
 end
 
 function game_display.executeAction(action)
@@ -47,27 +57,14 @@ function game_display.executeAction(action)
 			game_display.ui.player_sprites[action.player.name], 
 			action,
 			game_display.actionCallback)
-	end
+		game_display.executing = true
+	elseif (action.code == "select") then
+		game_display.setupUI()
+		game_display.ui.game_state = game_state.awaiting_player_move
+	end	
 end
 
 
-function game_display.tap( event ) 
-	local x = math.floor(event.x / TILE_X) + 1
-	local y = math.floor(event.y / TILE_Y) + 1
-
-	if (game_display.ui.game_state == game_state.awaiting_player_move) then
-		if (game.move_map.safe(x, y) ~= 0) then
-		
-			
-			local interaction = {}
-			
-			interaction.code = "move"
-			interaction.point = points.createPoint(x, y)
-			
-			game.submitInteraction(interaction)
-		end
-	end
-end
 
 function game_display.setupUI()
 	-- Draw Character info
@@ -87,6 +84,45 @@ function game_display.setupUI()
 		game_display.root.ui.frame.move_order)
 end
 
+function game_display.tap( event ) 
+	local x = math.floor(event.x / TILE_X) + 1
+	local y = math.floor(event.y / TILE_Y) + 1
+	
+	if (not game_display.executing) then
+		if (game_display.ui.game_state == game_state.awaiting_player_move) then
+			if (game.move_map.safe(x, y) ~= 0) then
+				
+				local interaction = {}
+				
+				interaction.code = "move"
+				interaction.point = points.createPoint(x, y)
+				
+				game.submitInteraction(interaction)
+			end
+		elseif (game_display.ui.game_state == game_state.awaiting_attack_confirmation) then
+			if (x == game.selected_player.pos.x and y == game.selected_player.pos.y) then
+				
+				local interaction = {}
+				
+				interaction.code = "move_cancel"
+				
+				draw_helper.emptyGroup(game_display.root.ui.play_area)
+				game.submitInteraction(interaction)
+			end
+			
+			if (player_helper.isEnemyAtPosition(x, y, game.player_list, game.selected_player.team) == 1) then
+				
+				local interaction = {}
+				
+				interaction.code = "attack"
+				interaction.attacker = game.selected_player
+				interaction.defender = player_helper.getPlayerAtPosition(x, y, game.player_list)
+				
+				game.submitInteraction(interaction)
+			end
+		end
+	end
+end
 
 
 function game_display.initialize(scene, player_data_file_path, level_data_file_path, level_background_image, team_data_file_path, main_team)
@@ -108,16 +144,19 @@ function game_display.initialize(scene, player_data_file_path, level_data_file_p
 	game_display.game.initialize(player_list, level)
 end
 
-
+-- Pick up the latest action and execute it
 function game_display.frame()
 	game_display.animation_manager.step()
 	
+	--print(game_display.action_counter .. tostring(#game.action_queue))
+	
+	
 	if (not game_display.executing) then
+
 		if (#game.action_queue > game_display.action_counter) then
 			game_display.action_counter = game_display.action_counter + 1
 			game_display.executeAction(
 				game.action_queue[game_display.action_counter])
-			executing = true
 		end
 	end
 end
@@ -166,6 +205,13 @@ function game_display.create(root)
 	
 	-- Frame
 	game_display.root.ui = display.newGroup()
+	
+	game_display.root.ui.hp = display.newGroup()
+	game_display.root.ui:insert(game_display.root.ui.hp)
+	
+	game_display.root.ui.play_area = display.newGroup()
+	game_display.root.ui:insert(game_display.root.ui.play_area)
+	
 	game_display.root.ui.frame = display.newGroup()
 	game_display.root.ui.frame.y = 256
 	game_display.root.ui:insert(game_display.root.ui.frame)

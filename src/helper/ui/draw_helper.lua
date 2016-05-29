@@ -294,7 +294,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 	local function drawEndAura(x, y) 
 		local png = path_end
 		
-		if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
+		if (player_helper.isAdjacentToEnemy(x, y, player_list, your_team)) then
 			png = path_end_red
 		end
 		
@@ -322,7 +322,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 	local function drawCornerOrPipeAura(x, y)
 		local rot = 0
 		local png = path_corner
-		if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
+		if (player_helper.isAdjacentToEnemy(x, y, player_list, your_team)) then
 			png = path_corner_red
 		end
 		
@@ -333,7 +333,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 				rot = 90
 				png = path_pipe
 				
-				if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
+				if (player_helper.isAdjacentToEnemy(x, y, player_list, your_team)) then
 					png = path_pipe_red
 				end
 			else
@@ -355,7 +355,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		else
 			-- identified vert pipe
 			png = path_pipe
-			if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
+			if (player_helper.isAdjacentToEnemy(x, y, player_list, your_team)) then
 				png = path_pipe_red
 			end
 		end
@@ -370,7 +370,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		local rot = 0
 		
 		local png = path_side
-		if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
+		if (player_helper.isAdjacentToEnemy(x, y, player_list, your_team)) then
 			png = path_side_red
 		end
 		
@@ -436,7 +436,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 	
 	local function drawSingleAura(x, y)
 		local png = path_single
-		if (geometry.isAdjacentToEnemy(x, y, player_list, your_team)) then
+		if (player_helper.isAdjacentToEnemy(x, y, player_list, your_team)) then
 			png = path_side_red
 		end
 		

@@ -1,3 +1,4 @@
+local game_engine = require("src.model.game.game_engine")
 local player_helper = require("src.model.game.player_helper")
 -- TODO: change player to unit everywhere
 -- TODO: Is it really needed here?
@@ -49,6 +50,19 @@ function game.submitInteraction(interaction)
 		move_action.path = ret
 		table.insert(game.action_queue, move_action)
 		
+		if (not player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
+			game.player_list, game.selected_player.team)) then
+			-- selectNextPlayer
+			game.selectNextPlayer()
+			
+			-- enqueue select action
+			local select_action = {}
+			select_action.code = "select"
+			select_action.player = game.selected_player
+			
+			table.insert(game.action_queue, select_action)
+		end
+	elseif (interaction.code == "move_cancel") then
 		-- selectNextPlayer
 		game.selectNextPlayer()
 		
@@ -58,6 +72,8 @@ function game.submitInteraction(interaction)
 		select_action.player = game.selected_player
 		
 		table.insert(game.action_queue, select_action)
+	elseif (interaction.code == "attack") then
+		
 	end
 end
 
