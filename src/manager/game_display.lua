@@ -47,6 +47,8 @@ function game_display.actionCallback(action)
 			
 			game_display.ui.game_state = game_state.awaiting_attack_confirmation
 		end
+	elseif (action.code == "action") then
+		game_display.executing = false
 	end
 end
 
@@ -65,6 +67,11 @@ function game_display.executeAction(action)
 	elseif (action.code == "action") then
 		draw_helper.emptyGroup(game_display.root.selection)
 		
+		local attacker_sprite = game_display.ui.player_sprites[action.attacker.name]
+		local defender_sprite = game_display.ui.player_sprites[action.defender.name]
+		
+		animation_manager.animateCharacterAttack(attacker_sprite, defender_sprite, 
+			game_display.actionCallback, action)
 		game_display.executing = true
 	end
 end
@@ -172,8 +179,7 @@ function game_display.debug2(args)
 end
 
 function game_display.debug()
-	--animation_manager.debug(game_display.ui.player_sprites[game.selected_player.name], game_display.debug2, "Hello World")
-	
+	animation_manager.debug(game_display.root.ui.play_area, game_display.ui.player_sprites[game.selected_player.name], game_display.debug2, "Hello World")
 end
 
 function game_display.create(root)

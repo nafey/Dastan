@@ -3,6 +3,53 @@ local sprite_data = require("src.helper.ui.sprite_data")
 
 local animations = {}
 
+
+
+function animations.showAnimationOnce(anim_data, pos, callback, args)
+	local a = {}
+	a.has_more = true
+	a.callback = callback
+	a.args = args
+	
+	a.period = anim_data["sequence"][1].time
+	a.period_elapsed = 0
+	
+	a.last_time = nil
+
+	a.sheet = graphics.newImageSheet(anim_data["image"], anim_data["options"])
+	a.sequence = anim_data["sequence"]
+	
+	function a.step() 
+		if (a.last_time == nil) then
+			a.last_time = system.getTimer()
+			a.spr = display.newSprite(a.sheet, a.sequence)
+			a.spr.x = pos.x
+			a.spr.y = pos.y
+			a.spr.anchorX = 0
+			a.spr.anchorY = 0
+			a.spr:play()
+		else
+			local now = system.getTimer() 
+			local delta = now - a.last_time
+			a.last_time = now
+			
+			if (a.period_elapsed < a.period) then
+				a.period_elapsed = a.period_elapsed + delta
+			else
+				a.period_elapsed = a.period
+				a.has_more = false
+			end
+		end
+	end
+	
+	function a.stop()
+		a.spr:pause()
+		a.spr:removeSelf()
+	end
+	
+	return a
+end
+
 function animations.attackImpactAnimation(character, attacked, callback)
 	
 	local pow_sheet = sprite_data.getPowSheetData()
@@ -18,32 +65,33 @@ function animations.attackImpactAnimation(character, attacked, callback)
 	return attack_seq
 end
 
-function animations.characterAttackAnimation(character, attacked, callback)
+function animations.attack(attacker, defender, callback, args)
 	local isHort = true
 	local isPos = true
 	
-	if (character.pos.x > attacked.pos.x) then
+	if (attacker.x > defender.x) then
 		isPos = false
-	elseif (character.pos.y > attacked.pos.y) then
+	elseif (attacker.y > defender.y) then
 		isHort = false
-	elseif (character.pos.y < attacked.pos.y) then
+	elseif (attacker.y < defender.y) then
 		isHort = false
 		isPos = false
 	end
 	
-	local poke = animations.poke(character, isHort, isPos)
+	local poke = animations.poke(attacker, isHort, isPos)
 	
 	local pow_sheet = sprite_data.getPowSheetData()
-	local pow_anim = animations.showAnimationOnce(pow_sheet, attacked.pos)
+	local pow_anim = animations.showAnimationOnce(pow_sheet, 
+		points.createPoint(defender.x, defender.y))
 	
-	local blink = animations.blink(attacked.sprite, 3, 100)
+	local blink = animations.blink(defender, 3, 100)
 	
 	local attack_anims = {}
 	table.insert(attack_anims, poke)
 	table.insert(attack_anims, pow_anim)
 	table.insert(attack_anims, blink)
 	
-	local attack_seq = animations.playSequence(attack_anims, callback)
+	local attack_seq = animations.playSequence(attack_anims, callback, args)
 	return attack_seq
 end
 
@@ -235,7 +283,7 @@ function animations.characterTranslate(sprite, to_point, period, callback, args)
 	return a
 end
 
--- TODO: can it be implemented with sequential move?
+-- TODO: remove jerkiness
 function animations.moveSprite(sprite, path, callback, args) 
 	if (#path == 1) then
 		a.has_more = false
@@ -255,11 +303,12 @@ function animations.moveSprite(sprite, path, callback, args)
 	return seq
 end
 
-function animations.poke(character, isHort, isPositive) 
+-- TODO: use poke here
+function animations.poke(sprite, isHort, isPositive, callback, args) 
 	local a = {}
 	a.has_more = true
 	a.amplitude = 0.3
-	a.period = 40
+	a.period = 80
 	
 	local list = {}
 	local to_point = nil
@@ -274,66 +323,23 @@ function animations.poke(character, isHort, isPositive)
 	
 	
 	if (isHort) then
-		to_point = points.createPoint(character.pos.x + sign * a.amplitude, character.pos.y)
+		to_point = points.createPoint(sprite.x + sign * TILE_X * a.amplitude, sprite.y)
 	else
-		to_point = points.createPoint(character.pos.x, character.pos.y + sign * a.amplitude)
+		to_point = points.createPoint(sprite.x, sprite.y + sign * TILE_Y * a.amplitude)
 	end
 	
-	local move1 = animations.characterTranslate(character, to_point, a.period)
-	local move2 = animations.characterTranslate(character, character.pos, a.period)
+	local move1 = animations.characterTranslate(sprite, to_point, a.period)
+	local move2 = animations.characterTranslate(sprite, 
+		points.createPoint(sprite.x, sprite.y), a.period)
 	
 	table.insert(list, move1)
 	table.insert(list, move2)
 	
-	a = animations.playSequence(list)
+	a = animations.playSequence(list, callback, args)
 	
 	return a 
 end
 
-function animations.showAnimationOnce(anim_data, pos, callback)
-	local a = {}
-	a.has_more = true
-	a.callback = callback
-	
-	a.period = anim_data["sequence"][1].time
-	a.period_elapsed = 0
-	
-	a.last_time = nil
-
-	a.sheet = graphics.newImageSheet(anim_data["image"], anim_data["options"])
-	a.sequence = anim_data["sequence"]
-	
-	function a.step() 
-		if (a.last_time == nil) then
-			a.last_time = system.getTimer()
-			a.spr = display.newSprite(a.sheet, a.sequence)
-			a.spr.x = (pos.x - 1) * TILE_X
-			a.spr.y = (pos.y - 1) * TILE_Y
-			a.spr.anchorX = 0
-			a.spr.anchorY = 0
-			a.spr:play()
-		else
-			local now = system.getTimer() 
-			local delta = now - a.last_time
-			a.last_time = now
-			
-			if (a.period_elapsed < a.period) then
-				a.period_elapsed = a.period_elapsed + delta
-			else
-				a.period_elapsed = a.period
-				a.has_more = false
-			end
-			
-		end
-	end
-	
-	function a.stop()
-		a.spr:pause()
-		a.spr:removeSelf()
-	end
-	
-	return a
-end
 
 function animations.blink(sprite, times, period)
 	local a = {}

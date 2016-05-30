@@ -1,3 +1,5 @@
+-- TODO: change this shit. This is too complicated and hard codey
+
 local sprite_data = {}
 
 

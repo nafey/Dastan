@@ -118,12 +118,12 @@ function animation_manager.animateCharacterMove(sprite, action, callback, args)
 	table.insert(animation_manager.list, move)
 end
 
-function animation_manager.animateCharacterAttack(character, attacked, callback)
-	local attack_seq = animations.characterAttackAnimation(character, attacked, callback)
+function animation_manager.animateCharacterAttack(attacker, defender, callback, args)
+	local attack_seq = animations.attack(attacker, defender, callback, args)
 	table.insert(animation_manager.list, attack_seq)
 end
 
-function animation_manager.debug(sprite, callback, args)
+function animation_manager.debug(displayGroup, sprite, callback, args)
 	--local move1 = animations.characterTranslate(character, points.createPoint(9, 3), 350)
 	--local move2 = animations.characterTranslate(character, points.createPoint(10, 6), 350)
 	--	
@@ -134,8 +134,16 @@ function animation_manager.debug(sprite, callback, args)
 	--local seq = animations.playSequence(move_anims)
 	--table.insert(animation_manager.list, seq)
 	
-	--local pow_sheet = sprite_data.getPowSheetData()
-	--local move = animations.showAnimationOnce(pow_sheet, character.pos)
+	--local anim_data = sprite_data.getPowSheetData()
+	--local once = animations.showAnimationOnce(anim_data, points.createPoint(sprite.x, sprite.y))
+	--table.insert(animation_manager.list, once)
+	
+	--local sheet = graphics.newImageSheet(anim_data["image"], anim_data["options"])
+	--local sequence = anim_data["sequence"]
+	--
+	--display.newSprite(sheet, sequence)
+	
+	--local move = animations.showAnimationOnce(displayGroup, pow_sheet, points.createPoint(30, 30))
 	--table.insert(animation_manager.list, move)
 	
 	--local poke = animations.poke(character, false, false)
@@ -143,22 +151,24 @@ function animation_manager.debug(sprite, callback, args)
 	
 	--table.insert(animation_manager.list, move)
 	
-	--local blink = animations.blink(character.sprite, 3, 100)
+	--local blink = animations.blink(sprite, 3, 100)
 	--table.insert(animation_manager.list, blink)
 	
-	local move1 = animations.characterTranslate(sprite, points.createPoint(288, 128), 
-		200)
-	local move2 = animations.characterTranslate(sprite, points.createPoint(320, 128),
-		200)
+	--local move1 = animations.characterTranslate(sprite, points.createPoint(288, 128), 
+	--	200)
+	--local move2 = animations.characterTranslate(sprite, points.createPoint(320, 128),
+	--	200)
+	--
+	--local anim_list = {}
+	--
+	--table.insert(anim_list, move1)
+	--table.insert(anim_list, move2)
+	--
+	--local seq = animations.playSequence(anim_list, callback, args)
+	--
+	--table.insert(animation_manager.list, seq)
 	
-	local anim_list = {}
-	
-	table.insert(anim_list, move1)
-	table.insert(anim_list, move2)
-	
-	local seq = animations.playSequence(anim_list, callback, args)
-	
-	table.insert(animation_manager.list, seq)
+	--table.insert(animation_manager.list, poke)
 end
 
 function animation_manager.step() 

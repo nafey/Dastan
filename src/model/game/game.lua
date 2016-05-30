@@ -39,19 +39,8 @@ end
 
 function game.submitInteraction(interaction)
 	if (interaction.code == "move") then
-		-- move player
-		local ret = player_helper.movePlayer(game.move_map, 
-			game.selected_player, interaction.point)
-		
-		-- enqueue move action
-		local move_action = {}
-		move_action.code = "move"
-		move_action.player = game.selected_player
-		move_action.path = ret
-		table.insert(game.action_queue, move_action)
-		
-		if (not player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
-			game.player_list, game.selected_player.team)) then
+		if (interaction.point.x == game.selected_player.pos.x and
+			interaction.point.y == game.selected_player.pos.y) then
 			-- selectNextPlayer
 			game.selectNextPlayer()
 			
@@ -61,7 +50,32 @@ function game.submitInteraction(interaction)
 			select_action.player = game.selected_player
 			
 			table.insert(game.action_queue, select_action)
+		else
+			-- move player
+			local ret = player_helper.movePlayer(game.move_map, 
+				game.selected_player, interaction.point)
+			
+			-- enqueue move action
+			local move_action = {}
+			move_action.code = "move"
+			move_action.player = game.selected_player
+			move_action.path = ret
+			table.insert(game.action_queue, move_action)
+			
+			if (not player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
+				game.player_list, game.selected_player.team)) then
+				-- selectNextPlayer
+				game.selectNextPlayer()
+				
+				-- enqueue select action
+				local select_action = {}
+				select_action.code = "select"
+				select_action.player = game.selected_player
+				
+				table.insert(game.action_queue, select_action)
+			end
 		end
+	
 	elseif (interaction.code == "move_cancel") then
 		-- selectNextPlayer
 		game.selectNextPlayer()
@@ -74,8 +88,7 @@ function game.submitInteraction(interaction)
 		table.insert(game.action_queue, select_action)
 	elseif (interaction.code == "attack") then
 		game_engine.playerAttack(interaction.attacker, interaction.defender, game.player_list)
-		print(interaction.defender.hp)
-		
+				
 		local attack_action = {}
 		attack_action.code = "action"
 		attack_action.attacker = interaction.attacker
