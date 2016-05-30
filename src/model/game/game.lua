@@ -12,6 +12,9 @@ game.selected_player = nil
 game.move_map = nil
 game.action_queue = {}
 
+-- TODO: This needs to be fixed
+game.main_team = 1
+
 function game.selectNextPlayer()
 	game.selected_player = player_helper.selectNextMover(game.player_list, false)
 
@@ -39,18 +42,26 @@ end
 
 function game.submitInteraction(interaction)
 	if (interaction.code == "move") then
-		if (interaction.point.x == game.selected_player.pos.x and
-			interaction.point.y == game.selected_player.pos.y) then
-			-- selectNextPlayer
-			game.selectNextPlayer()
-			
-			-- enqueue select action
-			local select_action = {}
-			select_action.code = "select"
-			select_action.player = game.selected_player
-			
-			table.insert(game.action_queue, select_action)
-		else
+		-- TODO: this should be handled better
+		--if (interaction.point.x == game.selected_player.pos.x and
+		--	interaction.point.y == game.selected_player.pos.y) then
+		--	--check if you are adjacent to enemy
+		--	if (player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
+		--			game.player_list, game.selected_player.team)) then
+		--		-- queue attack
+		--		
+		--	else 
+		--		-- selectNextPlayer
+		--		game.selectNextPlayer()
+		--		
+		--		-- enqueue select action
+		--		local select_action = {}
+		--		select_action.code = "select"
+		--		select_action.player = game.selected_player
+		--		
+		--		table.insert(game.action_queue, select_action)
+		--	end
+		--else
 			-- move player
 			local ret = player_helper.movePlayer(game.move_map, 
 				game.selected_player, interaction.point)
@@ -74,7 +85,7 @@ function game.submitInteraction(interaction)
 				
 				table.insert(game.action_queue, select_action)
 			end
-		end
+		--end
 	
 	elseif (interaction.code == "move_cancel") then
 		-- selectNextPlayer

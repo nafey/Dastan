@@ -286,8 +286,25 @@ end
 -- TODO: remove jerkiness
 function animations.moveSprite(sprite, path, callback, args) 
 	if (#path == 1) then
-		a.has_more = false
-		return nil
+		-- Return an empty animation
+		-- TODO: make a separate file for each animation
+		local  a = {}
+		a.callback = callback
+		a.args = args
+		function a.step() 
+			a.has_more = false
+		end
+		
+		function a.stop()
+			if (a.callback ~= nil) then
+				if (a.args ~= nil) then
+					a.callback(a.args)
+				else 
+					a.callback()
+				end
+			end
+		end
+		return a
 	end
 	
 	local anim_list = {}

@@ -16,6 +16,9 @@ local game_state = require("src.model.game.game_state")
 
 local game_display = {}
 
+
+
+
 -- All logic stuff
 game_display.game = game
 
@@ -161,9 +164,6 @@ end
 function game_display.frame()
 	game_display.animation_manager.step()
 	
-	--print(game_display.action_counter .. tostring(#game.action_queue))
-	
-	
 	if (not game_display.executing) then
 
 		if (#game.action_queue > game_display.action_counter) then
@@ -172,6 +172,8 @@ function game_display.frame()
 				game.action_queue[game_display.action_counter])
 		end
 	end
+	
+	draw_helper.drawHpBars(game.player_list, game_display.ui.player_sprites, game.main_team, game_display.root.ui.hp)
 end
 
 function game_display.debug2(args)
