@@ -16,9 +16,6 @@ local game_state = require("src.model.game.game_state")
 
 local game_display = {}
 
-
-
-
 -- All logic stuff
 game_display.game = game
 
@@ -39,47 +36,6 @@ game_display.executing = false
 
 game_display.animation_manager = animation_manager
 
-function game_display.actionCallback(action)
-	if (action.code == "move") then
-		game_display.executing = false
-		
-		if (player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
-			game.player_list, game.selected_player.team)) then
-			draw_helper.drawAttackGrid(game.selected_player.pos, game_display.root.selection, game.player_list, 
-				game.selected_player.team, game_display.root.ui.play_area)
-			
-			game_display.ui.game_state = game_state.awaiting_attack_confirmation
-		end
-	elseif (action.code == "action") then
-		game_display.executing = false
-	end
-end
-
-function game_display.executeAction(action)
-	if (action.code == "move") then
-		draw_helper.emptyGroup(game_display.root.selection)
-		
-		animation_manager.animateCharacterMove(
-			game_display.ui.player_sprites[action.player.name], 
-			action,
-			game_display.actionCallback)
-		game_display.executing = true
-	elseif (action.code == "select") then
-		game_display.setupUI()
-		game_display.ui.game_state = game_state.awaiting_player_move
-	elseif (action.code == "action") then
-		draw_helper.emptyGroup(game_display.root.selection)
-		
-		local attacker_sprite = game_display.ui.player_sprites[action.attacker.name]
-		local defender_sprite = game_display.ui.player_sprites[action.defender.name]
-		
-		animation_manager.animateCharacterAttack(attacker_sprite, defender_sprite, 
-			game_display.actionCallback, action)
-		game_display.executing = true
-	end
-end
-
-
 
 function game_display.setupUI()
 	-- Draw Character info
@@ -97,7 +53,73 @@ function game_display.setupUI()
 	-- Move Order draw
 	draw_helper.drawMoveOrder(game_display.game.player_list, 
 		game_display.root.ui.frame.move_order)
+		
+	-- Drop Dead
+	local rem = {}
+	for k,v in pairs(game_display.ui.player_sprites) do
+		local k_died = true
+		
+		for i = 1, #game.player_list do
+			if (k == game.player_list[i].name) then
+				k_died = false
+			end
+		end
+		
+		if (k_died) then
+			table.insert(rem, k)
+		end
+	end
+	
+	for i = 1, #rem do
+		game_display.ui.player_sprites[rem[i]]:removeSelf()
+		game_display.ui.player_sprites[rem[i]] = nil
+	end
 end
+
+function game_display.actionCallback(action)
+	if (action.code == "move") then
+		game_display.executing = false
+		
+		if (player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
+			game.player_list, game.selected_player.team)) then
+			draw_helper.drawAttackGrid(game.selected_player.pos, game_display.root.selection, game.player_list, 
+				game.selected_player.team, game_display.root.ui.play_area)
+			
+			game_display.ui.game_state = game_state.awaiting_attack_confirmation
+		end
+	elseif (action.code == "attack") then
+		game_display.executing = false
+		game_display.setupUI()
+	end
+end
+
+function game_display.executeAction(action)
+	if (action.code == "move") then
+		draw_helper.emptyGroup(game_display.root.selection)
+		
+		animation_manager.animateCharacterMove(
+			game_display.ui.player_sprites[action.player.name], 
+			action,
+			game_display.actionCallback)
+		game_display.executing = true
+	elseif (action.code == "select") then
+		game_display.setupUI()
+		game_display.ui.game_state = game_state.awaiting_player_move
+	elseif (action.code == "attack") then
+		draw_helper.emptyGroup(game_display.root.selection)
+		
+		local attacker_sprite = game_display.ui.player_sprites[action.attacker.name]
+		local defender_sprite = game_display.ui.player_sprites[action.defender.name]
+		
+		animation_manager.animateCharacterAttack(attacker_sprite, defender_sprite, 
+			game_display.actionCallback, action)
+		game_display.executing = true
+	end
+end
+
+
+
+
 
 function game_display.tap( event ) 
 	local x = math.floor(event.x / TILE_X) + 1

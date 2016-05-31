@@ -6,6 +6,7 @@ local geometry = require("src.model.geometry.geometry")
 
 local game = {}
 
+-- TODO: null initialization is probably dumb
 game.player_list = nil
 game.level = nil
 game.selected_player = nil
@@ -42,50 +43,28 @@ end
 
 function game.submitInteraction(interaction)
 	if (interaction.code == "move") then
-		-- TODO: this should be handled better
-		--if (interaction.point.x == game.selected_player.pos.x and
-		--	interaction.point.y == game.selected_player.pos.y) then
-		--	--check if you are adjacent to enemy
-		--	if (player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
-		--			game.player_list, game.selected_player.team)) then
-		--		-- queue attack
-		--		
-		--	else 
-		--		-- selectNextPlayer
-		--		game.selectNextPlayer()
-		--		
-		--		-- enqueue select action
-		--		local select_action = {}
-		--		select_action.code = "select"
-		--		select_action.player = game.selected_player
-		--		
-		--		table.insert(game.action_queue, select_action)
-		--	end
-		--else
-			-- move player
-			local ret = player_helper.movePlayer(game.move_map, 
-				game.selected_player, interaction.point)
+		local ret = player_helper.movePlayer(game.move_map, 
+			game.selected_player, interaction.point)
+		
+		-- enqueue move action
+		local move_action = {}
+		move_action.code = "move"
+		move_action.player = game.selected_player
+		move_action.path = ret
+		table.insert(game.action_queue, move_action)
+		
+		if (not player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
+			game.player_list, game.selected_player.team)) then
+			-- selectNextPlayer
+			game.selectNextPlayer()
 			
-			-- enqueue move action
-			local move_action = {}
-			move_action.code = "move"
-			move_action.player = game.selected_player
-			move_action.path = ret
-			table.insert(game.action_queue, move_action)
+			-- enqueue select action
+			local select_action = {}
+			select_action.code = "select"
+			select_action.player = game.selected_player
 			
-			if (not player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
-				game.player_list, game.selected_player.team)) then
-				-- selectNextPlayer
-				game.selectNextPlayer()
-				
-				-- enqueue select action
-				local select_action = {}
-				select_action.code = "select"
-				select_action.player = game.selected_player
-				
-				table.insert(game.action_queue, select_action)
-			end
-		--end
+			table.insert(game.action_queue, select_action)
+		end
 	
 	elseif (interaction.code == "move_cancel") then
 		-- selectNextPlayer
@@ -101,7 +80,7 @@ function game.submitInteraction(interaction)
 		game_engine.playerAttack(interaction.attacker, interaction.defender, game.player_list)
 				
 		local attack_action = {}
-		attack_action.code = "action"
+		attack_action.code = "attack"
 		attack_action.attacker = interaction.attacker
 		attack_action.defender = interaction.defender
 		

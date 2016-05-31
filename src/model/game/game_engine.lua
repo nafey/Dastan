@@ -2,6 +2,7 @@ local game_engine = {}
 
 function game_engine.kill(name, player_list) 
 	local rem = -1
+	
 	for i = 1, #player_list do
 		if (player_list[i].name == name) then
 			rem = i
@@ -9,10 +10,9 @@ function game_engine.kill(name, player_list)
 	end
 	
 	-- TODO: add remove sprite somewhere
-	--if (rem ~= -1) then
-	--	player_list[rem].sprite:removeSelf()
-	--	table.remove(player_list, rem)
-	--end
+	if (rem ~= -1) then
+		table.remove(player_list, rem)
+	end
 end
 
 function game_engine.damage(player, damage, player_list)
