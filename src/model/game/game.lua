@@ -1,5 +1,8 @@
 local game_engine = require("src.model.game.game_engine")
 local player_helper = require("src.model.game.player_helper")
+
+local ai = require("src.model.game.ai")
+
 -- TODO: change player to unit everywhere
 -- TODO: Is it really needed here?
 local geometry = require("src.model.geometry.geometry")
@@ -32,7 +35,8 @@ function game.selectNextPlayer()
 			game.move_map = geometry.floodFill(level_with_players, game.selected_player.pos, game.selected_player.range)
 			keep_selecting = false
 		else
-			--continue
+			-- do ai stuff here
+			
 		end
 	
 	end

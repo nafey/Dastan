@@ -59,8 +59,8 @@ function game_display.setupUI()
 	for k,v in pairs(game_display.ui.player_sprites) do
 		local k_died = true
 		
-		for i = 1, #game.player_list do
-			if (k == game.player_list[i].name) then
+		for i = 1, #game_display.game.player_list do
+			if (k == game_display.game.player_list[i].name) then
 				k_died = false
 			end
 		end
@@ -98,8 +98,8 @@ function game_display.executeAction(action)
 		game_display.setupUI()
 		game_display.ui.game_state = game_state.awaiting_player_move
 	elseif(action.code == "attack_choice") then
-		draw_helper.drawAttackGrid(game.selected_player.pos, game_display.root.selection, game.player_list, 
-			game.selected_player.team, game_display.root.ui.play_area)
+		draw_helper.drawAttackGrid(game_display.game.selected_player.pos, game_display.root.selection, game.player_list, 
+			game_display.game.selected_player.team, game_display.root.ui.play_area)
 		game_display.ui.game_state = game_state.awaiting_attack_confirmation
 	elseif(action.code == "attack") then
 		draw_helper.emptyGroup(game_display.root.selection)
@@ -123,41 +123,56 @@ function game_display.tap( event )
 	
 	if (not game_display.executing) then
 		if (game_display.ui.game_state == game_state.awaiting_player_move) then
-			if (game.move_map.safe(x, y) ~= 0) then
+			if (game_display.game.move_map.safe(x, y) ~= 0) then
 				
 				local interaction = {}
 				
 				interaction.code = "move"
 				interaction.point = points.createPoint(x, y)
 				
-				game.submitInteraction(interaction)
+				game_display.game.submitInteraction(interaction)
 			end
 		elseif (game_display.ui.game_state == game_state.awaiting_attack_confirmation) then
-			if (x == game.selected_player.pos.x and y == game.selected_player.pos.y) then
+			if (x == game_display.game.selected_player.pos.x and y == game_display.game.selected_player.pos.y) then
 				
 				local interaction = {}
 				
 				interaction.code = "move_cancel"
 				
 				draw_helper.emptyGroup(game_display.root.ui.play_area)
-				game.submitInteraction(interaction)
+				game_display.game.submitInteraction(interaction)
 			end
 			
-			if (player_helper.isEnemyAtPosition(x, y, game.player_list, game.selected_player.team) == 1) then
+			if (player_helper.isEnemyAtPosition(x, y, game_display.game.player_list, game_display.game.selected_player.team) == 1) then
 				
 				local interaction = {}
 				
 				interaction.code = "attack"
-				interaction.attacker = game.selected_player
-				interaction.defender = player_helper.getPlayerAtPosition(x, y, game.player_list)
+				interaction.attacker = game_display.game.selected_player
+				interaction.defender = player_helper.getPlayerAtPosition(x, y, game_display.game.player_list)
 				
 				draw_helper.emptyGroup(game_display.root.ui.play_area)
-				game.submitInteraction(interaction)
+				game_display.game.submitInteraction(interaction)
 			end
 		end
 	end
 end
 
+-- Pick up the latest action and execute it
+function game_display.frame()
+	game_display.animation_manager.step()
+	
+	if (not game_display.executing) then
+
+		if (#game.action_queue > game_display.action_counter) then
+			game_display.action_counter = game_display.action_counter + 1
+			game_display.executeAction(
+				game.action_queue[game_display.action_counter])
+		end
+	end
+	
+	draw_helper.drawHpBars(game.player_list, game_display.ui.player_sprites, game.main_team, game_display.root.ui.hp)
+end
 
 function game_display.initialize(scene, player_data_file_path, level_data_file_path, level_background_image, team_data_file_path, main_team)
 	-- Load team data
@@ -176,22 +191,6 @@ function game_display.initialize(scene, player_data_file_path, level_data_file_p
 	
 	-- initialize game
 	game_display.game.initialize(player_list, level)
-end
-
--- Pick up the latest action and execute it
-function game_display.frame()
-	game_display.animation_manager.step()
-	
-	if (not game_display.executing) then
-
-		if (#game.action_queue > game_display.action_counter) then
-			game_display.action_counter = game_display.action_counter + 1
-			game_display.executeAction(
-				game.action_queue[game_display.action_counter])
-		end
-	end
-	
-	draw_helper.drawHpBars(game.player_list, game_display.ui.player_sprites, game.main_team, game_display.root.ui.hp)
 end
 
 function game_display.debug2(args)

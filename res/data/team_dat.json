@@ -2,26 +2,26 @@
 {
   "name" : "uruk",
   "team" : 2,
-  "start_pos" : "P1"
+  "start_pos" : "P4"
 },{
   "name" : "asha",
   "team" : 2,
-  "start_pos" : "P2"
+  "start_pos" : "P5"
 },{
   "name" : "balzar",
   "team" : 2,
-  "start_pos" : "P3"
+  "start_pos" : "P6"
 },{
   "name" : "lan",
   "team" : 1,
-  "start_pos" : "P4"
+  "start_pos" : "P1"
 },{
   "name" : "feyd",
   "team" : 1,
-  "start_pos" : "P5"
+  "start_pos" : "P2"
 },{
   "name" : "pan",
   "team" : 1,
-  "start_pos" : "P6"
+  "start_pos" : "P3"
 }
 ]

@@ -29,8 +29,6 @@ function geometry.isAdjacent(x, y, x1, y1)
 	return ret
 end
 
-
-
 -- Decides which tiles are accessible from a given point
 -- Grid represents the active map
 -- p is the character position
@@ -82,7 +80,15 @@ function geometry.floodFill(g, p, range)
 		
 		for dir = 1, 4 do
 			local pt_adj = points.rotate(pt, dir)
-			if (grid.rotate(pt.x, pt.y, dir) == 0) then
+			if (pt.y == 1 and dir == 1) then
+				-- skip
+			elseif (pt.x == 1 and dir == 2) then
+				-- skip
+			elseif (pt.y == grid.height and dir == 3) then
+				-- skip
+			elseif (pt.x == grid.width and dir == 4) then
+				-- skip
+			elseif (grid.rotate(pt.x, pt.y, dir) == 0) then
 				local idx = toIndex(pt_adj.x, pt_adj.y)
 				if (not open_lookup[tostring(idx)] and not closed_lookup[tostring(idx)]) then
 					grid.rotate_put(pt.x, pt.y, dir, grid.safe(pt.x, pt.y) + 1)
@@ -90,7 +96,6 @@ function geometry.floodFill(g, p, range)
 					table.insert(open_list, idx)
 				end
 			end
-		
 		end
 		
 		a = a + 1

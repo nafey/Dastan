@@ -34,7 +34,7 @@
   "label" : "Feyd",
   "hp" : 15,
   "attack" : 2,
-  "speed" : 24,
+  "speed" : 18,
   "range" : 4,
   "ability_1" : {
 	"name" : "heal",

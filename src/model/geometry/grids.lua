@@ -89,29 +89,6 @@ function grids.adjacency(grid, x, y)
 			end
 		end
 	end
-	
---	if (grid[x][y] == 1) then
---		-- check top
---		if (grid.safe(x, y - 1) == 1) then
---			ret = ret + 1
---		end
---		
---		-- check left
---		if (grid.safe(x - 1, y) == 1) then
---			ret = ret + 1
---		end
---		
---		-- check bottom
---			if (grid.safe(x, y + 1) == 1) then
---				ret = ret + 1
---			end
---		
---		-- check right
---		if (grid.safe(x + 1, y) == 1) then
---			ret = ret + 1
---		end
---	end
-	
 	return ret
 end
 
