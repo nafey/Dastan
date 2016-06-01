@@ -10,6 +10,7 @@ function game_engine.kill(name, player_list)
 	end
 	
 	-- TODO: add remove sprite somewhere
+	-- TODO: add remove player action
 	if (rem ~= -1) then
 		table.remove(player_list, rem)
 	end

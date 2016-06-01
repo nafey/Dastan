@@ -17,12 +17,28 @@ game.action_queue = {}
 game.main_team = 1
 
 function game.selectNextPlayer()
-	game.selected_player = player_helper.selectNextMover(game.player_list, false)
-
-	local raw_level = player_helper.getMovementGrid(game.level)
-	local level_with_players = player_helper.markPlayers(raw_level, game.player_list, game.selected_player)
+		
+	local keep_selecting = true
 	
-	game.move_map = geometry.floodFill(level_with_players, game.selected_player.pos, game.selected_player.range)
+	while (keep_selecting) do
+		local tentative_selection = player_helper.selectNextMover(game.player_list, false)
+		
+		if (tentative_selection.team == game.main_team) then
+			game.selected_player = tentative_selection
+
+			local raw_level = player_helper.getMovementGrid(game.level)
+			local level_with_players = player_helper.markPlayers(raw_level, game.player_list, game.selected_player)
+			
+			game.move_map = geometry.floodFill(level_with_players, game.selected_player.pos, game.selected_player.range)
+			keep_selecting = false
+		else
+			--continue
+		end
+	
+	end
+
+	
+	
 end
 
 function game.initialize(player_list, level)
@@ -53,6 +69,8 @@ function game.submitInteraction(interaction)
 		move_action.path = ret
 		table.insert(game.action_queue, move_action)
 		
+		-- If you have moved to empty block select next player
+		-- or get ready to attack
 		if (not player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
 			game.player_list, game.selected_player.team)) then
 			-- selectNextPlayer
@@ -64,6 +82,12 @@ function game.submitInteraction(interaction)
 			select_action.player = game.selected_player
 			
 			table.insert(game.action_queue, select_action)
+		else 
+			local attack_choice_action = {}
+			attack_choice_action.code = "attack_choice"
+			attack_choice_action.player = game.selected_player
+			
+			table.insert(game.action_queue, attack_choice_action)
 		end
 	
 	elseif (interaction.code == "move_cancel") then

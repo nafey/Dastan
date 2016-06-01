@@ -79,14 +79,6 @@ end
 function game_display.actionCallback(action)
 	if (action.code == "move") then
 		game_display.executing = false
-		
-		if (player_helper.isAdjacentToEnemy(game.selected_player.pos.x, game.selected_player.pos.y, 
-			game.player_list, game.selected_player.team)) then
-			draw_helper.drawAttackGrid(game.selected_player.pos, game_display.root.selection, game.player_list, 
-				game.selected_player.team, game_display.root.ui.play_area)
-			
-			game_display.ui.game_state = game_state.awaiting_attack_confirmation
-		end
 	elseif (action.code == "attack") then
 		game_display.executing = false
 		game_display.setupUI()
@@ -105,7 +97,11 @@ function game_display.executeAction(action)
 	elseif (action.code == "select") then
 		game_display.setupUI()
 		game_display.ui.game_state = game_state.awaiting_player_move
-	elseif (action.code == "attack") then
+	elseif(action.code == "attack_choice") then
+		draw_helper.drawAttackGrid(game.selected_player.pos, game_display.root.selection, game.player_list, 
+			game.selected_player.team, game_display.root.ui.play_area)
+		game_display.ui.game_state = game_state.awaiting_attack_confirmation
+	elseif(action.code == "attack") then
 		draw_helper.emptyGroup(game_display.root.selection)
 		
 		local attacker_sprite = game_display.ui.player_sprites[action.attacker.name]
