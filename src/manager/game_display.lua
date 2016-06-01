@@ -51,7 +51,8 @@ function game_display.setupUI()
 		game_display.game.selected_player.pos)
 	
 	-- Move Order draw
-	draw_helper.drawMoveOrder(game_display.game.player_list, 
+	draw_helper.drawMoveOrder(game_display.game.selected_player,
+		game_display.game.player_list, 
 		game_display.root.ui.frame.move_order)
 		
 	-- Drop Dead

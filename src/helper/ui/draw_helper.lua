@@ -184,7 +184,7 @@ function draw_helper.drawHpBars(player_list, sprite_list, main_team, displayGrou
 end
 
 -- Draw Move order thingy
-function draw_helper.drawMoveOrder(player_list, displayGroup)
+function draw_helper.drawMoveOrder(current_player, player_list, displayGroup)
 	local function drawIcon(name, team, position, group)
 		local icon_path = "res/chars/" .. name .. "_icon.png"
 		
@@ -210,17 +210,17 @@ function draw_helper.drawMoveOrder(player_list, displayGroup)
 	
 	draw_helper.emptyGroup(displayGroup)
 	
+	-- TODO: Horrendous. Move all the model side code out from here
 	-- Predict the move_order for 6 turns to draw move order 
 	for i = 1, #player_list do 
 		local p = player_list[i]
 		p.movement_points_later = p.movement_points
 	end
 	
-	local next_6_movers = {}
+	drawIcon(current_player.name, current_player.team, 1, displayGroup)
 	
-	for i = 1, 6 do 
+	for i = 2, 6 do 
 		p = player_helper.selectNextMover(player_list, true)
-		table.insert(next_6_movers, p)
 		drawIcon(p.name, p.team, i, displayGroup)
 	end
 	

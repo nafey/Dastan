@@ -79,6 +79,7 @@ function geometry.floodFill(g, p, range)
 		end
 		
 		for dir = 1, 4 do
+			-- TODO: decide if this needs to be reworked
 			local pt_adj = points.rotate(pt, dir)
 			if (pt.y == 1 and dir == 1) then
 				-- skip
