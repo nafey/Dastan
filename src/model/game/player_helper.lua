@@ -7,10 +7,34 @@ local grids = require("src.model.geometry.grids")
 local file_helper = require("src.helper.util.file_helper")
 local json_helper = require("src.helper.util.json_helper")
 
+-- TODO: ensure this does not modify the state of any game object
 local player_helper = {}
 
 local move_threshold = 100
 
+-- Finds the mean point for the team
+function player_helper.findTeamCenter(team, player_list)
+	local x = 0
+	local y = 0
+	local count = 0
+	for i = 1, #player_list do
+		if (player_list[i].team == team) then
+			x = x + player_list[i].pos.x
+			y = y + player_list[i].pos.y
+			count = count + 1
+		end
+	end
+	
+	if (count == 0) then
+		count = 1
+	end
+	
+	
+	x = math.floor(x / count)
+	y = math.floor(y / count)
+	
+	return points.createPoint(x, y)
+end
 
 function player_helper.findInRange(character, player_list, range, selector)
 	local affected = {}

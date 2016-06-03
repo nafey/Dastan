@@ -188,6 +188,7 @@ function draw_helper.drawMoveOrder(current_player, player_list, displayGroup)
 	local function drawIcon(name, team, position, group)
 		local icon_path = "res/chars/" .. name .. "_icon.png"
 		
+		-- TODO: really -_- ? do we need to so shamelessly hard code
 		local frame_path = "res/ui/blue_frame.png"
 		if (team == 2) then
 			frame_path = "res/ui/red_frame.png"

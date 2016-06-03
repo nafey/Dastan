@@ -37,21 +37,21 @@ game_display.executing = false
 game_display.animation_manager = animation_manager
 
 
-function game_display.setupUI()
+function game_display.setupUI(player)
 	-- Draw Character info
 	draw_helper.showCharDetails(game_display.root.ui.frame.char_dat.face,
 		game_display.root.ui.frame.char_dat.desc,
-		game_display.game.selected_player)
+		player)
 
 	-- Movement Grid draw
 	draw_helper.drawMovementGrid(game_display.game.move_map, 
 		game_display.root.selection, 
 		game_display.game.player_list, 
-		game_display.game.selected_player.team, 
-		game_display.game.selected_player.pos)
+		player.team, 
+		player.pos)
 	
 	-- Move Order draw
-	draw_helper.drawMoveOrder(game_display.game.selected_player,
+	draw_helper.drawMoveOrder(player,
 		game_display.game.player_list, 
 		game_display.root.ui.frame.move_order)
 		
@@ -82,10 +82,10 @@ function game_display.actionCallback(action)
 		game_display.executing = false
 	elseif (action.code == "attack") then
 		game_display.executing = false
-		game_display.setupUI()
 	end
 end
 
+-- Actions should have complete info about action to be performed
 function game_display.executeAction(action)
 	if (action.code == "move") then
 		draw_helper.emptyGroup(game_display.root.selection)
@@ -96,7 +96,7 @@ function game_display.executeAction(action)
 			game_display.actionCallback)
 		game_display.executing = true
 	elseif (action.code == "select") then
-		game_display.setupUI()
+		game_display.setupUI(action.player)
 		game_display.ui.game_state = game_state.awaiting_player_move
 	elseif(action.code == "attack_choice") then
 		draw_helper.drawAttackGrid(game_display.game.selected_player.pos, game_display.root.selection, game.player_list, 
@@ -113,10 +113,6 @@ function game_display.executeAction(action)
 		game_display.executing = true
 	end
 end
-
-
-
-
 
 function game_display.tap( event ) 
 	local x = math.floor(event.x / TILE_X) + 1
@@ -291,7 +287,7 @@ function game_display.create(root)
 	--game_display.root.ui.frame.button:insert(game_display.root.ui.frame.button.button2)
 	--game_display.root.ui.frame.button.button2:addEventListener("tap", ability2click)
 	
-	game_display.setupUI()
+	game_display.setupUI(game_display.game.selected_player)
 	
 	-- Expect clicks
 	game_display.ui.game_state = game_state.awaiting_player_move

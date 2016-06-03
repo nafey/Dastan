@@ -24,19 +24,36 @@ function game.selectNextPlayer()
 	local keep_selecting = true
 	
 	while (keep_selecting) do
-		local tentative_selection = player_helper.selectNextMover(game.player_list, false)
-		
-		if (tentative_selection.team == game.main_team) then
-			game.selected_player = tentative_selection
+		game.selected_player = player_helper.selectNextMover(game.player_list, false)
 
-			local raw_level = player_helper.getMovementGrid(game.level)
-			local level_with_players = player_helper.markPlayers(raw_level, game.player_list, game.selected_player)
-			
-			game.move_map = geometry.floodFill(level_with_players, game.selected_player.pos, game.selected_player.range)
+		local raw_level = player_helper.getMovementGrid(game.level)
+		local level_with_players = player_helper.markPlayers(raw_level, game.player_list, game.selected_player)
+		
+		game.move_map = geometry.floodFill(level_with_players, game.selected_player.pos, game.selected_player.range)
+		if (game.selected_player.team == game.main_team) then
 			keep_selecting = false
 		else
 			-- do ai stuff here
+			local recommend = ai.aiTurn(game.selected_player, game.player_list, 
+				game.move_map, game.level)
 			
+			if (recommend.code == "recommend_move") then
+				-- enqueue move action
+				-- TODO: No select action here?			
+			
+				-- TODO: Currently I can count this piece of code in three places
+				--		 Modularize this shit
+				-- TODO: Player Helper cant be expected to execute triggers move 
+				--		 this to game engine
+				local ret = player_helper.movePlayer(game.move_map, 
+					game.selected_player, recommend.point)
+				
+				local move_action = {}
+				move_action.code = "move"
+				move_action.player = game.selected_player
+				move_action.path = ret
+				table.insert(game.action_queue, move_action)				
+			end			
 		end
 	
 	end
@@ -63,10 +80,10 @@ end
 
 function game.submitInteraction(interaction)
 	if (interaction.code == "move") then
+		-- enqueue move action
 		local ret = player_helper.movePlayer(game.move_map, 
 			game.selected_player, interaction.point)
 		
-		-- enqueue move action
 		local move_action = {}
 		move_action.code = "move"
 		move_action.player = game.selected_player
@@ -84,7 +101,7 @@ function game.submitInteraction(interaction)
 			local select_action = {}
 			select_action.code = "select"
 			select_action.player = game.selected_player
-			
+						
 			table.insert(game.action_queue, select_action)
 		else 
 			local attack_choice_action = {}
