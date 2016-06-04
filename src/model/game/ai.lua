@@ -7,8 +7,38 @@ local ai = {}
 ai.main_team = 1
 ai.ai_team = 2
 
+-- Returns point to which you can move
+function ai.moveToEnemy(player, move_map, enemy) 
+	local ret = {}
+	
+	for dir = 1, 4 do
+		local pt_check = points.rotate(enemy.pos, dir)
+		if (move_map.safe(pt_check.x, pt_check.y) ~= 0) then
+			ret = pt_check
+		end
+	end
+	
+	return ret
+end
+
+-- Select enemy to attack
+function ai.selectEnemyForAttack(player, move_map, enemies)
+	-- pick the lowest hp enemy
+	local hp_min = 99999
+	local enemy = {}
+	
+	for i = 1, #enemies do 
+		if (hp_min > enemies[i].hp) then
+			hp_min = enemies[i].hp
+			enemy = enemies[i]
+		end
+	end
+	
+	return enemy
+end
+
 -- returns the point to move to come close to enemy center
-function ai.moveToEnemy(player_list, move_map)
+function ai.moveToEnemyCenter(player_list, move_map)
 	local target_point = player_helper.findTeamCenter(ai.main_team, player_list)
 	local best_point = points.createPoint(9999, 9999)
 	
@@ -33,12 +63,24 @@ end
 -- Always ends with select next action
 function ai.aiTurn(player, player_list, move_map, level)
 	local recommend = {}
-	recommend.code = "recommend_move"
-	-- select point
 	
-	local move_target = ai.moveToEnemy(player_list, move_map)
+	-- check if enemies in range
+	local enemies = player_helper.findEnemyInRange(player, player_list, move_map)
 	
-	recommend.point = points.createPoint(move_target.x, move_target.y)
+	if (#enemies > 0) then
+		recommend.code = "recommend_attack"
+		
+		local enemy = ai.selectEnemyForAttack(player, move_map, enemies)
+		local move_point = ai.moveToEnemy(player, move_map, enemy)
+		
+		recommend.enemy = enemy
+		recommend.move_point = move_point
+	else 
+		recommend.code = "recommend_move"
+		-- select point
+		local move_point = ai.moveToEnemyCenter(player_list, move_map)
+		recommend.move_point = points.createPoint(move_point.x, move_point.y)
+	end
 	
 	return recommend
 end

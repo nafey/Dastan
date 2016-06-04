@@ -37,29 +37,54 @@ function game.selectNextPlayer()
 			local recommend = ai.aiTurn(game.selected_player, game.player_list, 
 				game.move_map, game.level)
 			
+			-- TODO: No select action here?			
+			local select_action = {}
+			select_action.code = "select"
+			select_action.player = game.selected_player
+			select_action.move_map = game.move_map
+						
+			table.insert(game.action_queue, select_action)				
+			
 			if (recommend.code == "recommend_move") then
 				-- enqueue move action
-				-- TODO: No select action here?			
-				local select_action = {}
-				select_action.code = "select"
-				select_action.player = game.selected_player
-				select_action.move_map = game.move_map
-							
-				table.insert(game.action_queue, select_action)				
 				
 				-- TODO: Currently I can count this piece of code in three places
 				--		 Modularize this shit
 				-- TODO: Player Helper cant be expected to execute triggers move 
 				--		 this to game engine
 				local ret = player_helper.movePlayer(game.move_map, 
-					game.selected_player, recommend.point)
+					game.selected_player, recommend.move_point)
 				
 				local move_action = {}
 				move_action.code = "move"
 				move_action.player = game.selected_player
 				move_action.path = ret
 				table.insert(game.action_queue, move_action)				
-			end			
+			elseif (recommend.code == "recommend_attack") then
+				-- enqueue move action
+				local ret = player_helper.movePlayer(game.move_map, 
+					game.selected_player, recommend.move_point)
+					
+				local move_action = {}
+				move_action.code = "move"
+				move_action.player = game.selected_player
+				move_action.path = ret
+				table.insert(game.action_queue, move_action)
+				
+				-- TODO: We should have an attack select here but its not working
+				
+				-- enqueue attack
+				print("here")
+				game_engine.playerAttack(game.selected_player, recommend.enemy, 
+					game.player_list)
+				
+				local attack_action = {}
+				attack_action.code = "attack"
+				attack_action.attacker = game.selected_player
+				attack_action.defender = recommend.enemy
+				
+				table.insert(game.action_queue, attack_action)
+			end
 		end
 	
 	end

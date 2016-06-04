@@ -25,6 +25,7 @@ function game_engine.damage(player, damage, player_list)
 end
 
 function game_engine.playerAttack(attacker, attacked, player_list) 
+	print(attacker.name .. " is attacking " .. attacked.name)
 	game_engine.damage(attacked, attacker.attack, player_list)
 end
 

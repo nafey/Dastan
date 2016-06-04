@@ -208,19 +208,6 @@ function player_helper.selectNextMover(player_list, later)
 	return ret
 end
 
-function player_helper.isAdjacentToEnemy(x, y, player_list, your_team)
-	local ret = false
-	for i = 1, #player_list do 
-		if (not(ret) and geometry.isAdjacent(x, y, player_list[i].pos.x, player_list[i].pos.y)) then
-			if (player_list[i].team ~= your_team) then
-				ret = true
-			end
-		end
-	end
-	
-	return ret
-end
-
 function player_helper.getPlayerPositions(levelgrid)
 	-- is true only when i,j corresponds to P1 ...P6
 	function isPlayerPosition(i, j) 
@@ -295,6 +282,20 @@ function player_helper.isEnemyAtPosition(x, y, player_list, your_team)
 	return ret
 end
 
+
+function player_helper.isAdjacentToEnemy(x, y, player_list, your_team)
+	local ret = false
+	for i = 1, #player_list do 
+		if (not(ret) and geometry.isAdjacent(x, y, player_list[i].pos.x, player_list[i].pos.y)) then
+			if (player_list[i].team ~= your_team) then
+				ret = true
+			end
+		end
+	end
+	
+	return ret
+end
+
 function player_helper.getPlayerAtPosition(x, y, player_list)
 	local ret = nil
 	for i = 1, #player_list do 
@@ -306,8 +307,29 @@ function player_helper.getPlayerAtPosition(x, y, player_list)
 	return ret
 end
 
-
-
-
+-- Get all players
+function player_helper.findEnemyInRange(player, player_list, move_map)
+	local ret = {}
+	
+	for i = 1, #player_list do
+		local add_flag = false
+		
+		for dir = 1, 4 do
+			local pt_check = points.rotate(player_list[i].pos, dir)
+			
+			if (move_map.safe(pt_check.x, pt_check.y) ~= 0) then
+				if (player_list[i].team ~= player.team) then
+					add_flag = true
+				end
+			end
+		end
+		
+		if (add_flag) then
+			table.insert(ret, player_list[i])
+		end
+	end
+	
+	return ret
+end
 
 return player_helper

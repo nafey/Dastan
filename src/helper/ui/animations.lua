@@ -412,9 +412,4 @@ function animations.blink(sprite, times, period)
 	return a
 end
 
-
-
-
-
-
 return animations

@@ -56,25 +56,25 @@ function game_display.setupUI(player, move_map)
 		game_display.root.ui.frame.move_order)
 		
 	-- Drop Dead
-	local rem = {}
-	for k,v in pairs(game_display.ui.player_sprites) do
-		local k_died = true
-		
-		for i = 1, #game_display.game.player_list do
-			if (k == game_display.game.player_list[i].name) then
-				k_died = false
-			end
-		end
-		
-		if (k_died) then
-			table.insert(rem, k)
-		end
-	end
-	
-	for i = 1, #rem do
-		game_display.ui.player_sprites[rem[i]]:removeSelf()
-		game_display.ui.player_sprites[rem[i]] = nil
-	end
+	--local rem = {}
+	--for k,v in pairs(game_display.ui.player_sprites) do
+	--	local k_died = true
+	--	
+	--	for i = 1, #game_display.game.player_list do
+	--		if (k == game_display.game.player_list[i].name) then
+	--			k_died = false
+	--		end
+	--	end
+	--	
+	--	if (k_died) then
+	--		table.insert(rem, k)
+	--	end
+	--end
+	--
+	--for i = 1, #rem do
+	--	game_display.ui.player_sprites[rem[i]]:removeSelf()
+	--	game_display.ui.player_sprites[rem[i]] = nil
+	--end
 	
 	-- TODO: The charachter currently bobs while moving
 	-- Bob animation
