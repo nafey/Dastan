@@ -40,7 +40,13 @@ function game.selectNextPlayer()
 			if (recommend.code == "recommend_move") then
 				-- enqueue move action
 				-- TODO: No select action here?			
-			
+				local select_action = {}
+				select_action.code = "select"
+				select_action.player = game.selected_player
+				select_action.move_map = game.move_map
+							
+				table.insert(game.action_queue, select_action)				
+				
 				-- TODO: Currently I can count this piece of code in three places
 				--		 Modularize this shit
 				-- TODO: Player Helper cant be expected to execute triggers move 
@@ -88,6 +94,7 @@ function game.submitInteraction(interaction)
 		move_action.code = "move"
 		move_action.player = game.selected_player
 		move_action.path = ret
+				
 		table.insert(game.action_queue, move_action)
 		
 		-- If you have moved to empty block select next player
@@ -101,6 +108,7 @@ function game.submitInteraction(interaction)
 			local select_action = {}
 			select_action.code = "select"
 			select_action.player = game.selected_player
+			select_action.move_map = game.move_map
 						
 			table.insert(game.action_queue, select_action)
 		else 
@@ -119,6 +127,7 @@ function game.submitInteraction(interaction)
 		local select_action = {}
 		select_action.code = "select"
 		select_action.player = game.selected_player
+		select_action.move_map = game.move_map
 		
 		table.insert(game.action_queue, select_action)
 	elseif (interaction.code == "attack") then
@@ -138,6 +147,7 @@ function game.submitInteraction(interaction)
 		local select_action = {}
 		select_action.code = "select"
 		select_action.player = game.selected_player
+		select_action.move_map = game.move_map
 		
 		table.insert(game.action_queue, select_action)
 	end

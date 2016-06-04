@@ -36,15 +36,15 @@ game_display.executing = false
 
 game_display.animation_manager = animation_manager
 
-
-function game_display.setupUI(player)
+-- TODO: having move_map here is a hack
+function game_display.setupUI(player, move_map)
 	-- Draw Character info
 	draw_helper.showCharDetails(game_display.root.ui.frame.char_dat.face,
 		game_display.root.ui.frame.char_dat.desc,
 		player)
 
 	-- Movement Grid draw
-	draw_helper.drawMovementGrid(game_display.game.move_map, 
+	draw_helper.drawMovementGrid(move_map, 
 		game_display.root.selection, 
 		game_display.game.player_list, 
 		player.team, 
@@ -75,6 +75,12 @@ function game_display.setupUI(player)
 		game_display.ui.player_sprites[rem[i]]:removeSelf()
 		game_display.ui.player_sprites[rem[i]] = nil
 	end
+	
+	-- TODO: The charachter currently bobs while moving
+	-- Bob animation
+	animation_manager.stopBob()
+	animation_manager.characterBob(game_display.ui.player_sprites[player.name],
+		player)
 end
 
 function game_display.actionCallback(action)
@@ -89,14 +95,14 @@ end
 function game_display.executeAction(action)
 	if (action.code == "move") then
 		draw_helper.emptyGroup(game_display.root.selection)
-		
+
 		animation_manager.animateCharacterMove(
 			game_display.ui.player_sprites[action.player.name], 
 			action,
 			game_display.actionCallback)
 		game_display.executing = true
 	elseif (action.code == "select") then
-		game_display.setupUI(action.player)
+		game_display.setupUI(action.player, action.move_map)
 		game_display.ui.game_state = game_state.awaiting_player_move
 	elseif(action.code == "attack_choice") then
 		draw_helper.drawAttackGrid(game_display.game.selected_player.pos, game_display.root.selection, game.player_list, 
@@ -126,6 +132,9 @@ function game_display.tap( event )
 				
 				interaction.code = "move"
 				interaction.point = points.createPoint(x, y)
+				
+				-- Bob animation
+				animation_manager.stopBob()
 				
 				game_display.game.submitInteraction(interaction)
 			end
@@ -191,7 +200,7 @@ function game_display.initialize(scene, player_data_file_path, level_data_file_p
 end
 
 function game_display.debug2(args)
-	print(args)
+
 end
 
 function game_display.debug()
@@ -287,7 +296,8 @@ function game_display.create(root)
 	--game_display.root.ui.frame.button:insert(game_display.root.ui.frame.button.button2)
 	--game_display.root.ui.frame.button.button2:addEventListener("tap", ability2click)
 	
-	game_display.setupUI(game_display.game.selected_player)
+	game_display.setupUI(game_display.game.selected_player, 
+		game_display.game.move_map)
 	
 	-- Expect clicks
 	game_display.ui.game_state = game_state.awaiting_player_move

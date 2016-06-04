@@ -4,19 +4,20 @@ local sprite_data = require("src.helper.ui.sprite_data")
 
 local animation_manager = {}
 animation_manager.list = {}
-local main_character_bob = nil
 
-function animation_manager.characterBob(character)
-	local bob = animations.characterBob(character)
+function animation_manager.characterBob(sprite, character)
+	local bob = animations.characterBob(sprite, character)
 	table.insert(animation_manager.list, bob)
 	main_character_bob = bob
 end
 
 function animation_manager.stopBob()
-	if (main_character_bob ~= nil) then
-		main_character_bob.stop()
-		animation_manager.clearDead()
+	for i = 1, #animation_manager.list do
+		if (animation_manager.list[i].name == "bob") then
+			animation_manager.list[i].stop()
+		end
 	end
+	animation_manager.clearDead()
 end
 
 function animation_manager.animateTriggeredAbility(character, affected, ability, callback)
@@ -111,8 +112,8 @@ function animation_manager.animateCharacterMove(sprite, action, callback, args)
 	local path = {}
 	
 	for i = 1, #action.path do
-		table.insert(path, 
-			points.createPoint((action.path[i].x - 1) * TILE_X, (action.path[i].y - 1) * TILE_Y))
+		table.insert(path, points.createPoint((action.path[i].x - 1) * TILE_X, 
+			(action.path[i].y - 1) * TILE_Y))
 	end
 	local move = animations.moveSprite(sprite, path, callback, action)
 	table.insert(animation_manager.list, move)

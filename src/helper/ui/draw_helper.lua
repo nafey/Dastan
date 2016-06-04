@@ -99,7 +99,7 @@ function draw_helper.showCharDetails(displayGroupFace, displayGroupDescription, 
 	local text_options = {
 		parent = displayGroupDescription,
 		text = "Name:",
-		font = "AR JULIAN",
+		font = "Arial",
 		width = 70,
 		align = "center",
 		fontSize = "14",

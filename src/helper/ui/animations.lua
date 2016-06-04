@@ -95,13 +95,15 @@ function animations.attack(attacker, defender, callback, args)
 	return attack_seq
 end
 
-function animations.characterBob(character)
+function animations.characterBob(sprite, character)
 	local a = {}
 	a.has_more = true
 	
-	a.character = character
-	a.last_time = nil
+	a.name = "bob"
 	
+	a.character = character
+	a.sprite = sprite
+	a.last_time = nil
 	
 	a.amplitude = 0.1
 	a.up = false
@@ -125,9 +127,9 @@ function animations.characterBob(character)
 				a.up = not a.up
 				
 				if (a.up) then
-					a.character.sprite.y = a.character.sprite.y - TILE_Y * a.amplitude
+					a.sprite.y = a.sprite.y - TILE_Y * a.amplitude
 				else
-					a.character.sprite.y = a.character.sprite.y + TILE_Y * a.amplitude
+					a.sprite.y = a.sprite.y + TILE_Y * a.amplitude
 				end
 			end
 		end
@@ -135,7 +137,7 @@ function animations.characterBob(character)
 	
 	function a.stop()
 		a.has_more = false
-		a.character.move(a.character.pos.x, a.character.pos.y)
+		a.sprite.y = (a.character.pos.y - 1) * TILE_Y
 	end
 	
 	return a
@@ -306,6 +308,7 @@ function animations.moveSprite(sprite, path, callback, args)
 		end
 		return a
 	end
+	
 	
 	local anim_list = {}
 	
