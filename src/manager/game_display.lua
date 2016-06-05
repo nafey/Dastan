@@ -156,7 +156,7 @@ function game_display.executeAction(action)
 			draw_helper.emptyGroup(game_display.root.selection)
 			
 			animation_manager.animateTargetedAbility(
-				game_display.ui.player_sprites[game.selected_player.name], 
+				game_display.ui.player_sprites[action.user.name], 
 				game_display.ui.player_sprites[action.target.name], 
 				action.ability, game_display.targetedAbilityCallback,
 				action)

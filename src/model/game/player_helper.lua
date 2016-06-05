@@ -88,7 +88,7 @@ end
 function player_helper.useTargetedAbility(character, target, ability, player_list) 
 	local did_kill = false
 	if (ability.name == "double_strike") then
-		target.hp = target.hp - character.attack * 2
+		did_kill = game_engine.damage(target, character.attack * 2, player_list)
 	elseif (ability.name == "shoot") then
 		did_kill = game_engine.damage(target, ability.damage, player_list)
 	elseif (ability.name == "heal") then

@@ -10,7 +10,7 @@
   "name": "lan",
   "label" : "Lan",
   "hp" : 25,
-  "attack" : 3,
+  "attack" : 4,
   "speed" : 16,
   "range" : 4,
   "ability_1" : {

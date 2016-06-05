@@ -202,6 +202,7 @@ function game.submitInteraction(interaction)
 			ability_action.ability = interaction.ability
 			ability_action.type = interaction.ability_type
 			ability_action.target = interaction.targeted_player
+			ability_action.user = game.selected_player
 			
 			table.insert(game.action_queue, ability_action)
 			

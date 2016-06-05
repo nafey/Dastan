@@ -28,22 +28,23 @@ function animation_manager.animateTriggeredAbility(character_sprite, affected_sp
 	if (ability.name == "roar") then
 		local anim_list = {}
 		
-		local pt = points.createPoint(character.pos.x - 1, character.pos.y - 1)
+		local pt = points.createPoint(character_sprite.x - TILE_X, character_sprite.y - TILE_Y)
 		local roar = animations.showAnimationOnce(sprite_data.getRoarFxData(), pt)
 		table.insert(anim_list, roar)
 		
 		
 		local roar_list = {}
 		
-		for i = 1, #affected do
-			local roar_after = animations.showAnimationOnce(sprite_data.getRoarFxFinalData(), affected[i].pos)
+		for i = 1, #affected_sprite do
+			local roar_after = animations.showAnimationOnce(sprite_data.getRoarFxFinalData(),
+				points.createPoint(affected_sprite[i].x, affected_sprite[i].y))
 			table.insert(roar_list, roar_after)
 		end
 		
 		local parallel = animations.playParallel(roar_list)
 		table.insert(anim_list, parallel)
 		
-		local seq = animations.playSequence(anim_list, callback)
+		local seq = animations.playSequence(anim_list, callback, args)
 		table.insert(animation_manager.list, seq)
 	elseif (ability.name == "scatter_shot") then
 		local anim_list = {}
@@ -91,15 +92,15 @@ end
 
 function animation_manager.animateTargetedAbility(character_sprite, target_sprite, ability, callback, args)
 	if (ability.name == "double_strike") then
-		local attack1 = animations.characterAttackAnimation(character_sprite, target_sprite)
-		local attack2 = animations.characterAttackAnimation(character_sprite, target_sprite)
+		local attack1 = animations.attack(character_sprite, target_sprite)
+		local attack2 = animations.attack(character_sprite, target_sprite)
 		
 		local anims = {}
 		
 		table.insert(anims, attack1)
 		table.insert(anims, attack2)
 		
-		local anim_seq = animations.playSequence(anims, callback)
+		local anim_seq = animations.playSequence(anims, callback, args)
 		table.insert(animation_manager.list, anim_seq)
 	elseif (ability.name == "shoot") then
 		local pow_sheet = sprite_data.getPowSheetData()
