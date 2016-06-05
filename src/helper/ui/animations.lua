@@ -361,7 +361,7 @@ function animations.poke(sprite, isHort, isPositive, callback, args)
 end
 
 
-function animations.blink(sprite, times, period)
+function animations.blink(sprite, times, period, callback, args)
 	local a = {}
 	
 	a.has_more = true
@@ -372,6 +372,9 @@ function animations.blink(sprite, times, period)
 	
 	a.period = period
 	a.period_elapsed = 0
+	
+	a.callback = callback
+	a.args = args
 	
 	a.last_time = nil
 	
@@ -407,6 +410,13 @@ function animations.blink(sprite, times, period)
 	
 	function a.stop()
 		a.sprite.alpha = 1
+		if (a.callback ~= nil) then
+			if (a.args ~= nil) then
+				a.callback(a.args)
+			else
+				a.callback()
+			end
+		end
 	end
 	
 	return a

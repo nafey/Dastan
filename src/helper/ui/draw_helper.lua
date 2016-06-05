@@ -164,7 +164,7 @@ function draw_helper.showCharDetails(displayGroupFace, displayGroupDescription, 
 	hp:setFillColor(0, 0, 0)
 end
 
-function draw_helper.drawHpBars(player_list, sprite_list, main_team, displayGroup)
+function draw_helper.drawHpBars(player_list, hp_vals, sprite_list, main_team, displayGroup)
 	draw_helper.emptyGroup(displayGroup)
 			
 
@@ -172,7 +172,7 @@ function draw_helper.drawHpBars(player_list, sprite_list, main_team, displayGrou
 		local p = player_list[i]
 		local sprite = sprite_list[p.name]
 		
-		local healthBar = display.newRect(displayGroup, sprite.x, sprite.y + TILE_Y * 7 / 8, TILE_X * (p.hp / p.max_hp), TILE_Y / 8)
+		local healthBar = display.newRect(displayGroup, sprite.x, sprite.y + TILE_Y * 7 / 8, TILE_X * (hp_vals[p.name] / p.max_hp), TILE_Y / 8)
 		healthBar.anchorX = 0
 		healthBar.anchorY = 0
 		if (p.team == main_team) then

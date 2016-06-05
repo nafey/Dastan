@@ -5,10 +5,14 @@ local sprite_data = require("src.helper.ui.sprite_data")
 local animation_manager = {}
 animation_manager.list = {}
 
+function animation_manager.animateDeath(sprite, callback, args)
+	local death_blink = animations.blink(sprite, 10, 50, callback, args)
+	table.insert(animation_manager.list, death_blink)
+end
+
 function animation_manager.characterBob(sprite, character)
 	local bob = animations.characterBob(sprite, character)
 	table.insert(animation_manager.list, bob)
-	main_character_bob = bob
 end
 
 function animation_manager.stopBob()
@@ -170,6 +174,7 @@ function animation_manager.debug(displayGroup, sprite, callback, args)
 	--table.insert(animation_manager.list, seq)
 	
 	--table.insert(animation_manager.list, poke)
+	
 end
 
 function animation_manager.step() 

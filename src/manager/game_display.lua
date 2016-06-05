@@ -51,6 +51,7 @@ function game_display.setupUI(player, move_map)
 		player.pos)
 	
 	-- Move Order draw
+	-- TODO: look closely there is some issue with Move Order
 	draw_helper.drawMoveOrder(player,
 		game_display.game.player_list, 
 		game_display.root.ui.frame.move_order)
@@ -72,8 +73,7 @@ function game_display.setupUI(player, move_map)
 	--end
 	--
 	--for i = 1, #rem do
-	--	game_display.ui.player_sprites[rem[i]]:removeSelf()
-	--	game_display.ui.player_sprites[rem[i]] = nil
+
 	--end
 	
 	-- TODO: The charachter currently bobs while moving
@@ -88,6 +88,22 @@ function game_display.actionCallback(action)
 		game_display.executing = false
 	elseif (action.code == "attack") then
 		game_display.executing = false
+		
+		-- TODO: ui is an unfortunate name please change
+		local hp = 0
+		
+		-- Update the hp here
+		for i = 1, #game.player_list do
+			if (action.defender.name == game.player_list[i].name) then
+				hp = game.player_list[i].hp
+			end
+		end
+		
+		game_display.ui.hp[action.defender.name] = hp
+	elseif (action.code == "dead") then
+		game_display.ui.player_sprites[action.died.name]:removeSelf()
+		game_display.ui.player_sprites[action.died.name] = nil		
+		
 	end
 end
 
@@ -113,10 +129,12 @@ function game_display.executeAction(action)
 		
 		local attacker_sprite = game_display.ui.player_sprites[action.attacker.name]
 		local defender_sprite = game_display.ui.player_sprites[action.defender.name]
-		
+
 		animation_manager.animateCharacterAttack(attacker_sprite, defender_sprite, 
 			game_display.actionCallback, action)
 		game_display.executing = true
+	elseif (action.code == "dead") then
+		animation_manager.animateDeath(game_display.ui.player_sprites[action.died.name], game_display.actionCallback, action)
 	end
 end
 
@@ -177,7 +195,7 @@ function game_display.frame()
 		end
 	end
 	
-	draw_helper.drawHpBars(game.player_list, game_display.ui.player_sprites, game.main_team, game_display.root.ui.hp)
+	draw_helper.drawHpBars(game.player_list, game_display.ui.hp, game_display.ui.player_sprites, game.main_team, game_display.root.ui.hp)
 end
 
 function game_display.initialize(scene, player_data_file_path, level_data_file_path, level_background_image, team_data_file_path, main_team)
@@ -226,10 +244,12 @@ function game_display.create(root)
 	game_display.root.player = display.newGroup()
 	
 	game_display.ui.player_sprites = {}
+	game_display.ui.hp = {}
 	for i = 1, #game_display.game.player_list do
 		local player = game_display.game.player_list[i]
 		game_display.ui.player_sprites [player.name] = sprites.draw("res/chars/" .. player.name .. ".png", 
 			player.pos.x - 1, player.pos.y - 1, 0, game_display.root.player)
+		game_display.ui.hp[player.name] = player.max_hp
 	end
 	
 	-- Frame

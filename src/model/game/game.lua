@@ -74,16 +74,22 @@ function game.selectNextPlayer()
 				-- TODO: We should have an attack select here but its not working
 				
 				-- enqueue attack
-				print("here")
-				game_engine.playerAttack(game.selected_player, recommend.enemy, 
+				local did_kill = game_engine.playerAttack(game.selected_player, recommend.enemy, 
 					game.player_list)
 				
 				local attack_action = {}
 				attack_action.code = "attack"
 				attack_action.attacker = game.selected_player
 				attack_action.defender = recommend.enemy
-				
 				table.insert(game.action_queue, attack_action)
+				
+				if (did_kill) then
+					local dead_action = {}
+					dead_action.code = "dead"
+					dead_action.died = attack_action.defender
+					table.insert(game.action_queue, dead_action)
+				end
+				
 			end
 		end
 	
@@ -156,7 +162,7 @@ function game.submitInteraction(interaction)
 		
 		table.insert(game.action_queue, select_action)
 	elseif (interaction.code == "attack") then
-		game_engine.playerAttack(interaction.attacker, interaction.defender, game.player_list)
+		local did_kill = game_engine.playerAttack(interaction.attacker, interaction.defender, game.player_list)
 				
 		local attack_action = {}
 		attack_action.code = "attack"
@@ -164,6 +170,13 @@ function game.submitInteraction(interaction)
 		attack_action.defender = interaction.defender
 		
 		table.insert(game.action_queue, attack_action)
+		
+		if (did_kill) then
+			local dead_action = {}
+			dead_action.code = "dead"
+			dead_action.died = attack_action.defender
+			table.insert(game.action_queue, dead_action)
+		end
 		
 		-- selectNextPlayer
 		game.selectNextPlayer()
