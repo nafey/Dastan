@@ -192,6 +192,14 @@ function animations.showAnimationOnce(anim_data, pos, callback, args)
 	function a.stop()
 		a.spr:pause()
 		a.spr:removeSelf()
+		
+		if (a.callback ~= nil) then
+			if (a.args ~= nil) then
+				a.callback(a.args)
+			else
+				a.callback()
+			end
+		end
 	end
 	
 	return a

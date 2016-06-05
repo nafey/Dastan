@@ -67,23 +67,24 @@ function animation_manager.animateTriggeredAbility(character_sprite, affected_sp
 	elseif (ability.name == "speed_rush") then
 		local anim_list = {}
 		
-		local pt = points.createPoint(character.pos.x, character.pos.y - 1)
+		local pt = points.createPoint(character_sprite.x, character_sprite.y - TILE_Y)
 		local rush_fx = sprite_data.getSpeedRushFxData()
-		local rush = animations.showAnimationOnce(rush_fx, pt, callback)
+		local rush = animations.showAnimationOnce(rush_fx, pt)
 		table.insert(anim_list, rush)
 		
 		
 		local roar_list = {}
 		
-		for i = 1, #affected do
-			local roar_after = animations.showAnimationOnce(sprite_data.getRoarFxFinalData(), affected[i].pos)
+		for i = 1, #affected_sprite do
+			local roar_after = animations.showAnimationOnce(sprite_data.getRoarFxFinalData(), 
+				points.createPoint(affected_sprite[i].x, affected_sprite[i].y))
 			table.insert(roar_list, roar_after)
 		end
 		
 		local parallel = animations.playParallel(roar_list)
 		table.insert(anim_list, parallel)
 		
-		local seq = animations.playSequence(anim_list, callback)
+		local seq = animations.playSequence(anim_list, callback, args)
 		table.insert(animation_manager.list, seq)
 	end
 end
@@ -107,7 +108,7 @@ function animation_manager.animateTargetedAbility(character_sprite, target_sprit
 		table.insert(animation_manager.list, attack_seq)
 	elseif (ability.name == "heal") then
 		local heal_fx = sprite_data.getHealFxData()
-		local heal = animations.showAnimationOnce(heal_fx, points.createPoint(target_sprite.x, target_sprite.y), callback)
+		local heal = animations.showAnimationOnce(heal_fx, points.createPoint(target_sprite.x, target_sprite.y), callback, args)
 		table.insert(animation_manager.list, heal)
 	end
 end

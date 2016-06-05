@@ -196,7 +196,7 @@ function game.submitInteraction(interaction)
 			local did_kill = player_helper.useTargetedAbility(
 				game.selected_player, interaction.targeted_player, 
 				interaction.ability, game.player_list) 
-		
+					
 			local ability_action = {}
 			ability_action.code = "ability"
 			ability_action.ability = interaction.ability

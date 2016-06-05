@@ -48,9 +48,9 @@
 	"name" : "speed_rush",
 	"open" : true,
 	"type" : "triggered",
-	"range": 3,
+	"range": 4,
 	"select": "ally",
-	"speed_buff": 1
+	"speed_buff": 3
   }
 },
 {
