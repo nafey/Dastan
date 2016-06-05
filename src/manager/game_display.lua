@@ -1,3 +1,4 @@
+local composer = require( "composer" )
 local points = require("src.model.geometry.points")
 
 local game = require("src.model.game.game")
@@ -25,7 +26,7 @@ game_display.ui = {}
 -- All UI sprites 
 game_display.root = {}
 
--- TODO: to use {} instead of nil for initialization
+game_display.victoryFlag = false
 
 
 -- Scene for clicks and stuff
@@ -38,31 +39,41 @@ game_display.animation_manager = animation_manager
 
 -- TODO: having move_map here is a hack
 function game_display.setupUI(player, move_map)
-	-- Draw Character info
-	draw_helper.showCharDetails(game_display.root.ui.frame.char_dat.face,
-		game_display.root.ui.frame.char_dat.desc,
-		player)
-
-	-- Movement Grid draw
-	draw_helper.drawMovementGrid(move_map, 
-		game_display.root.selection, 
-		game_display.game.player_list, 
-		player.team, 
-		player.pos)
+	-- Check victory
+	if (game.checkVictory() == 1) then
+		native.showAlert( "Congrats!!", "You WIN", { "OK"})
+	elseif (game.checkVictory() == 2) then
+		native.showAlert( "Sorry!!", "You LOSE", { "OK"})
+		game_display.victoryFlag = true
+	else 
 	
-	-- Move Order draw
-	-- TODO: look closely there is some issue with Move Order
-	draw_helper.drawMoveOrder(player,
-		game_display.game.player_list, 
-		game_display.root.ui.frame.move_order)
+		-- Draw Character info
+		draw_helper.showCharDetails(game_display.root.ui.frame.char_dat.face,
+			game_display.root.ui.frame.char_dat.desc,
+			player)
+
+		-- Movement Grid draw
+		draw_helper.drawMovementGrid(move_map, 
+			game_display.root.selection, 
+			game_display.game.player_list, 
+			player.team, 
+			player.pos)
 		
-	draw_helper.drawButtons(game_display.root.ui.frame.button,
-		game.selected_player)
-		
-	-- Bob animation
-	animation_manager.stopBob()
-	animation_manager.characterBob(game_display.ui.player_sprites[player.name],
-		player)
+		-- Move Order draw
+		-- TODO: look closely there is some issue with Move Order
+		draw_helper.drawMoveOrder(player,
+			game_display.game.player_list, 
+			game_display.root.ui.frame.move_order)
+			
+		draw_helper.drawButtons(game_display.root.ui.frame.button,
+			game.selected_player)
+			
+		-- Bob animation
+		animation_manager.stopBob()
+		animation_manager.characterBob(game_display.ui.player_sprites[player.name],
+			player)
+	end
+	
 end
 
 function game_display.triggeredAbilityCallback(action) 	
@@ -190,11 +201,12 @@ function game_display.frame()
 	game_display.animation_manager.step()
 	
 	if (not game_display.executing) then
-
-		if (#game.action_queue > game_display.action_counter) then
-			game_display.action_counter = game_display.action_counter + 1
-			game_display.executeAction(
-				game.action_queue[game_display.action_counter])
+		if (game_display.victoryFlag ~= true) then
+			if (#game.action_queue > game_display.action_counter) then
+				game_display.action_counter = game_display.action_counter + 1
+				game_display.executeAction(
+					game.action_queue[game_display.action_counter])
+			end
 		end
 	end
 	

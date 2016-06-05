@@ -20,6 +20,37 @@ game.used_ability = {}
 
 -- TODO: This needs to be fixed
 game.main_team = 1
+game.ai_team = 2
+
+function game.checkVictory()
+	
+	local we_lost_flag = true
+	
+	for i = 1, #game.player_list do
+		if (game.player_list[i].team == game.main_team) then
+			we_lost_flag = false
+		end
+	end
+	
+	if (we_lost_flag) then
+		return 2
+	end
+	
+	
+	local we_won_flag = true
+	
+	for i = 1, #game.player_list do
+		if (game.player_list[i].team == game.ai_team) then
+			we_won_flag = false
+		end
+	end
+	
+	if (we_won_flag) then
+		return 1
+	end
+	
+	return 0
+end
 
 function game.selectNextPlayer()
 		
@@ -46,6 +77,21 @@ function game.selectNextPlayer()
 			select_action.move_map = game.move_map
 						
 			table.insert(game.action_queue, select_action)				
+			
+			-- do turn only if humans left
+			local no_humans = true
+			
+			for i = 1, #game.player_list do
+				if (game.player_list[i].team == game.main_team) then
+					no_humans = false
+				end
+			
+			end
+			
+			if (no_humans) then
+				return
+			end
+			
 			
 			if (recommend.code == "recommend_move") then
 				-- enqueue move action
