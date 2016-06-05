@@ -3,7 +3,7 @@ local composer = require("composer")
 local scene = composer.newScene()
 
 function click()
-	composer.gotoScene( "src.level.level1" )
+	composer.gotoScene( "src.level.info" )
 end
 
 function scene:create( event )	
