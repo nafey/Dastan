@@ -191,37 +191,65 @@ function game.submitInteraction(interaction)
 		
 		table.insert(game.action_queue, select_action)
 	elseif (interaction.code == "ability") then
-		
-		local did_kill = player_helper.useTargetedAbility(
-			game.selected_player, interaction.targeted_player, 
-			interaction.ability, game.player_list) 
 	
-		local ability_action = {}
-		ability_action.code = "ability"
-		ability_action.ability = interaction.ability
-		ability_action.type = "targeted"
-		ability_action.target = interaction.targeted_player
+		if (interaction.ability_type == "targeted") then
+			local did_kill = player_helper.useTargetedAbility(
+				game.selected_player, interaction.targeted_player, 
+				interaction.ability, game.player_list) 
 		
-		table.insert(game.action_queue, ability_action)
-		
-		if (did_kill) then
-			local dead_action = {}
-			dead_action.code = "dead"
-			dead_action.died = ability_action.target
-			table.insert(game.action_queue, dead_action)
+			local ability_action = {}
+			ability_action.code = "ability"
+			ability_action.ability = interaction.ability
+			ability_action.type = interaction.ability_type
+			ability_action.target = interaction.targeted_player
+			
+			table.insert(game.action_queue, ability_action)
+			
+			if (did_kill) then
+				local dead_action = {}
+				dead_action.code = "dead"
+				dead_action.died = ability_action.target
+				table.insert(game.action_queue, dead_action)
+			end
+			
+			-- selectNextPlayer
+			game.selectNextPlayer()
+			
+			-- enqueue select action
+			local select_action = {}
+			select_action.code = "select"
+			select_action.player = game.selected_player
+			select_action.move_map = game.move_map
+			
+			table.insert(game.action_queue, select_action)
+		elseif (interaction.ability_type == "triggered") then
+			local affected = player_helper.findInAbilityRange(
+				game.selected_player, game.player_list, 
+				interaction.ability.range, interaction.ability.select)
+			player_helper.useTriggeredAbility(
+				game.selected_player, affected, interaction.ability)
+			
+			local ability_action = {}
+			ability_action.code = "ability"
+			ability_action.ability = interaction.ability
+			ability_action.type = interaction.ability_type
+			ability_action.affected = affected
+			ability_action.user = game.selected_player
+			
+			table.insert(game.action_queue, ability_action)
+			
+			-- selectNextPlayer
+			game.selectNextPlayer()
+			
+			-- enqueue select action
+			local select_action = {}
+			select_action.code = "select"
+			select_action.player = game.selected_player
+			select_action.move_map = game.move_map
+			
+			table.insert(game.action_queue, select_action)
+			
 		end
-		
-		-- selectNextPlayer
-		game.selectNextPlayer()
-		
-		-- enqueue select action
-		local select_action = {}
-		select_action.code = "select"
-		select_action.player = game.selected_player
-		select_action.move_map = game.move_map
-		
-		table.insert(game.action_queue, select_action)
-		
 	end
 end
 

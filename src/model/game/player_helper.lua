@@ -39,7 +39,7 @@ function player_helper.findTeamCenter(team, player_list)
 	return points.createPoint(x, y)
 end
 
-function player_helper.findInRange(character, player_list, range, selector)
+function player_helper.findInAbilityRange(character, player_list, range, selector)
 	local affected = {}
 	
 	for i = 1, #player_list do
@@ -47,6 +47,7 @@ function player_helper.findInRange(character, player_list, range, selector)
 		if (geometry.manhattan(player_list[i].pos.x, player_list[i].pos.y, 
 			character.pos.x, character.pos.y) <= range) then
 			local add_flag = true
+			
 			if (selector == "enemy" and character.team == player_list[i].team) then
 				add_flag = false
 			end
@@ -70,8 +71,12 @@ function player_helper.useTriggeredAbility(selected_player, affected, ability)
 			affected[i].attack = affected[i].attack + 1
 		end
 	elseif (ability.name == "scatter_shot") then
-		for i = 1, #affected do 
-			affected[i].hp = affected[i].hp - ability.damage
+		-- cant'kill
+		-- TODO: ^^^^ HACK, HACK, HACK
+		for i = 1, #affected do
+			if (affected[i].hp > ability.damage) then
+				affected[i].hp = affected[i].hp - ability.damage
+			end
 		end
 	elseif (ability.name == "speed_rush") then
 		for i = 1, #affected do

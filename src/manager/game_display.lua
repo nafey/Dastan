@@ -65,6 +65,23 @@ function game_display.setupUI(player, move_map)
 		player)
 end
 
+function game_display.triggeredAbilityCallback(action) 	
+	game_display.executing = false
+	
+	for i = 1, #action.affected do
+		-- Update the hp here
+		local hp = 0
+		for j = 1, #game.player_list do
+			if (action.affected[i].name == game.player_list[j].name) then
+				hp = game.player_list[j].hp
+			end
+		end
+		
+		game_display.ui.hp[action.affected[i].name] = hp
+	end
+	action.ability.open = true
+end
+
 function game_display.targetedAbilityCallback(action) 
 	game_display.executing = false
 		
@@ -79,6 +96,7 @@ function game_display.targetedAbilityCallback(action)
 	end
 	
 	game_display.ui.hp[action.target.name] = hp
+	action.ability.open = true
 end
 
 function game_display.actionCallback(action)
@@ -134,77 +152,38 @@ function game_display.executeAction(action)
 	elseif (action.code == "dead") then
 		animation_manager.animateDeath(game_display.ui.player_sprites[action.died.name], game_display.actionCallback, action)
 	elseif (action.code == "ability") then
-		draw_helper.emptyGroup(game_display.root.selection)
+		if (action.ability.type == "targeted") then
+			draw_helper.emptyGroup(game_display.root.selection)
+			
+			animation_manager.animateTargetedAbility(
+				game_display.ui.player_sprites[game.selected_player.name], 
+				game_display.ui.player_sprites[action.target.name], 
+				action.ability, game_display.targetedAbilityCallback,
+				action)
+			game_display.executing = true
+		elseif (action.ability.type == "triggered") then
+			draw_helper.emptyGroup(game_display.root.selection)
 		
-		animation_manager.animateTargetedAbility(
-			game_display.ui.player_sprites[game.selected_player.name], 
-			game_display.ui.player_sprites[action.target.name], 
-			action.ability, game_display.targetedAbilityCallback,
-			action)
-		game_display.executing = true
-	end
-end
-
-function game_display.tap( event ) 
-	local x = math.floor(event.x / TILE_X) + 1
-	local y = math.floor(event.y / TILE_Y) + 1
-	
-	if (not game_display.executing) then
-		if (game_display.ui.game_state == game_state.awaiting_player_move) then
-			if (game_display.game.move_map.safe(x, y) ~= 0) then
-				local interaction = {}
-				
-				interaction.code = "move"
-				interaction.point = points.createPoint(x, y)
-				
-				-- Bob animation
-				animation_manager.stopBob()
-				
-				game_display.game.submitInteraction(interaction)
-			end
-		elseif (game_display.ui.game_state == game_state.awaiting_attack_confirmation) then
-			if (x == game_display.game.selected_player.pos.x and y == game_display.game.selected_player.pos.y) then
-				
-				local interaction = {}
-				
-				interaction.code = "move_cancel"
-				
-				draw_helper.emptyGroup(game_display.root.ui.play_area)
-				game_display.game.submitInteraction(interaction)
+			local affected_sprites = {}
+			
+			for i = 1, #action.affected do
+				table.insert(affected_sprites, 
+				game_display.ui.player_sprites[action.affected[i].name])
 			end
 			
-			if (player_helper.isEnemyAtPosition(x, y, game_display.game.player_list, game_display.game.selected_player.team) == 1) then
-				
-				local interaction = {}
-				
-				interaction.code = "attack"
-				interaction.attacker = game_display.game.selected_player
-				interaction.defender = player_helper.getPlayerAtPosition(x, y, game_display.game.player_list)
-				
-				draw_helper.emptyGroup(game_display.root.ui.play_area)
-				game_display.game.submitInteraction(interaction)
-			end
-		elseif (game_display.ui.game_state == game_state.awaiting_ability_target_confirmation) then
-			if (player_helper.isTargetable(game.selected_player, game.player_list, game.used_ability, x, y)) then
-				local targeted_player = player_helper.getPlayerAtPosition(x, y, game.player_list)
-				
-				local interaction = {}
-				
-				interaction.code = "ability"
-				
-				interaction.targeted_player = targeted_player
-				interaction.ability = game.used_ability
-				game_display.game.submitInteraction(interaction)
-			else
-				game_display.ui.game_state = game_state.awaiting_player_move
-				
-				game.used_ability.open = true
-				game_display.setupUI(game.selected_player, game.move_map)
-			end
+			animation_manager.stopBob()
 			
+			animation_manager.animateTriggeredAbility(
+				game_display.ui.player_sprites[action.user.name],
+				affected_sprites, 
+				action.ability, game_display.triggeredAbilityCallback, 
+				action)
+				
+			game_display.executing = true
 		end
 	end
 end
+
 
 -- Pick up the latest action and execute it
 function game_display.frame()
@@ -267,17 +246,96 @@ function abilityClick(ability)
 		
 		game_display.ui.game_state = game_state.awaiting_ability_target_confirmation
 		animation_manager.stopBob()
+	elseif (ability.type == "triggered") then
+		ability.open = false
+		
+		game.used_ability = ability
+		draw_helper.drawButtons(game_display.root.ui.frame.button, game.selected_player)
+		
+		local interaction = {}
+		
+		interaction.code = "ability"
+		interaction.ability_type = "triggered"
+		interaction.ability = ability
+		
+		game_display.game.submitInteraction(interaction)
 	end
 end
 
 -- TODO: Only have one Ability Click listener
 -- TODO: should have ability as argument here
 function game_display.ability1click()
-	abilityClick(game.selected_player.ability_1)
+	if (game.selected_player.ability_1.open) then
+		abilityClick(game.selected_player.ability_1)
+	end
 end
 
 function game_display.ability2click()
-	abilityClick(game.selected_player.ability_2)
+	if (game.selected_player.ability_2.open) then
+		abilityClick(game.selected_player.ability_2)
+	end
+end
+
+function game_display.tap( event ) 
+	local x = math.floor(event.x / TILE_X) + 1
+	local y = math.floor(event.y / TILE_Y) + 1
+	
+	if (not game_display.executing) then
+		if (game_display.ui.game_state == game_state.awaiting_player_move) then
+			if (game_display.game.move_map.safe(x, y) ~= 0) then
+				local interaction = {}
+				
+				interaction.code = "move"
+				interaction.point = points.createPoint(x, y)
+				
+				-- Bob animation
+				animation_manager.stopBob()
+				
+				game_display.game.submitInteraction(interaction)
+			end
+		elseif (game_display.ui.game_state == game_state.awaiting_attack_confirmation) then
+			if (x == game_display.game.selected_player.pos.x and y == game_display.game.selected_player.pos.y) then
+				
+				local interaction = {}
+				
+				interaction.code = "move_cancel"
+				
+				draw_helper.emptyGroup(game_display.root.ui.play_area)
+				game_display.game.submitInteraction(interaction)
+			end
+			
+			if (player_helper.isEnemyAtPosition(x, y, game_display.game.player_list, game_display.game.selected_player.team) == 1) then
+				
+				local interaction = {}
+				
+				interaction.code = "attack"
+				interaction.attacker = game_display.game.selected_player
+				interaction.defender = player_helper.getPlayerAtPosition(x, y, game_display.game.player_list)
+				
+				draw_helper.emptyGroup(game_display.root.ui.play_area)
+				game_display.game.submitInteraction(interaction)
+			end
+		elseif (game_display.ui.game_state == game_state.awaiting_ability_target_confirmation) then
+			if (player_helper.isTargetable(game.selected_player, game.player_list, game.used_ability, x, y)) then
+				local targeted_player = player_helper.getPlayerAtPosition(x, y, game.player_list)
+				
+				local interaction = {}
+				
+				interaction.code = "ability"
+				interaction.ability_type = "targeted"
+				
+				interaction.targeted_player = targeted_player
+				interaction.ability = game.used_ability
+				game_display.game.submitInteraction(interaction)
+			else
+				game_display.ui.game_state = game_state.awaiting_player_move
+				
+				game.used_ability.open = true
+				game_display.setupUI(game.selected_player, game.move_map)
+			end
+			
+		end
+	end
 end
 
 function game_display.create(root)

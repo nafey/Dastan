@@ -24,7 +24,7 @@ function animation_manager.stopBob()
 	animation_manager.clearDead()
 end
 
-function animation_manager.animateTriggeredAbility(character, affected, ability, callback)
+function animation_manager.animateTriggeredAbility(character_sprite, affected_sprite, ability, callback, args)
 	if (ability.name == "roar") then
 		local anim_list = {}
 		
@@ -47,22 +47,22 @@ function animation_manager.animateTriggeredAbility(character, affected, ability,
 		table.insert(animation_manager.list, seq)
 	elseif (ability.name == "scatter_shot") then
 		local anim_list = {}
-		
-		local pt = points.createPoint(character.pos.x - 1, character.pos.y - 1)
+		-- TODO: in the next line, we have the hack to show larger sprites correctly
+		local pt = points.createPoint(character_sprite.x - TILE_X, character_sprite.y - TILE_Y)
 		local scatter = animations.showAnimationOnce(sprite_data.getScatterShotFxData(), pt)
 		table.insert(anim_list, scatter)
 		
 		local hit_list = {}
 		
-		for i = 1, #affected do
-			local scatter_after = animations.attackImpactAnimation(character, affected[i])
+		for i = 1, #affected_sprite do
+			local scatter_after = animations.attackImpactAnimation(affected_sprite[i])
 			table.insert(hit_list, scatter_after)
 		end
 		
 		local parallel = animations.playParallel(hit_list)
 		table.insert(anim_list, parallel)
 		
-		local seq = animations.playSequence(anim_list, callback)
+		local seq = animations.playSequence(anim_list, callback, args)
 		table.insert(animation_manager.list, seq) 
 	elseif (ability.name == "speed_rush") then
 		local anim_list = {}

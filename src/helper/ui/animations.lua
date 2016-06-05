@@ -47,8 +47,6 @@ function animations.playSequence(animation_list, callback, args)
 	return a
 end
 
-
-
 function animations.playParallel(animation_list, callback)
 	local a = {}
 	a.has_more = true
@@ -78,7 +76,13 @@ function animations.playParallel(animation_list, callback)
 	end
 	
 	function a.stop()
-		a.has_more = false
+		if (a.callback ~= nil) then
+			if (a.args ~= nil) then
+				a.callback(a.args)
+			else
+				a.callback()
+			end
+		end
 	end
 	
 	return a
