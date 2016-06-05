@@ -10,4 +10,4 @@ display.setStatusBar( display.HiddenStatusBar )
 TILE_X = 32
 TILE_Y = 32
 
-composer.gotoScene( "src.level.level1" )
+composer.gotoScene( "src.level.intro" )

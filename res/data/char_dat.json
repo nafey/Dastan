@@ -3,7 +3,7 @@
   "label" : "Uruk",
   "hp" : 20,
   "attack" : 4,
-  "speed" : 16,
+  "speed" : 14,
   "range" : 4
 },
 {
@@ -11,7 +11,7 @@
   "label" : "Lan",
   "hp" : 25,
   "attack" : 4,
-  "speed" : 16,
+  "speed" : 18,
   "range" : 4,
   "ability_1" : {
 	"name" : "double_strike",
@@ -33,8 +33,8 @@
   "name": "feyd",
   "label" : "Feyd",
   "hp" : 15,
-  "attack" : 2,
-  "speed" : 18,
+  "attack" : 3,
+  "speed" : 19,
   "range" : 4,
   "ability_1" : {
 	"name" : "heal",
@@ -57,7 +57,7 @@
   "name": "asha",
   "label" : "Asha",
   "hp" : 15,
-  "attack" : 3,
+  "attack" : 5,
   "speed" : 20,
   "range" : 4
 },
@@ -65,7 +65,7 @@
   "name": "balzar",
   "label" : "Balzar",
   "hp" : 20,
-  "attack" : 1,
+  "attack" : 3,
   "speed" : 14,
   "range" : 4
 },
