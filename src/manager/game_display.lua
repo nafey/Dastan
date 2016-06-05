@@ -56,31 +56,29 @@ function game_display.setupUI(player, move_map)
 		game_display.game.player_list, 
 		game_display.root.ui.frame.move_order)
 		
-	-- Drop Dead
-	--local rem = {}
-	--for k,v in pairs(game_display.ui.player_sprites) do
-	--	local k_died = true
-	--	
-	--	for i = 1, #game_display.game.player_list do
-	--		if (k == game_display.game.player_list[i].name) then
-	--			k_died = false
-	--		end
-	--	end
-	--	
-	--	if (k_died) then
-	--		table.insert(rem, k)
-	--	end
-	--end
-	--
-	--for i = 1, #rem do
-
-	--end
-	
-	-- TODO: The charachter currently bobs while moving
+	draw_helper.drawButtons(game_display.root.ui.frame.button,
+		game.selected_player)
+		
 	-- Bob animation
 	animation_manager.stopBob()
 	animation_manager.characterBob(game_display.ui.player_sprites[player.name],
 		player)
+end
+
+function game_display.targetedAbilityCallback(action) 
+	game_display.executing = false
+		
+	-- TODO: ui is an unfortunate name please change
+	local hp = 0
+	
+	-- Update the hp here
+	for i = 1, #game.player_list do
+		if (action.target.name == game.player_list[i].name) then
+			hp = game.player_list[i].hp
+		end
+	end
+	
+	game_display.ui.hp[action.target.name] = hp
 end
 
 function game_display.actionCallback(action)
@@ -135,6 +133,15 @@ function game_display.executeAction(action)
 		game_display.executing = true
 	elseif (action.code == "dead") then
 		animation_manager.animateDeath(game_display.ui.player_sprites[action.died.name], game_display.actionCallback, action)
+	elseif (action.code == "ability") then
+		draw_helper.emptyGroup(game_display.root.selection)
+		
+		animation_manager.animateTargetedAbility(
+			game_display.ui.player_sprites[game.selected_player.name], 
+			game_display.ui.player_sprites[action.target.name], 
+			action.ability, game_display.targetedAbilityCallback,
+			action)
+		game_display.executing = true
 	end
 end
 
@@ -145,7 +152,6 @@ function game_display.tap( event )
 	if (not game_display.executing) then
 		if (game_display.ui.game_state == game_state.awaiting_player_move) then
 			if (game_display.game.move_map.safe(x, y) ~= 0) then
-				
 				local interaction = {}
 				
 				interaction.code = "move"
@@ -178,6 +184,24 @@ function game_display.tap( event )
 				draw_helper.emptyGroup(game_display.root.ui.play_area)
 				game_display.game.submitInteraction(interaction)
 			end
+		elseif (game_display.ui.game_state == game_state.awaiting_ability_target_confirmation) then
+			if (player_helper.isTargetable(game.selected_player, game.player_list, game.used_ability, x, y)) then
+				local targeted_player = player_helper.getPlayerAtPosition(x, y, game.player_list)
+				
+				local interaction = {}
+				
+				interaction.code = "ability"
+				
+				interaction.targeted_player = targeted_player
+				interaction.ability = game.used_ability
+				game_display.game.submitInteraction(interaction)
+			else
+				game_display.ui.game_state = game_state.awaiting_player_move
+				
+				game.used_ability.open = true
+				game_display.setupUI(game.selected_player, game.move_map)
+			end
+			
 		end
 	end
 end
@@ -223,6 +247,37 @@ end
 
 function game_display.debug()
 	animation_manager.debug(game_display.root.ui.play_area, game_display.ui.player_sprites[game.selected_player.name], game_display.debug2, "Hello World")
+end
+
+function abilityClick(ability)
+	if (game_display.ui.game_state ~= game_state.awaiting_player_move) then
+		return 
+	end
+	
+	if (ability.type == "targeted") then
+		-- TODO: Cardinal Sin: Storing UI info in model
+		ability.open = false
+		game.used_ability = ability
+		
+		draw_helper.targetCharacters(game.selected_player, game.player_list, game.level, 
+											ability.select, ability.range,
+											game_display.root.selection)
+		
+		draw_helper.drawButtons(game_display.root.ui.frame.button, game.selected_player)
+		
+		game_display.ui.game_state = game_state.awaiting_ability_target_confirmation
+		animation_manager.stopBob()
+	end
+end
+
+-- TODO: Only have one Ability Click listener
+-- TODO: should have ability as argument here
+function game_display.ability1click()
+	abilityClick(game.selected_player.ability_1)
+end
+
+function game_display.ability2click()
+	abilityClick(game.selected_player.ability_2)
 end
 
 function game_display.create(root)
@@ -308,13 +363,13 @@ function game_display.create(root)
 			-- BUTTON 1
 	game_display.root.ui.frame.button.button1 = display.newGroup()
 	game_display.root.ui.frame.button:insert(game_display.root.ui.frame.button.button1)
-	--game_display.root.ui.frame.button.button1:addEventListener("tap", ability1click)
+	game_display.root.ui.frame.button.button1:addEventListener("tap", game_display.ability1click)
 	
 			-- BUTTON 2
 	game_display.root.ui.frame.button.button2 = display.newGroup()
 	game_display.root.ui.frame.button.button2.x = 50
-	--game_display.root.ui.frame.button:insert(game_display.root.ui.frame.button.button2)
-	--game_display.root.ui.frame.button.button2:addEventListener("tap", ability2click)
+	game_display.root.ui.frame.button:insert(game_display.root.ui.frame.button.button2)
+	game_display.root.ui.frame.button.button2:addEventListener("tap", game_display.ability2click)
 	
 	game_display.setupUI(game_display.game.selected_player, 
 		game_display.game.move_map)

@@ -88,10 +88,10 @@ function animation_manager.animateTriggeredAbility(character, affected, ability,
 	end
 end
 
-function animation_manager.animateTargetedAbility(character, target, ability, callback)
+function animation_manager.animateTargetedAbility(character_sprite, target_sprite, ability, callback, args)
 	if (ability.name == "double_strike") then
-		local attack1 = animations.characterAttackAnimation(character, target)
-		local attack2 = animations.characterAttackAnimation(character, target)
+		local attack1 = animations.characterAttackAnimation(character_sprite, target_sprite)
+		local attack2 = animations.characterAttackAnimation(character_sprite, target_sprite)
 		
 		local anims = {}
 		
@@ -103,11 +103,11 @@ function animation_manager.animateTargetedAbility(character, target, ability, ca
 	elseif (ability.name == "shoot") then
 		local pow_sheet = sprite_data.getPowSheetData()
 	
-		local attack_seq = animations.attackImpactAnimation(character, target, callback)
+		local attack_seq = animations.attackImpactAnimation(target_sprite, callback, args)
 		table.insert(animation_manager.list, attack_seq)
 	elseif (ability.name == "heal") then
 		local heal_fx = sprite_data.getHealFxData()
-		local heal = animations.showAnimationOnce(heal_fx, target.pos, callback)
+		local heal = animations.showAnimationOnce(heal_fx, points.createPoint(target_sprite.x, target_sprite.y), callback)
 		table.insert(animation_manager.list, heal)
 	end
 end

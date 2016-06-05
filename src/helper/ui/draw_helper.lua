@@ -23,7 +23,7 @@ function draw_helper.targetCharacters(user, player_list, level, selection, range
 	local green = "res/ui/aura_single_green.png"
 	
 	for i = 1, #player_list do
-		local point_val = area[player_list[i].pos.x][player_list[i].pos.y]
+		local point_val = area.safe(player_list[i].pos.x, player_list[i].pos.y)
 		local png = ""
 		local selectCriteriaFlag = true
 		

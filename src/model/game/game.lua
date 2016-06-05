@@ -16,6 +16,8 @@ game.selected_player = nil
 game.move_map = nil
 game.action_queue = {}
 
+game.used_ability = {}
+
 -- TODO: This needs to be fixed
 game.main_team = 1
 
@@ -188,6 +190,38 @@ function game.submitInteraction(interaction)
 		select_action.move_map = game.move_map
 		
 		table.insert(game.action_queue, select_action)
+	elseif (interaction.code == "ability") then
+		
+		local did_kill = player_helper.useTargetedAbility(
+			game.selected_player, interaction.targeted_player, 
+			interaction.ability, game.player_list) 
+	
+		local ability_action = {}
+		ability_action.code = "ability"
+		ability_action.ability = interaction.ability
+		ability_action.type = "targeted"
+		ability_action.target = interaction.targeted_player
+		
+		table.insert(game.action_queue, ability_action)
+		
+		if (did_kill) then
+			local dead_action = {}
+			dead_action.code = "dead"
+			dead_action.died = ability_action.target
+			table.insert(game.action_queue, dead_action)
+		end
+		
+		-- selectNextPlayer
+		game.selectNextPlayer()
+		
+		-- enqueue select action
+		local select_action = {}
+		select_action.code = "select"
+		select_action.player = game.selected_player
+		select_action.move_map = game.move_map
+		
+		table.insert(game.action_queue, select_action)
+		
 	end
 end
 

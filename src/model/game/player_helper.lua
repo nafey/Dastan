@@ -1,8 +1,11 @@
 local points = require("src.model.geometry.points")
 
 local players = require("src.model.game.players")
+local game_engine = require("src.model.game.game_engine")
+
 local geometry = require("src.model.geometry.geometry")
 local grids = require("src.model.geometry.grids")
+
 
 local file_helper = require("src.helper.util.file_helper")
 local json_helper = require("src.helper.util.json_helper")
@@ -77,11 +80,12 @@ function player_helper.useTriggeredAbility(selected_player, affected, ability)
 	end
 end
 
-function player_helper.useTargetedAbility(character, target, ability) 
+function player_helper.useTargetedAbility(character, target, ability, player_list) 
+	local did_kill = false
 	if (ability.name == "double_strike") then
 		target.hp = target.hp - character.attack * 2
 	elseif (ability.name == "shoot") then
-		target.hp = target.hp - ability.damage
+		did_kill = game_engine.damage(target, ability.damage, player_list)
 	elseif (ability.name == "heal") then
 		if (target.hp < target.max_hp - ability.heal) then
 			target.hp = target.hp + ability.heal
@@ -89,6 +93,8 @@ function player_helper.useTargetedAbility(character, target, ability)
 			target.hp = target.max_hp
 		end
 	end
+	
+	return did_kill
 end
 
 function player_helper.isTargetable(character, player_list, ability, x, y)
