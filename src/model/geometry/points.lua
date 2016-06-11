@@ -5,15 +5,6 @@ function points.create(x, y)
 	p.x = x or 0
 	p.y = y or 0
 	
-	function p.print(newline)
-		newline = newline or false
-		io.write(p.str())
-
-		if (newline) then
-			io.write("\n")
-		end
-	end
-	
 	function p.str()
 		return "(" .. p.x .. ", " .. p.y .. ")"
 	end
@@ -29,31 +20,24 @@ function points.copy(p)
 	return ret
 end
 
-function points.printPoints(pointsTable) 
-	io.write("{")
-	for i = 1, #pointsTable do
-		pointsTable[i].print()
-		io.write( ", ")
+function points.isAdjacent(p1, p2) 
+	for dir = 1, 4 do
+		local adj = points.rotate(p1, dir)
+		if (points.equals(adj, p2)) then
+			return true
+		end
 	end
-
-	io.write("}\n")
-end 
+	
+	return false
+end
 
 function points.dist(p1, p2) 
 	return math.sqrt((p2.x - p1.x)*(p2.x - p1.x) + (p2.y - p1.y)*(p2.y - p1.y))
 end
 
-function points.lerp(p1, p2, ratio)
-	local ret = points.copy(p1)
-	if (ratio <= 0) then
-		ret = points.copy(p1)
-	elseif (ratio >= 1) then
-		ret = points.copy(p2)
-	else
-		ret = points.create(p1.x + (p2.x - p1.x) * ratio, p1.y + (p2.y - p1.y) * ratio)
-	end
-	
-	return ret
+
+function points.manhattan(p1, p2) 
+	return math.abs(p1.x - p2.x) + math.abs(p1.y - p2.y)
 end
 
 function points.rotate(pt, dir) 
@@ -68,20 +52,17 @@ function points.rotate(pt, dir)
 	end
 end
 
-function points.isAdjacent(x1, y1, x2, y2) 
-	local p1 = points.create(x1, y1)
-	local p2 = points.create(x2, y2)
-	
-	for dir = 1, 4 do
-		local adj = points.rotate(p1, dir)
-		if (points.equals(adj, p2)) then
-			return true
-		end
+function points.lerp(p1, p2, ratio)
+	local ret = points.copy(p1)
+	if (ratio <= 0) then
+		ret = points.copy(p1)
+	elseif (ratio >= 1) then
+		ret = points.copy(p2)
+	else
+		ret = points.create(p1.x + (p2.x - p1.x) * ratio, p1.y + (p2.y - p1.y) * ratio)
 	end
 	
-	return false
+	return ret
 end
-
-
 
 return points

@@ -44,8 +44,7 @@ function player_helper.findInAbilityRange(character, player_list, range, selecto
 	
 	for i = 1, #player_list do
 		
-		if (geometry.manhattan(player_list[i].pos.x, player_list[i].pos.y, 
-			character.pos.x, character.pos.y) <= range) then
+		if (points.manhattan(player_list[i].pos, character.pos) <= range) then
 			local add_flag = true
 			
 			if (selector == "enemy" and character.team == player_list[i].team) then
@@ -105,10 +104,12 @@ end
 function player_helper.isTargetable(character, player_list, ability, x, y)
 	local valid_target_flag = false
 	
+	local x_y = points.create(x, y)
+	
 	for i = 1, #player_list do
 		if (player_list[i].pos.x == x and player_list[i].pos.y == y) then
 			valid_target_flag = true
-			if (geometry.manhattan(x, y, character.pos.x, character.pos.y) > tonumber(ability.range)) then
+			if (points.manhattan(x_y, character.pos) > tonumber(ability.range)) then
 				valid_target_flag = false
 			end
 			
@@ -296,8 +297,9 @@ end
 
 function player_helper.isAdjacentToEnemy(x, y, player_list, your_team)
 	local ret = false
+	local pt = points.create(x, y)
 	for i = 1, #player_list do 
-		if (not(ret) and points.isAdjacent(x, y, player_list[i].pos.x, player_list[i].pos.y)) then
+		if (not(ret) and points.isAdjacent(pt, player_list[i].pos)) then
 			if (player_list[i].team ~= your_team) then
 				ret = true
 			end

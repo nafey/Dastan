@@ -3,12 +3,6 @@ local grids = require("src.model.geometry.grids")
 
 local geometry = {}
 
-function geometry.manhattan(x, y, x1, y1) 
-	return math.abs(x - x1) + math.abs(y - y1)
-end
-
-
-
 -- Decides which tiles are accessible from a given point
 -- Grid represents the active map
 -- p is the character position
@@ -133,8 +127,6 @@ function geometry.getPath(map, p, d)
 	end
 	
 	return ret_reversed
-	
 end
-
 
 return geometry
