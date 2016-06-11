@@ -55,12 +55,12 @@ function grids.createGrid(size_x, size_y)
 	-- 3 : bot i.e. (i, j + 1)
 	-- anything else : right i.e (i + 1, j)
 	function g.rotate(i, j, dir)
-		local rot = points.rotate(points.createPoint(i, j), dir)
+		local rot = points.rotate(points.create(i, j), dir)
 		return g.safe(rot.x, rot.y)
 	end
 	
 	function g.rotate_put(i, j, dir, val) 
-		local rot = points.rotate(points.createPoint(i, j), dir)
+		local rot = points.rotate(points.create(i, j), dir)
 		g.put(rot.x, rot.y, val)
 	end
 	

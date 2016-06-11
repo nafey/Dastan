@@ -298,7 +298,7 @@ function game_display.tap( event )
 				local interaction = {}
 				
 				interaction.code = "move"
-				interaction.point = points.createPoint(x, y)
+				interaction.point = points.create(x, y)
 				
 				-- Bob animation
 				animation_manager.stopBob()

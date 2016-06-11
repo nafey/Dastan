@@ -261,7 +261,7 @@ function animations.characterTranslate(sprite, to_point, period, callback, args)
 	
 	a.sprite = sprite
 	a.start = nil
-	a.to_point = points.copyPoint(to_point)
+	a.to_point = points.copy(to_point)
 	a.period = period
 	a.period_elapsed = 0
 	a.callback = callback
@@ -272,7 +272,7 @@ function animations.characterTranslate(sprite, to_point, period, callback, args)
 		
 	function a.step()
 		if (a.start == nil) then
-			a.start = points.createPoint(a.sprite.x, a.sprite.y)
+			a.start = points.create(a.sprite.x, a.sprite.y)
 		end
 		
 		if (a.last_time == nil) then
@@ -337,14 +337,14 @@ function animations.poke(sprite, isHort, isPositive, callback, args)
 	
 	
 	if (isHort) then
-		to_point = points.createPoint(sprite.x + sign * TILE_X * a.amplitude, sprite.y)
+		to_point = points.create(sprite.x + sign * TILE_X * a.amplitude, sprite.y)
 	else
-		to_point = points.createPoint(sprite.x, sprite.y + sign * TILE_Y * a.amplitude)
+		to_point = points.create(sprite.x, sprite.y + sign * TILE_Y * a.amplitude)
 	end
 	
 	local move1 = animations.characterTranslate(sprite, to_point, a.period)
 	local move2 = animations.characterTranslate(sprite, 
-		points.createPoint(sprite.x, sprite.y), a.period)
+		points.create(sprite.x, sprite.y), a.period)
 	
 	table.insert(list, move1)
 	table.insert(list, move2)
@@ -383,7 +383,7 @@ function animations.moveSprite(sprite, path, callback, args)
 	
 	for i = 2, #path do
 		local move = animations.characterTranslate(sprite, 
-			points.createPoint(path[i].x, path[i].y), 
+			points.create(path[i].x, path[i].y), 
 			100)
 		table.insert(anim_list, move)
 	end
@@ -396,7 +396,7 @@ end
 function animations.attackImpactAnimation(attacked_sprite, callback, args)
 	
 	local pow_sheet = sprite_data.getPowSheetData()
-	local pow_anim = animations.showAnimationOnce(pow_sheet, points.createPoint(attacked_sprite.x, attacked_sprite.y))
+	local pow_anim = animations.showAnimationOnce(pow_sheet, points.create(attacked_sprite.x, attacked_sprite.y))
 	
 	local blink = animations.blink(attacked_sprite, 3, 100)
 	
@@ -425,7 +425,7 @@ function animations.attack(attacker, defender, callback, args)
 	
 	local pow_sheet = sprite_data.getPowSheetData()
 	local pow_anim = animations.showAnimationOnce(pow_sheet, 
-		points.createPoint(defender.x, defender.y))
+		points.create(defender.x, defender.y))
 	
 	local blink = animations.blink(defender, 3, 100)
 	

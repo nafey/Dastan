@@ -1,7 +1,10 @@
-local grids = require("src.model.geometry.grids")
 local geometry = require("src.model.geometry.geometry")
-local player_helper = require("src.model.game.player_helper")
 
+-- TODO: Examine if we can avoid having these here
+local grids = require("src.model.geometry.grids")
+local points = require("src.model.geometry.points")
+
+local player_helper = require("src.model.game.player_helper")
 local sprites = require("src.helper.ui.sprites")
 
 local draw_helper = {}
@@ -240,7 +243,7 @@ function draw_helper.drawAttackGrid(pos, displayGroup, player_list, your_team, a
 	sprites.draw(blue, pos.x - 1, pos.y - 1, 0, displayGroup)
 	
 	for i = 1, #player_list do
-		if (geometry.isAdjacent(pos.x, pos.y, player_list[i].pos.x, player_list[i].pos.y)) then
+		if (points.isAdjacent(pos.x, pos.y, player_list[i].pos.x, player_list[i].pos.y)) then
 			if (player_list[i].team ~= your_team) then
 				sprites.draw(red, player_list[i].pos.x - 1, player_list[i].pos.y - 1, 0, displayGroup)
 				

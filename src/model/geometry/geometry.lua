@@ -7,27 +7,7 @@ function geometry.manhattan(x, y, x1, y1)
 	return math.abs(x - x1) + math.abs(y - y1)
 end
 
-function geometry.isAdjacent(x, y, x1, y1) 
-	local ret = false
-	
-	if ((x == x1 - 1) and (y == y1)) then 	
-		ret = true
-	end
-	
-	if ((x == x1) and (y == y1 - 1)) then 
-		ret = true
-	end
-	
-	if ((x == x1 + 1) and (y == y1)) then 
-		ret = true
-	end
-	
-	if ((x == x1) and (y == y1 + 1)) then 
-		ret = true
-	end
-	
-	return ret
-end
+
 
 -- Decides which tiles are accessible from a given point
 -- Grid represents the active map
@@ -40,7 +20,7 @@ function geometry.floodFill(g, p, range)
 	end
 	
 	local function toPoint(index)
-		return points.createPoint(index % grid.width + 1 , math.floor(index / grid.width) + 1 )
+		return points.create(index % grid.width + 1 , math.floor(index / grid.width) + 1 )
 	end
 	for j = 1, grid.height do
 		for i = 1, grid.width do
@@ -124,8 +104,8 @@ function geometry.getPath(map, p, d)
 	end
 	
 	local ret = {}
-	local curr = points.copyPoint(d)
-	table.insert(ret, points.copyPoint(curr))
+	local curr = points.copy(d)
+	table.insert(ret, points.copy(curr))
 	
 	-- infinity breaker
 	local a = 0
@@ -141,7 +121,7 @@ function geometry.getPath(map, p, d)
 				end
 			end
 		end		
-		table.insert(ret,points.copyPoint(curr))
+		table.insert(ret,points.copy(curr))
 		a = a + 1
 	end
 	

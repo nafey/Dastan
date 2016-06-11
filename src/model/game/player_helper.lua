@@ -1,14 +1,14 @@
-local points = require("src.model.geometry.points")
-
-local players = require("src.model.game.players")
-local game_engine = require("src.model.game.game_engine")
-
-local geometry = require("src.model.geometry.geometry")
-local grids = require("src.model.geometry.grids")
-
 
 local file_helper = require("src.helper.util.file_helper")
 local json_helper = require("src.helper.util.json_helper")
+
+local points = require("src.model.geometry.points")
+local grids = require("src.model.geometry.grids")
+
+local geometry = require("src.model.geometry.geometry")
+
+local players = require("src.model.game.players")
+local game_engine = require("src.model.game.game_engine")
 
 -- TODO: ensure this does not modify the state of any game object
 local player_helper = {}
@@ -36,7 +36,7 @@ function player_helper.findTeamCenter(team, player_list)
 	x = math.floor(x / count)
 	y = math.floor(y / count)
 	
-	return points.createPoint(x, y)
+	return points.create(x, y)
 end
 
 function player_helper.findInAbilityRange(character, player_list, range, selector)
@@ -241,7 +241,7 @@ function player_helper.getPlayerPositions(levelgrid)
 	for i = 1, levelgrid.width do
 		for j = 1, levelgrid.height do
 			if (isPlayerPosition(i,j)) then
-				ret[levelgrid.safe(i, j)] = points.createPoint(i, j)
+				ret[levelgrid.safe(i, j)] = points.create(i, j)
 			end
 		end
 	end
@@ -297,7 +297,7 @@ end
 function player_helper.isAdjacentToEnemy(x, y, player_list, your_team)
 	local ret = false
 	for i = 1, #player_list do 
-		if (not(ret) and geometry.isAdjacent(x, y, player_list[i].pos.x, player_list[i].pos.y)) then
+		if (not(ret) and points.isAdjacent(x, y, player_list[i].pos.x, player_list[i].pos.y)) then
 			if (player_list[i].team ~= your_team) then
 				ret = true
 			end

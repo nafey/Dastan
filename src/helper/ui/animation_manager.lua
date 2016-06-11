@@ -28,7 +28,7 @@ function animation_manager.animateTriggeredAbility(character_sprite, affected_sp
 	if (ability.name == "roar") then
 		local anim_list = {}
 		
-		local pt = points.createPoint(character_sprite.x - TILE_X, character_sprite.y - TILE_Y)
+		local pt = points.create(character_sprite.x - TILE_X, character_sprite.y - TILE_Y)
 		local roar = animations.showAnimationOnce(sprite_data.getRoarFxData(), pt)
 		table.insert(anim_list, roar)
 		
@@ -37,7 +37,7 @@ function animation_manager.animateTriggeredAbility(character_sprite, affected_sp
 		
 		for i = 1, #affected_sprite do
 			local roar_after = animations.showAnimationOnce(sprite_data.getRoarFxFinalData(),
-				points.createPoint(affected_sprite[i].x, affected_sprite[i].y))
+				points.create(affected_sprite[i].x, affected_sprite[i].y))
 			table.insert(roar_list, roar_after)
 		end
 		
@@ -49,7 +49,7 @@ function animation_manager.animateTriggeredAbility(character_sprite, affected_sp
 	elseif (ability.name == "scatter_shot") then
 		local anim_list = {}
 		-- TODO: in the next line, we have the hack to show larger sprites correctly
-		local pt = points.createPoint(character_sprite.x - TILE_X, character_sprite.y - TILE_Y)
+		local pt = points.create(character_sprite.x - TILE_X, character_sprite.y - TILE_Y)
 		local scatter = animations.showAnimationOnce(sprite_data.getScatterShotFxData(), pt)
 		table.insert(anim_list, scatter)
 		
@@ -68,7 +68,7 @@ function animation_manager.animateTriggeredAbility(character_sprite, affected_sp
 	elseif (ability.name == "speed_rush") then
 		local anim_list = {}
 		
-		local pt = points.createPoint(character_sprite.x, character_sprite.y - TILE_Y)
+		local pt = points.create(character_sprite.x, character_sprite.y - TILE_Y)
 		local rush_fx = sprite_data.getSpeedRushFxData()
 		local rush = animations.showAnimationOnce(rush_fx, pt)
 		table.insert(anim_list, rush)
@@ -78,7 +78,7 @@ function animation_manager.animateTriggeredAbility(character_sprite, affected_sp
 		
 		for i = 1, #affected_sprite do
 			local roar_after = animations.showAnimationOnce(sprite_data.getRoarFxFinalData(), 
-				points.createPoint(affected_sprite[i].x, affected_sprite[i].y))
+				points.create(affected_sprite[i].x, affected_sprite[i].y))
 			table.insert(roar_list, roar_after)
 		end
 		
@@ -109,7 +109,7 @@ function animation_manager.animateTargetedAbility(character_sprite, target_sprit
 		table.insert(animation_manager.list, attack_seq)
 	elseif (ability.name == "heal") then
 		local heal_fx = sprite_data.getHealFxData()
-		local heal = animations.showAnimationOnce(heal_fx, points.createPoint(target_sprite.x, target_sprite.y), callback, args)
+		local heal = animations.showAnimationOnce(heal_fx, points.create(target_sprite.x, target_sprite.y), callback, args)
 		table.insert(animation_manager.list, heal)
 	end
 end
@@ -118,7 +118,7 @@ function animation_manager.animateCharacterMove(sprite, action, callback, args)
 	local path = {}
 	
 	for i = 1, #action.path do
-		table.insert(path, points.createPoint((action.path[i].x - 1) * TILE_X, 
+		table.insert(path, points.create((action.path[i].x - 1) * TILE_X, 
 			(action.path[i].y - 1) * TILE_Y))
 	end
 	local move = animations.moveSprite(sprite, path, callback, action)
@@ -131,8 +131,8 @@ function animation_manager.animateCharacterAttack(attacker, defender, callback, 
 end
 
 function animation_manager.debug(displayGroup, sprite, callback, args)
-	--local move1 = animations.characterTranslate(character, points.createPoint(9, 3), 350)
-	--local move2 = animations.characterTranslate(character, points.createPoint(10, 6), 350)
+	--local move1 = animations.characterTranslate(character, points.create(9, 3), 350)
+	--local move2 = animations.characterTranslate(character, points.create(10, 6), 350)
 	--	
 	--local move_anims = {}
 	--table.insert(move_anims, move1)
@@ -142,7 +142,7 @@ function animation_manager.debug(displayGroup, sprite, callback, args)
 	--table.insert(animation_manager.list, seq)
 	
 	--local anim_data = sprite_data.getPowSheetData()
-	--local once = animations.showAnimationOnce(anim_data, points.createPoint(sprite.x, sprite.y))
+	--local once = animations.showAnimationOnce(anim_data, points.create(sprite.x, sprite.y))
 	--table.insert(animation_manager.list, once)
 	
 	--local sheet = graphics.newImageSheet(anim_data["image"], anim_data["options"])
@@ -150,7 +150,7 @@ function animation_manager.debug(displayGroup, sprite, callback, args)
 	--
 	--display.newSprite(sheet, sequence)
 	
-	--local move = animations.showAnimationOnce(displayGroup, pow_sheet, points.createPoint(30, 30))
+	--local move = animations.showAnimationOnce(displayGroup, pow_sheet, points.create(30, 30))
 	--table.insert(animation_manager.list, move)
 	
 	--local poke = animations.poke(character, false, false)
@@ -161,9 +161,9 @@ function animation_manager.debug(displayGroup, sprite, callback, args)
 	--local blink = animations.blink(sprite, 3, 100)
 	--table.insert(animation_manager.list, blink)
 	
-	--local move1 = animations.characterTranslate(sprite, points.createPoint(288, 128), 
+	--local move1 = animations.characterTranslate(sprite, points.create(288, 128), 
 	--	200)
-	--local move2 = animations.characterTranslate(sprite, points.createPoint(320, 128),
+	--local move2 = animations.characterTranslate(sprite, points.create(320, 128),
 	--	200)
 	--
 	--local anim_list = {}

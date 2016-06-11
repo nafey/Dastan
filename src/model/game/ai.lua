@@ -40,7 +40,7 @@ end
 -- returns the point to move to come close to enemy center
 function ai.moveToEnemyCenter(player_list, move_map)
 	local target_point = player_helper.findTeamCenter(ai.main_team, player_list)
-	local best_point = points.createPoint(9999, 9999)
+	local best_point = points.create(9999, 9999)
 	
 	local dist = points.dist(best_point, target_point)
 	
@@ -48,9 +48,9 @@ function ai.moveToEnemyCenter(player_list, move_map)
 	for i = 1, move_map.width do
 		for j = 1, move_map.height do
 			if (move_map.safe(i, j) ~= 0) then
-				if (dist > points.dist(target_point, points.createPoint(i, j))) then
-					dist = points.dist(target_point, points.createPoint(i, j))
-					best_point = points.createPoint(i, j)
+				if (dist > points.dist(target_point, points.create(i, j))) then
+					dist = points.dist(target_point, points.create(i, j))
+					best_point = points.create(i, j)
 				end
 			end
 		end
@@ -79,7 +79,7 @@ function ai.aiTurn(player, player_list, move_map, level)
 		recommend.code = "recommend_move"
 		-- select point
 		local move_point = ai.moveToEnemyCenter(player_list, move_map)
-		recommend.move_point = points.createPoint(move_point.x, move_point.y)
+		recommend.move_point = points.create(move_point.x, move_point.y)
 	end
 	
 	return recommend
