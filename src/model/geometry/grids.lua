@@ -28,9 +28,10 @@ function grids.createGrid(size_x, size_y)
 		return ret
 	end
 	
+	-- TODO: consider having -1 return as default
 	-- throw no error get
 	function g.safe(i, j)
-		local ret = 0
+		local ret = -1
 		if ((i >= 1 and i <= g.width) and (j >= 1 and j <= g.height)) then
 			ret = g.get(i, j)
 		end

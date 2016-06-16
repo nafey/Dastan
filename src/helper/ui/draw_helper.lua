@@ -259,7 +259,6 @@ end
 -- Mark the areas next to enemy players in red
 -- send one mark_pos to highlight it in the grid
 -- TODO: Do remaining rot stuff
-
 function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, mark_pos) 
 	local path_dot = "res/ui/aura_dot.png"
 	local path_corner = "res/ui/aura_corner.png"
@@ -278,11 +277,11 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 	local grid = grids.copyGrid(g)
 	for j = 1, grid.height do
 		for i = 1, grid.width do
-			if (grid.safe(i, j) ~= 0) then
+			if (grid.safe(i, j) > 0) then
 				grid.put(i, j, 1)
 			end
 		end
-	end			
+	end		
 	
 	for i = 1, displayGroup.numChildren do
 		displayGroup:remove(1)
@@ -307,17 +306,17 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		local rot = 0
 		
 		--rotate top
-		if (adj.safe(x, y + 1) ~= 0) then
+		if (adj.safe(x, y + 1) > 0) then
 			rot = 90
 		end
 		
 		--rotate right
-		if (adj.safe(x - 1, y) ~= 0) then
+		if (adj.safe(x - 1, y) > 0) then
 			rot = 180
 		end
 		
 		--rotate bot
-		if (adj.safe(x, y - 1) ~= 0) then
+		if (adj.safe(x, y - 1) > 0) then
 			rot = 270
 		end
 			
@@ -333,8 +332,8 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		end
 		
 		-- determine if pipe or corner
-		if (adj.safe(x - 1, y) ~= 0) then
-			if (adj.safe(x + 1, y) ~= 0) then
+		if (adj.safe(x - 1, y) > 0) then
+			if (adj.safe(x + 1, y) > 0) then
 				-- identified hort pipe
 				rot = 90
 				png = path_pipe
@@ -344,7 +343,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 				end
 			else
 				-- identified corner find rot now
-				if (adj.safe(x, y - 1) ~= 0) then
+				if (adj.safe(x, y - 1) > 0) then
 					-- bottom right corner
 					rot = 180
 				else 
@@ -352,9 +351,9 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 					rot = 90
 				end
 			end
-		elseif (adj.safe(x + 1, y) ~= 0) then
+		elseif (adj.safe(x + 1, y) > 0) then
 			-- identified corner find rot now
-			if (adj.safe(x, y - 1) ~= 0) then
+			if (adj.safe(x, y - 1) > 0) then
 				-- bottom left corner
 				rot = 270
 			end -- no need for else as top left is the default case
@@ -404,7 +403,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		--local png = path_dot
 		
 		-- top left 
-		if ((adj.safe(x, y - 1) ~= 0) and (adj.safe(x - 1, y) ~= 0)) then
+		if ((adj.safe(x, y - 1) > 0) and (adj.safe(x - 1, y) > 0)) then
 			if (adj.safe(x - 1, y - 1) == 0) then
 				-- decreasing by 1 because the screen is zero based and adj is 1 based
 				sprites.draw(path_dot, x - 1, y - 1, rot, displayGroup)
@@ -412,7 +411,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		end
 		
 		-- top right 
-		if ((adj.safe(x, y - 1) ~= 0) and (adj.safe(x + 1, y) ~= 0)) then
+		if ((adj.safe(x, y - 1) > 0) and (adj.safe(x + 1, y) > 0)) then
 			if (adj.safe(x + 1, y - 1) == 0) then
 				rot = 90
 				-- decreasing by 1 because the screen is zero based and adj is 1 based
@@ -421,7 +420,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		end
 		
 		-- bot right 
-		if ((adj.safe(x + 1, y) ~= 0) and (adj.safe(x, y + 1) ~= 0)) then
+		if ((adj.safe(x + 1, y) > 0) and (adj.safe(x, y + 1) > 0)) then
 					
 			if (adj.safe(x + 1, y + 1) == 0) then
 				rot = 180
@@ -431,7 +430,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		end
 		
 		-- bot left 
-		if ((adj.safe(x, y + 1) ~= 0) and (adj.safe(x - 1, y) ~= 0)) then
+		if ((adj.safe(x, y + 1) > 0) and (adj.safe(x - 1, y) > 0)) then
 			if (adj.safe(x - 1, y + 1) == 0) then
 				rot = 270
 				-- decreasing by 1 because the screen is zero based and adj is 1 based
@@ -459,7 +458,7 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 			elseif (adj.safe(i, j) == 3) then
 				drawSideAura(i, j)
 			end	
-			if (adj.safe(i, j) ~= 0) then
+			if (adj.safe(i, j) > 0) then
 				drawDotAura(i, j)
 			end
 			
