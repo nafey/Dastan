@@ -304,20 +304,13 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		end
 		
 		local rot = 0
-		
-		--rotate top
-		if (adj.safe(x, y + 1) > 0) then
-			rot = 90
-		end
-		
-		--rotate right
-		if (adj.safe(x - 1, y) > 0) then
-			rot = 180
-		end
-		
-		--rotate bot
-		if (adj.safe(x, y - 1) > 0) then
-			rot = 270
+		local pt = points.create(x, y)
+		for dir = 1, 4 do
+			local pt_rot = points.rotate(pt, dir)
+			
+			if (adj.safe(pt_rot.x, pt_rot.y) > 0) then
+				rot = (dir - 1) * 90
+			end
 		end
 			
 		sprites.draw(png, x - 1, y - 1, rot, displayGroup)
@@ -398,45 +391,32 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 		sprites.draw(png, x - 1, y - 1, rot, displayGroup)
 	end
 	
+	-- TODO: wtf? why do we get infy loops on clicking top row?
 	local function drawDotAura(x, y)
 		local rot = 0	
 		--local png = path_dot
+		local pt = points.create(x, y)
 		
-		-- top left 
-		if ((adj.safe(x, y - 1) > 0) and (adj.safe(x - 1, y) > 0)) then
-			if (adj.safe(x - 1, y - 1) == 0) then
-				-- decreasing by 1 because the screen is zero based and adj is 1 based
-				sprites.draw(path_dot, x - 1, y - 1, rot, displayGroup)
+		for dir = 1, 4 do
+			rot = (dir - 1) * 90
+			
+			local rot1 = points.rotate(pt, dir)
+			local opp = points.rotate(pt, dir + 0.5)
+			local dir2 = dir + 1
+			
+			if (dir2 > 4) then
+				dir2 = 1
+			end
+			
+			local rot2 = points.rotate(pt, dir2)
+			
+			if ((adj.safe(rot1.x, rot1.y) > 0) and (adj.safe(rot2.x, rot2.y) > 0)) then
+				if (adj.safe(opp.x, opp.y) == 0) then 
+					sprites.draw(path_dot, pt.x - 1, pt.y - 1, rot, displayGroup)
+				end
 			end
 		end
 		
-		-- top right 
-		if ((adj.safe(x, y - 1) > 0) and (adj.safe(x + 1, y) > 0)) then
-			if (adj.safe(x + 1, y - 1) == 0) then
-				rot = 90
-				-- decreasing by 1 because the screen is zero based and adj is 1 based
-				sprites.draw(path_dot, x - 1, y - 1, rot, displayGroup)
-			end
-		end
-		
-		-- bot right 
-		if ((adj.safe(x + 1, y) > 0) and (adj.safe(x, y + 1) > 0)) then
-					
-			if (adj.safe(x + 1, y + 1) == 0) then
-				rot = 180
-				-- decreasing by 1 because the screen is zero based and adj is 1 based
-				sprites.draw(path_dot, x - 1, y - 1, rot, displayGroup)
-			end
-		end
-		
-		-- bot left 
-		if ((adj.safe(x, y + 1) > 0) and (adj.safe(x - 1, y) > 0)) then
-			if (adj.safe(x - 1, y + 1) == 0) then
-				rot = 270
-				-- decreasing by 1 because the screen is zero based and adj is 1 based
-				sprites.draw(path_dot, x - 1, y - 1, rot, displayGroup)
-			end
-		end
 	end
 	
 	local function drawSingleAura(x, y)

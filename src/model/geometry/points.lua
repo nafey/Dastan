@@ -40,20 +40,37 @@ function points.manhattan(p1, p2)
 	return math.abs(p1.x - p2.x) + math.abs(p1.y - p2.y)
 end
 
+-- dir rotation
+-- 	1	top
+-- 	1.5	top-right
+--	2	right
+--	2.5	bot-right
+-- 	3 	bot
+--	3.5	bot-left
+--	4	left
+-- 	4.5 top-left
 function points.rotate(pt, dir) 
 	if (dir == 1) then
 		return points.create(pt.x, pt.y - 1)
+	elseif (dir == 1.5) then	
+		return points.create(pt.x + 1, pt.y - 1)
 	elseif (dir == 2) then	
-		return points.create(pt.x - 1, pt.y)
+		return points.create(pt.x + 1, pt.y)
+	elseif (dir == 2.5) then	
+		return points.create(pt.x + 1, pt.y + 1)
 	elseif (dir == 3) then
 		return points.create(pt.x, pt.y + 1)
-	else 
-		return points.create(pt.x + 1, pt.y)
+	elseif (dir == 3.5) then
+		return points.create(pt.x - 1, pt.y + 1)
+	elseif (dir == 4) then
+		return points.create(pt.x - 1, pt.y)
+	elseif (dir == 4.5) then
+		return points.create(pt.x - 1, pt.y - 1)
 	end
 end
 
 function points.lerp(p1, p2, ratio)
-	local ret = points.copy(p1)
+	local ret = {}
 	if (ratio <= 0) then
 		ret = points.copy(p1)
 	elseif (ratio >= 1) then
