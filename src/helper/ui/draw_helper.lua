@@ -295,7 +295,8 @@ function draw_helper.drawMovementGrid(g, displayGroup, player_list, your_team, m
 			end
 		end
 	end
-		
+	
+	-- Local functions start here
 	local function drawEndAura(x, y) 
 		local png = path_end
 		
